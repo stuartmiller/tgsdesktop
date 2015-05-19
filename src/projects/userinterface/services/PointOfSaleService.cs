@@ -33,7 +33,7 @@ WHERE Published=1 AND Deleted=0";
             }
             this.Reset();
             this.Command.CommandText = @"SELECT i.id, i.description, i.cost, i.price, i.isTaxable
-FROM tbl_item i";
+FROM tbl_salesItem i";
             using (var dr = this.ExecuteReader()) {
                 while (dr.Read()) {
                     var i = 0;
