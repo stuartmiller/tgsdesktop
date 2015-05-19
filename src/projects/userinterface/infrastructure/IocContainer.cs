@@ -18,7 +18,7 @@ namespace tgsdesktop.infrastructure {
                 builder.RegisterType<services.AccountReceivableService>().As<IAccountReceivableService>();
                 builder.RegisterType<services.TransactionService>().As<ITransactionService>();
                 builder.RegisterType<services.transaction.GeneralJournalService>().As<IGeneralJournalService>();
-                builder.RegisterType<services.PointOfSaleService>().As<IPointOfSaleService>();
+                builder.RegisterType<services.SalesInvoiceService>().As<ISalesInvoiceService>();
                 builder.RegisterType<services.SettingsService>().As<IGlobalSettingsAccessor>();
                 BaseContainer = builder.Build();
             }

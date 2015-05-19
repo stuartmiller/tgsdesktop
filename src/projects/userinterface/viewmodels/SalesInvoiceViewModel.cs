@@ -27,7 +27,7 @@ namespace tgsdesktop.viewmodels {
 
             this.Customers = new ReactiveList<transaction.CustomerViewModel>();
 
-            var posService = infrastructure.IocContainer.Resolve<infrastructure.IPointOfSaleService>();
+            var posService = infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
             this.Products = new ReactiveList<ProductViewModel>();
             this.Products.AddRange(posService.GetProducts().Select(p => new ProductViewModel(p)));
 

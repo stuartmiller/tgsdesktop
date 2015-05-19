@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace tgsdesktop.services {
-    public class PointOfSaleService : ServiceBase, infrastructure.IPointOfSaleService {
+    public class SalesInvoiceService : ServiceBase, infrastructure.ISalesInvoiceService {
 
         public IList<models.Product> GetProducts() {
 

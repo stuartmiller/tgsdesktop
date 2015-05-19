@@ -131,7 +131,7 @@ namespace tgsdesktop.viewmodels {
             });
             invoice.Items.AddRange(items);
 
-            var posService = infrastructure.IocContainer.Resolve<infrastructure.IPointOfSaleService>();
+            var posService = infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
             this.InvoiceModel = posService.AddSalesInvoice(invoice);
         }
 

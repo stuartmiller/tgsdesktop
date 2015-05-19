@@ -240,7 +240,7 @@
     <Compile Include="reporting\SalesInvoice.Designer.cs">
       <DependentUpon>SalesInvoice.cs</DependentUpon>
     </Compile>
-    <Compile Include="services\PointOfSaleService.cs" />
+    <Compile Include="services\SalesInvoiceService.cs" />
     <Compile Include="services\transaction\GeneralJournalService.cs" />
     <Compile Include="services\ServiceBase.cs" />
     <Compile Include="services\SettingsService.cs" />
