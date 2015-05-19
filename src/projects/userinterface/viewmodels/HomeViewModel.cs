@@ -21,6 +21,8 @@ namespace tgsdesktop.viewmodels {
             //this.GoToPaymentEntry = this.RegisterNavigationCommand(() => new account.PaymentEntryViewModel(HostScreen));
             //this.PrintLabels = this.RegisterNavigationCommand(() => new reporting.ReportViewerViewModel(HostScreen));
             this.MakeGeneralJournalEntries = this.RegisterNavigationCommand(() => new transaction.TransactionEntryViewModel(HostScreen));
+            this.GoToSettings = this.RegisterNavigationCommand(() => new SettingsViewModel(HostScreen));
+
 
         }
 
@@ -32,6 +34,7 @@ namespace tgsdesktop.viewmodels {
         public ReactiveCommand<object> PrintLabels { get; private set; }
         public ReactiveCommand<object> MakeGeneralJournalEntries { get; private set; }
         public ReactiveCommand<object> GoToSalesInvoice { get; private set; }
+        public ReactiveCommand<object> GoToSettings { get; private set; }
 
     }
 }
