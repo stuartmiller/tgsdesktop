@@ -3,7 +3,6 @@ IF EXISTS(SELECT * FROM sys.columns WHERE Name = N'paymentMethodId' and Object_I
     ALTER TABLE tbl_salesInvoice DROP COLUMN paymentMethodId
 END
 IF EXISTS(SELECT * FROM sys.columns WHERE Name = N'paymentTxnId' and Object_ID = Object_ID(N'tbl_salesInvoice')) BEGIN
-
 	ALTER TABLE tbl_salesInvoice DROP CONSTRAINT [fk_invoice_paymentTxnId]
     ALTER TABLE tbl_salesInvoice DROP COLUMN paymentTxnId
 END;
@@ -178,6 +177,25 @@ GO
 
 
 
+-- DROP TYPE udt_salesAccountItem
+IF TYPE_ID(N'udt_salesInvoiceItem') IS NULL
+	CREATE TYPE [dbo].[udt_salesInvoiceItem] AS TABLE(
+		[description] [nvarchar](100) NOT NULL,
+		[productId] [int] NULL,
+		[unitPrice] [money] NOT NULL,
+		[unitCost] [money] NULL,
+		[quantity] [int] NOT NULL,
+		[isTaxable] [bit] NOT NULL,
+		[discount] [money] NULL DEFAULT ((0))
+	)
+GO
+IF TYPE_ID(N'udt_payment') IS NULL
+    CREATE TYPE [dbo].[udt_payment] AS TABLE(
+		methodId int NOT NULL, -- The payment type 1 = cash, 2 = check, 3 = amex, 4 = visa, 5 = mc, 6 = discover, 7 = account
+		amount money NOT NULL,
+		checkNo nvarchar(50) NULL
+    )
+GO
 IF OBJECT_ID('proc_addSalesInvoice') IS NOT NULL
 	DROP PROC proc_addSalesInvoice
 GO
