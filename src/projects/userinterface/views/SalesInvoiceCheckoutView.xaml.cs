@@ -18,25 +18,25 @@ namespace tgsdesktop.views {
     /// <summary>
     /// Interaction logic for SalesInvoiceConfirm.xaml
     /// </summary>
-    public partial class SalesInvoiceConfirmView : UserControl, IViewFor<viewmodels.ISalesInvoiceConfirmViewModel> {
-        public SalesInvoiceConfirmView() {
+    public partial class SalesInvoiceCheckoutView : UserControl, IViewFor<viewmodels.ISalesInvoiceCheckoutViewModel> {
+        public SalesInvoiceCheckoutView() {
             InitializeComponent();
             this.WhenAnyValue(x => x.ViewModel).BindTo(this, x => x.DataContext);
         }
 
-        public viewmodels.ISalesInvoiceConfirmViewModel ViewModel {
-            get { return (viewmodels.ISalesInvoiceConfirmViewModel)GetValue(ViewModelProperty); }
+        public viewmodels.ISalesInvoiceCheckoutViewModel ViewModel {
+            get { return (viewmodels.ISalesInvoiceCheckoutViewModel)GetValue(ViewModelProperty); }
             set { SetValue(ViewModelProperty, value); }
         }
 
         object IViewFor.ViewModel {
             get { return this.ViewModel; }
-            set { this.ViewModel = (viewmodels.ISalesInvoiceConfirmViewModel)value; }
+            set { this.ViewModel = (viewmodels.ISalesInvoiceCheckoutViewModel)value; }
         }
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register("ViewModel",
-            typeof(viewmodels.ISalesInvoiceConfirmViewModel),
-            typeof(SalesInvoiceConfirmView),
+            typeof(viewmodels.ISalesInvoiceCheckoutViewModel),
+            typeof(SalesInvoiceCheckoutView),
             new PropertyMetadata(null));
 
     }

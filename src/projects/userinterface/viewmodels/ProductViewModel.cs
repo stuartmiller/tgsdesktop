@@ -46,6 +46,8 @@ namespace tgsdesktop.viewmodels {
 
         public SalesInvoiceItemViewModel(decimal taxRate) {
 
+            this.Quantity = 1;
+
             var total = this.WhenAny(
                 vm => vm.Quantity,
                 vm => vm.UnitPrice,

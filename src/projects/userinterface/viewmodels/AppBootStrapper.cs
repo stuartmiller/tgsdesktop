@@ -34,15 +34,15 @@ namespace tgsdesktop.viewmodels {
             dependencyResolver.Register(() => new views.LoginView(), typeof(IViewFor<LoginViewModel>));
             dependencyResolver.Register(() => new views.HomeView(), typeof(IViewFor<HomeViewModel>));
             dependencyResolver.Register(() => new views.StoreSalesView(), typeof(IViewFor<StoreSalesViewModel>));
-            dependencyResolver.Register(() => new views.PosRegisterView(), typeof(IViewFor<PosRegisterViewModel>));
+            dependencyResolver.Register(() => new views.SalesInvoiceView(), typeof(IViewFor<SalesInvoiceViewModel>));
             //dependencyResolver.Register(() => new views.account.HomeView(), typeof(IViewFor<viewmodels.account.HomeViewModel>));
             //dependencyResolver.Register(() => new views.account.PaymentEntryView(), typeof(IViewFor<viewmodels.account.PaymentEntryViewModel>));
             //dependencyResolver.Register(() => new views.account.AccountSearchView(), typeof(IViewFor<viewmodels.account.AccountSearchViewModel>));
             //dependencyResolver.Register(() => new views.reporting.ReportViewerView(), typeof(IViewFor<viewmodels.reporting.ReportViewerViewModel>));
             dependencyResolver.Register(() => new views.transaction.TransactionEntryView(), typeof(IViewFor<viewmodels.transaction.TransactionEntryViewModel>));
             dependencyResolver.Register(() =>
-                new views.SalesInvoiceConfirmView(),
-                typeof(IViewFor<viewmodels.SalesInvoiceConfirmViewModel>));
+                new views.SalesInvoiceCheckoutView(),
+                typeof(IViewFor<viewmodels.SalesInviceCheckoutViewModel>));
         }
 
     }

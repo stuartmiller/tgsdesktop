@@ -12,8 +12,7 @@ namespace tgsdesktop.viewmodels.transaction {
         public PaymentViewModel(models.transaction.Payment payment = null) {
 
             this.DeletePayment = ReactiveCommand.Create();
-            this.Payments = new ReactiveList<PaymentViewModel>();
-            this.Payments.ChangeTrackingEnabled = true;
+            this.PaymentMethods = new ReactiveList<KeyValuePair<int, string>>();
             var paymentString = this.WhenAny(
                 vm => vm.PaymentMethod,
                 vm => vm.CheckNumber,
@@ -53,6 +52,6 @@ namespace tgsdesktop.viewmodels.transaction {
 
         public ReactiveCommand<object> DeletePayment { get; private set; }
 
-        public ReactiveList<transaction.PaymentViewModel> Payments { get; private set; }
+        public ReactiveList<KeyValuePair<int, string>> PaymentMethods { get; private set; }
     }
 }

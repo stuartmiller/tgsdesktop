@@ -249,9 +249,9 @@
     <Compile Include="utilities\ResourceAccessor.cs" />
     <Compile Include="utilities\RijndaelEnhanced.cs" />
     <Compile Include="viewmodels\IDialogViewModel.cs" />
-    <Compile Include="viewmodels\PosRegisterViewModel.cs" />
+    <Compile Include="viewmodels\SalesInvoiceViewModel.cs" />
     <Compile Include="viewmodels\ProductViewModel.cs" />
-    <Compile Include="viewmodels\SalesInvoiceConfirmViewModel.cs" />
+    <Compile Include="viewmodels\SalesInviceCheckoutViewModel.cs" />
     <Compile Include="viewmodels\transaction\AccountType.cs" />
     <Compile Include="viewmodels\transaction\AccountViewModel.cs" />
     <Compile Include="viewmodels\transaction\AddressViewModel.cs" />
@@ -259,13 +259,13 @@
     <Compile Include="viewmodels\transaction\GeneralJournalViewModel.cs" />
     <Compile Include="viewmodels\transaction\HouseholdViewModel.cs" />
     <Compile Include="viewmodels\transaction\PaymentViewModel.cs" />
-    <Compile Include="views\PosRegisterView.xaml.cs">
-      <DependentUpon>PosRegisterView.xaml</DependentUpon>
+    <Compile Include="views\SalesInvoiceView.xaml.cs">
+      <DependentUpon>SalesInvoiceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="viewmodels\transaction\TransactionEntryViewModel.cs" />
     <Compile Include="viewmodels\transaction\TransactionViewModel.cs" />
-    <Compile Include="views\SalesInvoiceConfirmView.xaml.cs">
-      <DependentUpon>SalesInvoiceConfirmView.xaml</DependentUpon>
+    <Compile Include="views\SalesInvoiceCheckoutView.xaml.cs">
+      <DependentUpon>SalesInvoiceCheckoutView.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\transaction\TransactionEntryView.xaml.cs">
       <DependentUpon>TransactionEntryView.xaml</DependentUpon>
@@ -366,7 +366,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="views\PosRegisterView.xaml">
+    <Page Include="views\SalesInvoiceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -382,7 +382,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="views\SalesInvoiceConfirmView.xaml">
+    <Page Include="views\SalesInvoiceCheckoutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

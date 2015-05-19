@@ -40,8 +40,7 @@ namespace tgsdesktop.viewmodels.transaction {
                     return pm.GetValue().Key != 0
                         && a.GetValue().HasValue && a.Value.Value > 0
                         && ((pm.GetValue().Key) != 2 || !string.IsNullOrEmpty(cn.GetValue()));
-                }).ObserveOn(RxApp.MainThreadScheduler)
-                );
+                }));
             this.AddPayment.Subscribe(x => {
                 var memo = this.CurrentPayment.PaymentMethod.Value.ToString();
                 if (!string.IsNullOrEmpty(this.CurrentPayment.CheckNumber))

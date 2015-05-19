@@ -17,36 +17,31 @@ namespace tgsdesktop.views {
     /// <summary>
     /// Interaction logic for POSRegister.xaml
     /// </summary>
-    public partial class PosRegisterView : UserControl, IViewFor<viewmodels.IPosRegisterViewModel> {
-        public PosRegisterView() {
+    public partial class SalesInvoiceView : UserControl, IViewFor<viewmodels.ISalesInvoiceViewModel> {
+        public SalesInvoiceView() {
             InitializeComponent();
             this.WhenAnyValue(x => x.ViewModel).BindTo(this, x => x.DataContext);
 
-            this.WhenAnyValue(x => x.ViewModel.CurrentCartItem)
-                .Subscribe(_ => {
-                    if (this.ViewModel.CurrentCartItem.IsComplete)
-                        btnAddItem.IsDefault = true;
-                    else
-                        btnAddItem.IsDefault = false;
-                });
-            this.Loaded += PosRegisterView_Loaded;
+            this.WhenAnyValue(x => x.ViewModel.CurrentCartItem.IsComplete)
+                .Subscribe(x => btnAddItem.IsDefault = x);
+            this.Loaded += SalesInvoiceView_Loaded;
         }
 
-        void PosRegisterView_Loaded(object sender, RoutedEventArgs e) {
+        void SalesInvoiceView_Loaded(object sender, RoutedEventArgs e) {
             txtCustomers.Focus();
         }
 
-        public viewmodels.IPosRegisterViewModel ViewModel {
-            get { return (viewmodels.IPosRegisterViewModel)GetValue(ViewModelProperty); }
+        public viewmodels.ISalesInvoiceViewModel ViewModel {
+            get { return (viewmodels.ISalesInvoiceViewModel)GetValue(ViewModelProperty); }
             set { SetValue(ViewModelProperty, value); }
         }
 
         object IViewFor.ViewModel {
             get { return this.ViewModel; }
-            set { this.ViewModel = (viewmodels.IPosRegisterViewModel)value; }
+            set { this.ViewModel = (viewmodels.ISalesInvoiceViewModel)value; }
         }
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register("ViewModel", typeof(viewmodels.IPosRegisterViewModel), typeof(PosRegisterView), new PropertyMetadata(null));
+            DependencyProperty.Register("ViewModel", typeof(viewmodels.ISalesInvoiceViewModel), typeof(SalesInvoiceView), new PropertyMetadata(null));
 
         private void acProducts_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         }

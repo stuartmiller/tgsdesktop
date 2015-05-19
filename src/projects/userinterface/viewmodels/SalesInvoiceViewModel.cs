@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace tgsdesktop.viewmodels {
 
-    public interface IPosRegisterViewModel : IRoutableViewModel {
+    public interface ISalesInvoiceViewModel : IRoutableViewModel {
         ReactiveList<transaction.CustomerViewModel> Customers { get; }
         ReactiveList<ProductViewModel> Products { get; }
 
@@ -16,13 +16,14 @@ namespace tgsdesktop.viewmodels {
         ReactiveCommand<object> Save { get; }
     }
 
-    public class PosRegisterViewModel : ViewModelBase, IPosRegisterViewModel {
+    public class SalesInvoiceViewModel : ViewModelBase, ISalesInvoiceViewModel {
 
-        public PosRegisterViewModel(IScreen screen)
+        public SalesInvoiceViewModel(IScreen screen)
             : base(screen) {
 
             this.InvoiceNumber = DateTime.Now.ToString("Hmmssff");
             this.SeasonId = infrastructure.IocContainer.Resolve<infrastructure.IGlobalSettingsAccessor>().CurrentSeasonId;
+            this.EffectiveDate = DateTime.Now;
 
             this.Customers = new ReactiveList<transaction.CustomerViewModel>();
 
@@ -87,27 +88,9 @@ namespace tgsdesktop.viewmodels {
 
             });
             this.Save = this.RegisterNavigationCommand(() =>{
-                var invoice = new models.AddSalesInvoiceModel {
-                    Person = this.SelectedCustomer.PersonModel,
-                    InvoiceNumber = this.InvoiceNumber,
-                    SalesTax = this.SalesTax,
-                    EffectiveDate = this.EffectiveDate,
-                    SeasonId = this.SeasonId
-                };
-                var items = this.Items.Select(i => new models.AddSalesInvoiceModel.Item {
-                    Cost = i.UnitCost,
-                    Price = i.UnitPrice.Value,
-                    Description = i.Description,
-                    Discount = i.Discount,
-                    IsTaxable = i.IsTaxable,
-                    ItemId = i.ItemId,
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity.Value
-                });
-                invoice.Items.AddRange(items);
-                return new SalesInvoiceConfirmViewModel(HostScreen, invoice);
+                return new SalesInviceCheckoutViewModel(HostScreen, this);
             });
-            this.Cancel = this.RegisterNavigationCommand(() => new PosRegisterViewModel(HostScreen));
+            this.Cancel = this.RegisterNavigationCommand(() => new SalesInvoiceViewModel(HostScreen));
 
 
             // get the customers, and put them in a list

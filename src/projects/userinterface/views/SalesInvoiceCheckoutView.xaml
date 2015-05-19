@@ -3,53 +3,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" x:Class="tgsdesktop.views.SalesInvoiceConfirmView" 
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" x:Class="tgsdesktop.views.SalesInvoiceCheckoutView" 
              mc:Ignorable="d">
     <Grid Width="800">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Grid Width="800">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Label Content="{Binding Transaction.Customer.FirstName}" />
-                    <Label Content="{Binding Transaction.Customer.LastName}" />
-                </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Label Content="Balance" />
-                    <Label Content="{Binding Transaction.Customer.Balance, StringFormat={}{0:C}}" />
-                </StackPanel>
-            </Grid>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <telerik:RadComboBox Grid.Row="0"
-                                     ItemsSource="{Binding PaymentMethods}"
-                                     SelectedItem="{Binding CurrentPayment.PaymentMethod, Mode=TwoWay}"
+            <TextBlock Text="Sales Invoice Checkout" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Invoice #: "/>
+                <TextBlock Text="{Binding InvoiceViewModel.InvoiceNumber}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Date: "/>
+                <TextBlock Text="{Binding InvoiceViewModel.EffectiveDate, StringFormat=d}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Customer: "/>
+                <TextBlock Text="{Binding InvoiceViewModel.SelectedCustomer.Name}"/>
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Payments}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <telerik:RadComboBox ItemsSource="{Binding PaymentMethods}"
+                                     Width="400"
+                                     SelectedItem="{Binding PaymentMethod, Mode=TwoWay}"
                                      DisplayMemberPath="Value"
                                      SelectedValuePath="Key"/>
-                <telerik:RadWatermarkTextBox Grid.Row="0"
-                                             Grid.Column="1"
-                                             WatermarkContent="Amount"
-                                             Text="{Binding CurrentPayment.Amount, Mode=TwoWay, StringFormat={}{0:C}}"/>
-                <telerik:RadWatermarkTextBox Grid.Row="0"
-                                             Grid.Column="2"
-                                             WatermarkContent="Check Number"
+                            <telerik:RadWatermarkTextBox WatermarkContent="Amount"
+                                             Width="150"
+                                             Text="{Binding Amount, Mode=TwoWay, StringFormat={}{0:C}}"/>
+                            <telerik:RadWatermarkTextBox WatermarkContent="Check Number"
+                                             Width="250"
                                              IsEnabled="{Binding CheckNumberEnabled}"
-                                             Text="{Binding CurrentPayment.CheckNumber}"/>
-                <telerik:RadWatermarkTextBox Grid.Row="1"
+                                             Text="{Binding CheckNumber}"/>
+                            <telerik:RadWatermarkTextBox Grid.Row="1"
                                              Grid.ColumnSpan="3"
                                              WatermarkContent="Memo"
                                              Text="{Binding TransactionMemo}"/>
-            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <StackPanel Orientation="Horizontal">
                 <telerik:RadButton Content="Print"
                                    Command="{Binding Print}"

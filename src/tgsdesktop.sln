@@ -15,6 +15,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sql", "Sql", "{33B72A1F-8D42-4745-8A7F-540E0F48F8C0}"
 	ProjectSection(SolutionItems) = preProject
 		..\sql\DbSetup.sql = ..\sql\DbSetup.sql
+		..\sql\UpdateScript.sql = ..\sql\UpdateScript.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_console", "projects\_console\_console\_console.csproj", "{799D11BA-6EFB-4919-BECF-6B67A285D7BC}"
