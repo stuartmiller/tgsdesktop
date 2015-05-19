@@ -1,0 +1,20 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:tr="http://schemas.telerik.com/wpf"
+             xmlns:tgs="clr-namespace:tgsdesktop.views" x:Class="tgsdesktop.views.reporting.ReportViewerView"
+             mc:Ignorable="d" x:Name="ThisControl"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <tgs:NavigationView Grid.Row="0"/>
+        <StackPanel Grid.Row="1">
+            <Button Grid.Row="1" Content="Shipping Labels" />
+        </StackPanel>
+    </Grid>
+</UserControl>

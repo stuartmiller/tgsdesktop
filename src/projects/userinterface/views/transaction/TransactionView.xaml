@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="tgsdesktop.views.transaction.TransactionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style x:Key="alternatingWithTriggers" 
+               TargetType="{x:Type ContentPresenter}">
+            <Setter Property="Height" Value="25"></Setter>
+        </Style>
+        <DataTemplate x:Key="MyItemTemplate">
+            <Border x:Name="yahoo">
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="50" Content="{Binding Id}"></Label>
+                    <Label Width="50" Content="{Binding SeasonId}"></Label>
+                    <Label Width="100" Content="{Binding Account.Name}"></Label>
+                    <Label Width="100" Content="{Binding Customer.Name}"></Label>
+                    <Label Width="50" Content="{Binding DebitAmount}"></Label>
+                    <Label Width="50" Content="{Binding CreditAmount}"></Label>
+                    <Label Width="150" Content="{Binding Memo}"></Label>
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="#e9e9e9" 
+                            TargetName="yahoo"></Setter>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#d9d9d9" 
+                            TargetName="yahoo"></Setter>
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <telerik:RadGridView Grid.Row="0"
+                             ItemsSource="{Binding Transactions}"
+                             GroupRenderMode="Flat"
+							 RowIndicatorVisibility="Collapsed"
+                             ShowColumnSortIndexes="True"
+							 AutoGenerateColumns="False"
+							 CanUserFreezeColumns="False"
+							 CanUserResizeColumns="False">
+            <telerik:RadGridView.Columns>
+                <telerik:GridViewToggleRowDetailsColumn />
+                <telerik:GridViewImageColumn Header="Photo"
+											 DataMemberBinding="{Binding Picture}"
+											 ImageHeight="35"
+											 ImageWidth="35"
+											 Width="45" />
+                <telerik:GridViewDataColumn Header="Id"
+											DataMemberBinding="{Binding Id}" />
+                <telerik:GridViewDataColumn Header="Effective Date"
+											DataMemberBinding="{Binding EffectiveDate}" />
+                <telerik:GridViewDataColumn Header="Amount"
+											DataMemberBinding="{Binding Amount}" />
+                <telerik:GridViewDataColumn Header="Invoice#"
+											DataMemberBinding="{Binding InvoiceNumber}" />
+            </telerik:RadGridView.Columns>
+            <telerik:RadGridView.RowDetailsTemplate>
+                <DataTemplate>
+                    <Grid MinHeight="350" MinWidth="550">
+                        <ItemsControl ItemsSource="{Binding JournalEntries}" 
+                                      ItemContainerStyle="{StaticResource alternatingWithTriggers}" 
+                                      AlternationCount="2" 
+                                      ItemTemplate="{StaticResource MyItemTemplate}"/>
+                    </Grid>
+                </DataTemplate>
+            </telerik:RadGridView.RowDetailsTemplate>
+        </telerik:RadGridView>
+    </Grid>
+</UserControl>

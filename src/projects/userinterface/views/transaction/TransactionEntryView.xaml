@@ -1,0 +1,221 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:tgsviews="clr-namespace:tgsdesktop.views"
+             xmlns:local="clr-namespace:tgsdesktop.infrastructure"
+             xmlns:model="clr-namespace:tgsdesktop.models.transaction"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" x:Class="tgsdesktop.views.transaction.TransactionEntryView"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="1024">
+
+    <UserControl.Resources>
+        <Style TargetType="telerik:RadWatermarkTextBox" BasedOn="{StaticResource RadAutoCompleteTextBoxStyle}" x:Key="WatermarkTextBoxStyle">
+            <Setter Property="SelectionOnFocus" Value="SelectAll" />
+        </Style>
+        <Style x:Key="NameAutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#FF0A0A0A" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="BalanceAutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#006600" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="AutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Foreground" Value="#FF0A0A0A" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+
+        <DataTemplate x:Key="CustomerSearchAutoComplete">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource NameAutoCompleteStyle}" />
+                    <TextBlock Text="{Binding Balance}" Margin="2,0,0,0" Style="{StaticResource BalanceAutoCompleteStyle}" />
+                </StackPanel>
+                <TextBlock Grid.Row="1" Margin="2,0,0,0" Visibility="{Binding InfoLine1Visibility}" Text="{Binding InfoLine1}" Style="{StaticResource AutoCompleteStyle}" />
+                <TextBlock Grid.Row="2" Margin="2,0,0,0" Visibility="{Binding InfoLine2Visibility}" Text="{Binding InfoLine2}" Style="{StaticResource AutoCompleteStyle}" />
+                <TextBlock Grid.Row="3" Margin="2,0,0,0" Visibility="{Binding InfoLine3Visibility}" Text="{Binding InfoLine3}" Style="{StaticResource AutoCompleteStyle}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <tgsviews:NavigationView Grid.Row="0" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <telerik:RadDatePicker Margin="3" Width="100"
+                                   Name="TransDatePicker"
+                                   SelectionOnFocus="SelectAll"
+                                   DateTimeWatermarkContent="Effective Date"
+                                   SelectedValue="{Binding EffectiveDate}"/>
+            <telerik:RadWatermarkTextBox Margin="3" TextWrapping="NoWrap"
+                                         Text="{Binding InvoiceNumber}"
+                                         WatermarkContent="Invoice Number"
+                                         AutoWordSelection="True"
+                                         SelectionOnFocus="SelectAll"/>
+            <telerik:RadWatermarkTextBox Name="txtMemo"
+                                         Text="{Binding Memo}"
+                                         TextWrapping="NoWrap"
+                                         Margin="3"
+                                         WatermarkContent="Transaction Memo"
+                                         ToolTip="This memo applies to the whole transaction"
+                                         Width="400"
+                                         AutoWordSelection="True"
+                                         SelectionOnFocus="SelectAll"/>
+        </StackPanel>
+        <telerik:RadExpander Grid.Row="2">
+            <StackPanel Orientation="Horizontal" >
+                <telerik:RadComboBox ItemsSource="{Binding PaymentMethods}"
+                                     DisplayMemberPath="Name"
+                                     Width="85"
+                                     VerticalAlignment="Center"
+                                     SelectedItem="{Binding CurrentPayment.PaymentMethod, Mode=TwoWay}"
+                                     Margin="3"/>
+                <telerik:RadWatermarkTextBox x:Name="txtCheckNo"
+                                             WatermarkContent="Check#"
+                                             Text="{Binding CurrentPayment.CheckNumber}"
+                                             Width="75"
+                                             Margin="3" />
+                <telerik:RadWatermarkTextBox WatermarkContent="Amount" Text="{Binding CurrentPayment.Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=C}" Width="75" Margin="3" />
+                <telerik:RadButton Content="Add" Command="{Binding AddPayment}" Width="30" Margin="3" />
+            </StackPanel>
+            <telerik:RadExpander.Header>
+                <TextBlock Text="Payments"/>
+            </telerik:RadExpander.Header>
+        </telerik:RadExpander>
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <telerik:RadAutoCompleteBox x:Name="txtFinancialAccounts"
+                                        Margin="3"
+                                        ItemsSource="{Binding Accounts}"
+                                        Width="190"
+                                        WatermarkContent="Account"
+                                        DisplayMemberPath="Name"
+                                        AutoCompleteMode="SuggestAppend"
+                                        TextSearchMode="StartsWith"
+                                        SelectedItem="{Binding CurrentJournalEntry.SelectedAccount, Mode=TwoWay}"
+                                        TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
+                                        SelectionChanged="txtFinancialAccounts_SelectionChanged"
+                                        SelectionMode="Single"/>
+            <telerik:RadAutoCompleteBox Name="txtCustomers"
+                                        ItemsSource="{Binding Customers}"
+                                        Margin="3"
+                                        Width="190"
+                                        WatermarkContent="Customer"
+                                        DisplayMemberPath="DisplayText"
+                                        DropDownWidth="Auto"
+                                        MaxDropDownHeight="400"
+                                        TextSearchPath="SearchText"
+                                        AutoCompleteMode="SuggestAppend"
+                                        TextSearchMode="Contains"
+                                        SelectedItem="{Binding CurrentJournalEntry.SelectedCustomer, Mode=TwoWay}"
+                                        TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
+                                        DropDownItemTemplate="{StaticResource CustomerSearchAutoComplete}"
+                                        SelectionChanged="txtCustomers_SelectionChanged"
+                                        SelectionMode="Single"/>
+            <telerik:RadWatermarkTextBox Name="txtSeasonId"
+                                         Text="{Binding CurrentJournalEntry.SeasonId}"
+                                         Margin="3" Width="50"
+                                         SelectionOnFocus="SelectAll"
+                                         WatermarkContent="Season" />
+            <telerik:RadWatermarkTextBox Name="txtAmount"
+                                         Text="{Binding CurrentJournalEntry.Amount, StringFormat=C}"
+                                         SelectionOnFocus="SelectAll"
+                                         Margin="3" Width="65"
+                                         WatermarkContent="Amount" />
+            <Label Content="Is Credit" />
+            <CheckBox IsChecked="{Binding CurrentJournalEntry.IsCredit}" />
+            <telerik:RadWatermarkTextBox Margin="3"
+                                         SelectionOnFocus="SelectAll"
+                                         WatermarkContent="Memo"
+                                         Text="{Binding CurrentJournalEntry.Memo}"
+                                         ToolTip="This memo applies to this journal entry only."
+                                         Width="300" />
+            <telerik:RadButton Content="Add Journal Entry" Margin="3" Command="{Binding AddJournalEntry}" IsDefault="{Binding JournalOutOfBalance}" />
+        </StackPanel>
+        <ItemsControl Grid.Row="4" ItemsSource="{Binding Payments}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Delete" Command="{Binding DeletePayment}" Margin="3" />
+                            <TextBlock Text="{Binding PaymentString}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl Grid.Row="5" ItemsSource="{Binding JournalEntries}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <telerik:RadButton Grid.Column="0" Content="Delete" Command="{Binding DeleteJournalEntry}" Margin="3" />
+                        <TextBlock Grid.Column="1" Text="{Binding SelectedAccount.Name}" />
+                        <TextBlock Grid.Column="2" Text="{Binding SelectedCustomer.Name}" />
+                        <TextBlock Grid.Column="3" Text="{Binding SeasonId}" />
+                        <TextBlock Grid.Column="4" Text="{Binding DebitAmount}" />
+                        <TextBlock Grid.Column="5" Text="{Binding CreditAmount}" />
+                        <TextBlock Grid.Column="6" Text="{Binding Memo}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <telerik:RadButton Grid.Row="6" Content="Add Transaction" Command="{Binding AddTransaction}" IsDefault="{Binding JournalBalanced}" />
+        <ItemsControl Grid.Row="7" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Id}" />
+                        <TextBlock Grid.Column="1" Text="{Binding EffectiveDate}" />
+                        <TextBlock Grid.Column="2" Text="{Binding Amount}" />
+                        <TextBlock Grid.Column="3" Text="{Binding InvoiceNumber}" />
+                        <TextBlock Grid.Column="4" Text="{Binding Memo}" />
+                        <telerik:RadButton Grid.Column="5" Content="Reverse" Command="{Binding Reverse}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

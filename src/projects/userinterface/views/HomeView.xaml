@@ -1,0 +1,39 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:tr="http://schemas.telerik.com/wpf" x:Class="tgsdesktop.views.HomeView" 
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024              ">
+    <Grid>
+        <Label Content="Home"/>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Store Sales" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToStoreSales}" />
+                <Button Content="Account Detail" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToAccountDetails}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Payment Entry" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToPaymentEntry}" />
+                <Button Content="Print Labels" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding PrintLabels}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="POS Register" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToPosRegister}" />
+                <Button Content="Hyper Drive" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding MakeGeneralJournalEntries}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Button1" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+                <Button Content="Button2" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Button1" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+                <Button Content="Button2" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Button1" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+                <Button Content="Button2" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+            </StackPanel>
+            <Button Content="Logout" Height="75" Width="1000" FontSize="24" FontWeight="Bold" Command="{Binding Logout}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0E710A81-AF14-4543-B2BD-51FC34F43490}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>tgsdesktop</RootNamespace>
+    <AssemblyName>tgsdesktop</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">tgsdesktop\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\..\..\lib\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>tgsdesktop\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\..\..\lib\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\..\..\lib\packages\reactiveui-core.6.5.0\lib\Net45\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\..\..\lib\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\..\..\lib\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\..\..\lib\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\..\..\lib\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\..\..\lib\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading">
+      <HintPath>..\..\..\lib\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Services.WebApi, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\Bin\Telerik.Reporting.Services.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.XpsRendering, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be" />
+    <Reference Include="Telerik.Windows.Controls, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Telerik\UI for WPF Q1 2015\Binaries\WPF45\Telerik.Windows.Controls.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.GridView, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Controls.GridView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Controls.Input.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Controls.Navigation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Core, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Fixed, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.Fixed.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Flow, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.Flow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.FormatProviders.Pdf, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.FormatProviders.Pdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.FormatProviders.Rtf, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.FormatProviders.Rtf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Spreadsheet, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.Spreadsheet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Spreadsheet.FormatProviders.Pdf, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Documents.Spreadsheet.FormatProviders.Pdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Maths, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Maths.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Zip, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\RCWPF\2015.1.225.45\Telerik.Windows.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TwainDotNet">
+      <HintPath>..\..\..\lib\packages\TwainDotNet.1.0.0\lib\TwainDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="TwainDotNet.WinFroms">
+      <HintPath>..\..\..\lib\packages\TwainDotNet.1.0.0\lib\TwainDotNet.WinFroms.dll</HintPath>
+    </Reference>
+    <Reference Include="TwainDotNet.Wpf">
+      <HintPath>..\..\..\lib\packages\TwainDotNet.1.0.0\lib\TwainDotNet.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Telerik.Reporting, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be">
+      <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\bin\Telerik.Reporting.dll</HintPath>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.Wpf, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be">
+      <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\bin\Telerik.ReportViewer.Wpf.dll</HintPath>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
+      <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
+      <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
+      <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Config.cs" />
+    <Compile Include="dal\DbAccessor.cs" />
+    <Compile Include="dal\DbLocal.cs" />
+    <Compile Include="dal\GlobalSettingsAccessor.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="extensions\KeyValuePairExtensions.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="infrastructure\EnumerationManager.cs" />
+    <Compile Include="infrastructure\IAccountReceivableService.cs" />
+    <Compile Include="infrastructure\IGeneralJournalService.cs" />
+    <Compile Include="infrastructure\IMainViewModel.cs" />
+    <Compile Include="infrastructure\IocContainer.cs" />
+    <Compile Include="infrastructure\IPointOfSaleService.cs" />
+    <Compile Include="models\AddSalesInvoiceModel.cs" />
+    <Compile Include="models\KeyNamePair.cs" />
+    <Compile Include="models\ListItem.cs" />
+    <Compile Include="models\Product.cs" />
+    <Compile Include="models\SalesInvoice.cs" />
+    <Compile Include="models\Settings.cs" />
+    <Compile Include="models\ShippingAddress.cs" />
+    <Compile Include="models\transaction\Account.cs" />
+    <Compile Include="models\transaction\JournalEntry.cs" />
+    <Compile Include="models\transaction\AccountType.cs" />
+    <Compile Include="models\transaction\Payment.cs" />
+    <Compile Include="models\transaction\PaymentMethod.cs" />
+    <Compile Include="models\transaction\Transaction.cs" />
+    <Compile Include="models\User.cs" />
+    <Compile Include="reporting\SalesInvoice.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="reporting\SalesInvoice.Designer.cs">
+      <DependentUpon>SalesInvoice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="services\PointOfSaleService.cs" />
+    <Compile Include="services\transaction\GeneralJournalService.cs" />
+    <Compile Include="services\ServiceBase.cs" />
+    <Compile Include="services\SettingsService.cs" />
+    <Compile Include="services\SqlUdtTypes.cs" />
+    <Compile Include="services\TransactionService.cs" />
+    <Compile Include="utilities\ResourceAccessor.cs" />
+    <Compile Include="utilities\RijndaelEnhanced.cs" />
+    <Compile Include="viewmodels\IDialogViewModel.cs" />
+    <Compile Include="viewmodels\PosRegisterViewModel.cs" />
+    <Compile Include="viewmodels\ProductViewModel.cs" />
+    <Compile Include="viewmodels\SalesInvoiceConfirmViewModel.cs" />
+    <Compile Include="viewmodels\transaction\AccountType.cs" />
+    <Compile Include="viewmodels\transaction\AccountViewModel.cs" />
+    <Compile Include="viewmodels\transaction\AddressViewModel.cs" />
+    <Compile Include="viewmodels\transaction\CustomerViewModel.cs" />
+    <Compile Include="viewmodels\transaction\GeneralJournalViewModel.cs" />
+    <Compile Include="viewmodels\transaction\HouseholdViewModel.cs" />
+    <Compile Include="viewmodels\transaction\PaymentViewModel.cs" />
+    <Compile Include="views\PosRegisterView.xaml.cs">
+      <DependentUpon>PosRegisterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="viewmodels\transaction\TransactionEntryViewModel.cs" />
+    <Compile Include="viewmodels\transaction\TransactionViewModel.cs" />
+    <Compile Include="views\SalesInvoiceConfirmView.xaml.cs">
+      <DependentUpon>SalesInvoiceConfirmView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\transaction\TransactionEntryView.xaml.cs">
+      <DependentUpon>TransactionEntryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\reporting\Reports\OrderShipmentItemSubreport.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="views\reporting\Reports\OrderShipmentItemSubreport.Designer.cs">
+      <DependentUpon>OrderShipmentItemSubreport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="views\reporting\Reports\OrderShippment.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="views\reporting\Reports\OrderShippment.Designer.cs">
+      <DependentUpon>OrderShippment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="services\AccountReceivableService.cs" />
+    <Compile Include="services\LoginService.cs" />
+    <Compile Include="infrastructure\dependencymanagement\IDependencyRegistrar.cs" />
+    <Compile Include="infrastructure\DependencyRegistrar.cs" />
+    <Compile Include="infrastructure\Engine.cs" />
+    <Compile Include="infrastructure\IArAccountService.cs" />
+    <Compile Include="infrastructure\IEngine.cs" />
+    <Compile Include="infrastructure\IGlobalSettingsAccessor.cs" />
+    <Compile Include="infrastructure\ILoginService.cs" />
+    <Compile Include="infrastructure\ITransactionService.cs" />
+    <Compile Include="infrastructure\ITypeFinder.cs" />
+    <Compile Include="models\AccountReceivableTransaction.cs" />
+    <Compile Include="models\ArAccount.cs" />
+    <Compile Include="models\CamperTransaction.cs" />
+    <Compile Include="models\CmLinkedPerson.cs" />
+    <Compile Include="models\InvalidLoginException.cs" />
+    <Compile Include="models\Person.cs" />
+    <Compile Include="models\Transaction.cs" />
+    <Compile Include="viewmodels\accounts\PaymentEntryViewModel.cs" />
+    <Compile Include="viewmodels\accounts\SearchViewModel.cs" />
+    <Compile Include="viewmodels\ARTxnViewModel.cs" />
+    <Compile Include="viewmodels\AppBootStrapper.cs" />
+    <Compile Include="viewmodels\BatchTransactionViewModel.cs" />
+    <Compile Include="viewmodels\HomeViewModel.cs" />
+    <Compile Include="viewmodels\LoginViewModel.cs" />
+    <Compile Include="viewmodels\MainViewModel.cs" />
+    <Compile Include="viewmodels\NavigationViewModel.cs" />
+    <Compile Include="viewmodels\reporting\ReportViewerViewModel.cs" />
+    <Compile Include="viewmodels\StoreSalesViewModel.cs" />
+    <Compile Include="viewmodels\ViewModelBase.cs" />
+    <Compile Include="views\account\CamperBatchTransaction.xaml.cs">
+      <DependentUpon>CamperBatchTransaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\account\CamperBatchStoreSale.xaml.cs">
+      <DependentUpon>CamperBatchStoreSale.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\account\CamperThemeShirt.xaml.cs">
+      <DependentUpon>CamperThemeShirt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\account\StaffStoreSale.xaml.cs">
+      <DependentUpon>StaffStoreSale.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\account\AccountSearchView.xaml.cs">
+      <DependentUpon>AccountSearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\CashBatchSale.xaml.cs">
+      <DependentUpon>CashBatchSale.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\NavigationView.xaml.cs">
+      <DependentUpon>NavigationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\reporting\ReportViewerView.xaml.cs">
+      <DependentUpon>ReportViewerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\reporting\ReportViewerWindow.xaml.cs">
+      <DependentUpon>ReportViewerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\StoreSalesView.xaml.cs">
+      <DependentUpon>StoreSalesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\TransactionsView.xaml.cs">
+      <DependentUpon>TransactionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\transaction\TransactionView.xaml.cs">
+      <DependentUpon>TransactionView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="views\PosRegisterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\account\CamperBatchTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\account\CamperBatchStoreSale.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\account\CamperThemeShirt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\SalesInvoiceConfirmView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\transaction\TransactionEntryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\account\StaffStoreSale.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\account\AccountSearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\CashBatchSale.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\LoginView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\NavigationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\reporting\ReportViewerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="views\reporting\ReportViewerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\reporting\Themes\OfficeBlack\System.Windows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\reporting\Themes\OfficeBlack\Telerik.ReportViewer.Wpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\reporting\Themes\OfficeBlack\Telerik.Windows.Controls.Input.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\reporting\Themes\OfficeBlack\Telerik.Windows.Controls.Navigation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\reporting\Themes\OfficeBlack\Telerik.Windows.Controls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\StoreSalesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\TransactionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\transaction\TransactionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="reporting\SalesInvoice.resx">
+      <DependentUpon>SalesInvoice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="views\reporting\Reports\OrderShipmentItemSubreport.resx">
+      <DependentUpon>OrderShipmentItemSubreport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="views\reporting\Reports\OrderShippment.resx">
+      <DependentUpon>OrderShippment.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Global.asax" />
+    <Content Include="infrastructure\DbSetup.sql" />
+    <Resource Include="infrastructure\TheGreystoneStore_1.5InPrint.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

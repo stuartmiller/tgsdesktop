@@ -1,0 +1,78 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" x:Class="tgsdesktop.views.SalesInvoiceConfirmView" 
+             mc:Ignorable="d">
+    <Grid Width="800">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Width="800">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label Content="{Binding Transaction.Customer.FirstName}" />
+                    <Label Content="{Binding Transaction.Customer.LastName}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Content="Balance" />
+                    <Label Content="{Binding Transaction.Customer.Balance, StringFormat={}{0:C}}" />
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <telerik:RadComboBox Grid.Row="0"
+                                     ItemsSource="{Binding PaymentMethods}"
+                                     SelectedItem="{Binding CurrentPayment.PaymentMethod, Mode=TwoWay}"
+                                     DisplayMemberPath="Value"
+                                     SelectedValuePath="Key"/>
+                <telerik:RadWatermarkTextBox Grid.Row="0"
+                                             Grid.Column="1"
+                                             WatermarkContent="Amount"
+                                             Text="{Binding CurrentPayment.Amount, Mode=TwoWay, StringFormat={}{0:C}}"/>
+                <telerik:RadWatermarkTextBox Grid.Row="0"
+                                             Grid.Column="2"
+                                             WatermarkContent="Check Number"
+                                             IsEnabled="{Binding CheckNumberEnabled}"
+                                             Text="{Binding CurrentPayment.CheckNumber}"/>
+                <telerik:RadWatermarkTextBox Grid.Row="1"
+                                             Grid.ColumnSpan="3"
+                                             WatermarkContent="Memo"
+                                             Text="{Binding TransactionMemo}"/>
+            </Grid>
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadButton Content="Print"
+                                   Command="{Binding Print}"
+                                   IsDefault="True"
+                                   Width="400"
+                                   Visibility="{Binding PrintButtonVisibility}"/>
+                <telerik:RadButton Content="Save"
+                                   Command="{Binding Save}"
+                                   IsDefault="True"
+                                   Width="400"
+                                   Visibility="{Binding SaveButtonVisibility}" />
+                <telerik:RadButton Content="Back to Invoice"
+                                   Command="{Binding Cancel}"
+                                   IsCancel="True"
+                                   Width="400"
+                                   Visibility="{Binding SaveButtonVisibility}"/>
+                <telerik:RadButton Content="New Invoice"
+                                   Command="{Binding NewInvoice}"
+                                   IsCancel="True"
+                                   Width="400"
+                                   Visibility="{Binding PrintButtonVisibility}"/>
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

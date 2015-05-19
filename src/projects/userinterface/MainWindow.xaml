@@ -1,0 +1,19 @@
+﻿<Window x:Class="tgsdesktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:rx="clr-namespace:ReactiveUI;assembly=ReactiveUI"
+        Title="The Greystone Store" Height="768" Width="1024">
+        <!--Source="Views/LoginView.xaml"-->
+    <Grid UseLayoutRounding="True">
+        <!--
+            COOLSTUFF: RoutedViewHost
+        
+            RoutedViewHost will take a Router and display whatever ViewModel 
+            is at the front of the route stack.
+        -->
+        <rx:RoutedViewHost
+            Router="{Binding Router}"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch" />
+    </Grid>
+</Window>

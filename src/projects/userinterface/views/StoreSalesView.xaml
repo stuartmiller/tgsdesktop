@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="tgsdesktop.views.StoreSalesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:tgs="clr-namespace:tgsdesktop.views"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <tgs:NavigationView x:Name="NavigationBar" />
+            <Label Name="lblStoreSales" Content="Store Sales"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,257 @@
+﻿<UserControl
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    x:Class="tgsdesktop.views.PosRegisterView"
+    xmlns:tgs="clr-namespace:tgsdesktop.views">
+    <UserControl.Resources>
+        <Style TargetType="telerik:RadWatermarkTextBox" BasedOn="{StaticResource RadAutoCompleteTextBoxStyle}" x:Key="WatermarkTextBoxStyle">
+            <Setter Property="SelectionOnFocus" Value="SelectAll" />
+        </Style>
+        <Style x:Key="ProductAutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#FF0A0A0A" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="NameAutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#FF0A0A0A" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="BalanceAutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{Binding BalanceColor}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="AutoCompleteStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Foreground" Value="#FF0A0A0A" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+        <DataTemplate x:Key="ProductSearchAutoComplete">
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Text="{Binding Name}" Style="{StaticResource ProductAutoCompleteStyle}" />
+                <TextBlock Text="{Binding Price, StringFormat={}{0:C}}" Margin="2,0,0,0" Style="{StaticResource ProductAutoCompleteStyle}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="CustomerSearchAutoComplete">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource NameAutoCompleteStyle}" />
+                    <TextBlock Text="{Binding Balance}" Margin="2,0,0,0" Style="{StaticResource BalanceAutoCompleteStyle}" />
+                </StackPanel>
+                <TextBlock Grid.Row="1" Margin="2,0,0,0" Visibility="{Binding InfoLine1Visibility}" Text="{Binding InfoLine1}" Style="{StaticResource AutoCompleteStyle}" />
+                <TextBlock Grid.Row="2" Margin="2,0,0,0" Visibility="{Binding InfoLine2Visibility}" Text="{Binding InfoLine2}" Style="{StaticResource AutoCompleteStyle}" />
+                <TextBlock Grid.Row="3" Margin="2,0,0,0" Visibility="{Binding InfoLine3Visibility}" Text="{Binding InfoLine3}" Style="{StaticResource AutoCompleteStyle}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <tgs:NavigationView Grid.Row="0"  x:Name="NavigationBar" />
+        <!-- customer lookup -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <telerik:RadDatePicker SelectedValue="{Binding EffectiveDate}"
+                                   Margin="3"
+                                   Width="100"/>
+            <telerik:RadWatermarkTextBox Text="{Binding InvoiceNumber, Mode=TwoWay}"
+                                         Margin="3"
+                                         WatermarkContent="Invoice#"
+                                         Width="100" />
+            <telerik:RadAutoCompleteBox Name="txtCustomers"
+                                        Width="500"
+                                        ItemsSource="{Binding Customers}"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="3"
+                                        WatermarkContent="Customer"
+                                        DisplayMemberPath="DisplayText"
+                                        DropDownWidth="Auto"
+                                        TextSearchPath="SearchText"
+                                        AutoCompleteMode="SuggestAppend"
+                                        TextSearchMode="StartsWith"
+                                        SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
+                                        TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
+                                        DropDownItemTemplate="{StaticResource CustomerSearchAutoComplete}"
+                                        SelectionChanged="txtCustomers_SelectionChanged"
+                                        SelectionMode="Single"/>
+        </StackPanel>
+        <!-- subtotal and account balance -->
+        <Grid Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="190"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                    <Label Width="60" Content="Subtotal: " />
+                    <TextBlock Text="{Binding SubTotal, StringFormat={}{0:C}}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                    <Label Width="60" Content="Tax: " />
+                    <TextBlock Text="{Binding SalesTax, StringFormat={}{0:C}}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                    <Label Width="60" Content="Total: " />
+                    <TextBlock Text="{Binding Total, StringFormat={}{0:C}}" />
+                </StackPanel>
+                <Grid Grid.Column="1" Grid.RowSpan="5">
+                    <StackPanel Orientation="Vertical" Margin="3">
+                        <TextBlock Text="{Binding SelectedCustomer.Name}" FontSize="14" FontWeight="Bold" />
+                        <TextBlock Text="{Binding SelectedCustomer.InfoLine1}" />
+                        <TextBlock Text="{Binding SelectedCustomer.Household.Address1}" Visibility="{Binding SelectedCustomer.Household.Address1Visibility}" />
+                        <TextBlock Text="{Binding SelectedCustomer.Household.Address2}" Visibility="{Binding SelectedCustomer.Household.Address2Visibility}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding SelectedCustomer.Household.City}" Visibility="{Binding SelectedCustomer.Household.CityVisibility}" />
+                            <Label Content=", " Visibility="{Binding SelectedCustomer.Household.StateProvinceVisibility}" />
+                            <TextBlock Text="{Binding SelectedCustomer.Household.StateProvince}" Visibility="{Binding SelectedCustomer.Household.StateProvinceVisibility}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <StackPanel Grid.Column="2" Grid.RowSpan="5" Margin="3">
+                    <TextBlock Text="{Binding SelectedCustomer.ParentNames}" Visibility="{Binding SelectedCustomer.ParentNamesVisibility}" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
+                    <Label Width="120" Content="Current Balance: " />
+                    <TextBlock Text="{Binding SelectedCustomer.Balance, StringFormat={}{0:C}}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal">
+                    <Label Width="120" Content="Balance less invoice: " />
+                    <TextBlock Text="{Binding BalanceLessInvoice, StringFormat={}{0:C}}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <!-- AddItem control -->
+        <Grid Grid.Row="3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <telerik:RadAutoCompleteBox Name="txtProducts"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            WatermarkContent="Item"
+                                            Margin="3"
+                                            SelectionMode="Single"
+                                            ItemsSource="{Binding Products}"
+                                            TextSearchPath="Name"
+                                            TextSearchMode="Contains"
+                                            AutoCompleteMode="SuggestAppend"
+                                            SearchText="{Binding ProductDescription, Mode=TwoWay}"
+                                            DropDownWidth="Auto"
+                                            SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                                            DropDownItemTemplate="{StaticResource ProductSearchAutoComplete}"
+                                            SelectionChanged="txtProducts_SelectionChanged" />
+                <telerik:RadWatermarkTextBox x:Name="txtPrice"
+                                             Grid.Column="1"
+                                             HorizontalAlignment="Stretch"
+                                             Margin="3"
+                                             SelectionOnFocus="SelectAll"
+                                             WatermarkContent="Price"
+                                             Text="{Binding CurrentCartItem.UnitPrice, StringFormat={}{0:C}}" />
+                <telerik:RadWatermarkTextBox x:Name="txtQuantity"
+                                             Grid.Column="2"
+                                             HorizontalAlignment="Stretch"
+                                             Margin="3"
+                                             SelectionOnFocus="SelectAll"
+                                             WatermarkContent="Qty"
+                                             Text="{Binding CurrentCartItem.Quantity}" />
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="3"
+                            HorizontalAlignment="Stretch">
+                    <Label Content="Taxable"/>
+                    <CheckBox IsChecked="{Binding CurrentCartItem.IsTaxable}"
+                              IsTabStop="False"/>
+                </StackPanel>
+                <TextBlock Text="{Binding CurrentCartItem.Total, StringFormat={}{0:C}}"
+                           Grid.Column="4"
+                           HorizontalAlignment="Stretch"
+                           Margin="3"
+                           TextAlignment="Right"/>
+                <Button x:Name="btnAddItem"
+                        Content="Add Item"
+                        Grid.Column="5"
+                        Margin="3"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding AddItem}" />
+            </Grid>
+        </Grid>
+        
+        <!-- item list -->
+        <telerik:RadGridView Grid.Row="4"
+                             ItemsSource="{Binding Items}"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             ShowColumnSortIndexes="False"
+                             AutoGenerateColumns="False"
+                             ShowGroupPanel="False"
+                             CanUserSelect="False" >
+
+            <telerik:RadGridView.Columns>
+                <telerik:GridViewDataColumn Header="Quantity"
+											DataMemberBinding="{Binding Quantity}" />
+                <telerik:GridViewDataColumn Header="Description"
+											DataMemberBinding="{Binding Description}"
+                                            Width="*"/>
+                <telerik:GridViewDataColumn Header="Price"
+											DataMemberBinding="{Binding UnitPrice, StringFormat={}{0:C}}" />
+                <telerik:GridViewDataColumn Header="Total"
+											DataMemberBinding="{Binding Total, StringFormat={}{0:C}}" />
+                <telerik:GridViewColumn>
+                    <telerik:GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <telerik:RadButton Content="Remove" Command="{Binding RemoveItem}" />
+                        </DataTemplate>
+                    </telerik:GridViewColumn.CellTemplate>
+                </telerik:GridViewColumn>
+            </telerik:RadGridView.Columns>
+        </telerik:RadGridView>
+
+        <!-- save/cancel-->
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <telerik:RadButton Grid.Column="0" Content="Save" Command="{Binding Save}" Height="50" />
+            <telerik:RadButton Grid.Column="1" Content="Cancel" Command="{Binding Cancel}" Height="50" />
+        </Grid>
+
+    </Grid>
+</UserControl>

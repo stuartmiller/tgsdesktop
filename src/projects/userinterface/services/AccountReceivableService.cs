@@ -1,0 +1,156 @@
+﻿using Microsoft.SqlServer.Server;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace tgsdesktop.services {
+    public class AccountReceivableService : ServiceBase, infrastructure.IAccountReceivableService {
+
+        static Dictionary<int, List<models.Person>> _seasonAccounts = new Dictionary<int, List<models.Person>>();
+
+        public IList<models.Person> GetPeople(models.PersonType? typeFilter = null, int? seasonId = null) {
+
+            if (!seasonId.HasValue)
+                seasonId = new SettingsService().GetSettings().CurrentSeasonId;
+
+            var retVal = new List<models.Person>();
+
+            if (!_seasonAccounts.ContainsKey(seasonId.Value)) {
+
+                var households = this.GetHouseholds(seasonId.Value);
+
+                this.Command.Parameters.Clear();
+                this.Command.CommandText = @"SELECT p.id, p.lastName, p.firstName, p.nickName, p.householdId, p.dob, p.genderId,
+    CAST(CASE WHEN cs.personId IS NOT NULL THEN 1 ELSE 0 END AS bit) AS isCamper,
+    CAST(CASE WHEN ps.personId IS NOT NULL THEN 1 ELSE 0 END AS bit) AS isParent,
+    CAST(CASE WHEN ss.personId IS NOT NULL THEN 1 ELSE 0 END AS bit) AS isStaff,
+    ISNULL(ab.signedBalance,0),
+    p.cmFamilyRole,
+    cs.cmSessionId, sess.name, cs.cmCabinId, c.name
+FROM tbl_person p
+    LEFT OUTER JOIN tbl_cmCamperSeason cs ON p.id=cs.personId AND cs.seasonId=@seasonId
+    LEFT OUTER JOIN tbl_cmStaffSeason ss ON p.id=ss.personId AND ss.seasonId=@seasonId
+    LEFT OUTER JOIN tbl_cmParentSeason ps ON p.id=ps.personId AND ps.seasonId=@seasonId
+    LEFT OUTER JOIN tbl_session sess ON cs.cmSessionId=sess.cmId
+    LEFT OUTER JOIN tbl_cabin c ON cs.cmCabinId=c.cmId
+    LEFT OUTER JOIN view_householdBalances ab ON p.id=ab.personId
+ORDER BY p.lastName, p.firstName";
+                this.Command.Parameters.AddWithValue("@seasonId", seasonId);
+
+                using (var dr = this.ExecuteReader()) {
+                    while (dr.Read()) {
+                        var i = 0;
+                        var p = new models.Person {
+                            Id = dr.GetInt32(i++),
+                            LastName = dr.GetString(i),
+                            FirstName = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                            NickName = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                            Household = dr.IsDBNull(++i) ? null : households.Single(x => x.Id == dr.GetInt32(i)),
+                            Dob = dr.IsDBNull(++i) ? null : (DateTime?)dr.GetDateTime(i).Date,
+                            GenderId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                            IsCamper = dr.GetBoolean(++i),
+                            IsParent = dr.GetBoolean(++i),
+                            IsStaff = dr.GetBoolean(++i),
+                            Balance = dr.IsDBNull(++i) ? 0 : dr.GetDecimal(i),
+                            HouseholdRoleId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i)
+                        };
+                        int? sessionId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i);
+                        var sessionName = dr.IsDBNull(++i) ? null : dr.GetString(i);
+                        var cabinId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i);
+                        var cabinName = dr.IsDBNull(++i) ? null : dr.GetString(i);
+
+                        if (p.IsCamper) {
+                            var camper = new models.Camper {
+                                Session = sessionId.HasValue ? new models.KeyNamePair<int, string> { Key = sessionId.Value, Name = sessionName } : null,
+                                Cabin = cabinId.HasValue ? new models.KeyNamePair<int, string> { Key = cabinId.Value, Name = cabinName } : null
+                            };
+                            p.ToPerson(camper);
+                            p = camper;
+                        }
+                        retVal.Add(p);
+                    }
+                };
+                foreach (var h in households) {
+                    h.People.AddRange(retVal.Where(p => p.Household == h));
+                }
+                _seasonAccounts.Add(seasonId.Value, retVal);
+            } else
+                retVal = _seasonAccounts[seasonId.Value];
+
+            if (typeFilter.HasValue)
+                return retVal.Where(x =>
+                    (((typeFilter & models.PersonType.Camper) == models.PersonType.Camper))
+                    ||
+                    (((typeFilter & models.PersonType.Staff) == models.PersonType.Staff))
+                    ||
+                    (((typeFilter & models.PersonType.Parent) == models.PersonType.Parent))
+                    ||
+                    (((typeFilter & models.PersonType.Other) == models.PersonType.Other))
+                ).ToList();
+            return retVal;
+        }
+
+        IList<models.Household> GetHouseholds(int seasonId) {
+            this.Command.CommandText = @"SELECT hhld.id, hhld.name, hhld.phone, hhld.email,
+    hhld.address1, hhld.address2, hhld.city, hhld.stateProvince, hhld.postalCode, hhld.country, hhld.cmFamilyId
+FROM tbl_household hhld
+WHERE EXISTS(SELECT * FROM tbl_person WHERE householdId=hhld.id)";
+
+            var retVal = new List<models.Household>();
+            using (var dr = this.ExecuteReader(System.Data.CommandBehavior.Default)) {
+                while (dr.Read()) {
+                    var i = 0;
+                    var arAct = new models.Household {
+                        Id = dr.GetInt32(i++),
+                        Name = dr.GetString(i),
+                        Phone = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        Email = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        Address1 = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        Address2 = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        City = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        StateProvince = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        PostalCode = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        Country = dr.IsDBNull(++i) ? null : dr.GetString(i)
+                    };
+                    retVal.Add(arAct);
+                }
+            };
+
+            return retVal;
+        }
+
+        public void AddPayment(models.transaction.Payment2 payment) {
+            this.Reset();
+            this.Command.CommandText = "proc_addTransactionJournalEntries";
+            this.Command.CommandType = CommandType.StoredProcedure;
+
+            var pmtDt = SqlUdtTypes.GetAccountPaymentEntryTable();
+            var gjeDt = SqlUdtTypes.GetAccountJournalEntryTable();
+
+            var effectiveDateParam = this.Command.Parameters.Add("@effectiveDate", SqlDbType.Date);
+            var memoParam = this.Command.Parameters.Add("@txnMemo", SqlDbType.NVarChar, 300);
+
+            var gjeParam = this.Command.Parameters.Add("@accounts", SqlDbType.Structured);
+            var pmtParam = this.Command.Parameters.Add("@payments", SqlDbType.Structured);
+
+            effectiveDateParam.Value = payment.EffectiveDate.Date;
+            memoParam.Value = "check #" + payment.CheckNumber;
+
+            pmtDt.Rows.Add((int)payment.PaymentMethod.Item2, payment.Amount, payment.CheckNumber, payment.DepositOrderIndex);
+
+            foreach (var act in payment.PersonAccounts) {
+                gjeDt.Rows.Add(101, act.SeasonId, act.Amount, true, act.ArPersonId, null);
+                gjeDt.Rows.Add(105, act.SeasonId, act.Amount, false, act.ArPersonId, null);
+            }
+
+            pmtParam.Value = pmtDt;
+            gjeParam.Value = gjeDt;
+
+            this.Execute();
+        }
+
+    }
+}
