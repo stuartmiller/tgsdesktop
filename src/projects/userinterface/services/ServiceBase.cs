@@ -28,12 +28,7 @@ namespace tgsdesktop.services {
         }
 
         string ConnectionString {
-            get {
-                var connectionString = ConfigurationManager.ConnectionStrings["tgs"].ConnectionString;
-                var passphrase = utilities.ResourceAccessor.GetStringResource("Passphrase");
-                var decriptor = new utilities.RijndaelEnhanced(passphrase, connectionString.Substring(0, 16));
-                return decriptor.Decrypt(connectionString.Substring(16, connectionString.Length - 16));
-            }
+            get { return Config.Instance.ConnectionString; }
         }
 
         SqlConnection Cn { get; set; }
