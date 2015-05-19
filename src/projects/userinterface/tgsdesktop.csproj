@@ -252,6 +252,7 @@
     <Compile Include="viewmodels\PosRegisterViewModel.cs" />
     <Compile Include="viewmodels\ProductViewModel.cs" />
     <Compile Include="viewmodels\SalesInvoiceConfirmViewModel.cs" />
+    <Compile Include="viewmodels\SettingsViewModel.cs" />
     <Compile Include="viewmodels\transaction\AccountType.cs" />
     <Compile Include="viewmodels\transaction\AccountViewModel.cs" />
     <Compile Include="viewmodels\transaction\AddressViewModel.cs" />
@@ -266,6 +267,9 @@
     <Compile Include="viewmodels\transaction\TransactionViewModel.cs" />
     <Compile Include="views\SalesInvoiceConfirmView.xaml.cs">
       <DependentUpon>SalesInvoiceConfirmView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\transaction\TransactionEntryView.xaml.cs">
       <DependentUpon>TransactionEntryView.xaml</DependentUpon>
@@ -383,6 +387,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\SalesInvoiceConfirmView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

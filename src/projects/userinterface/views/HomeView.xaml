@@ -31,7 +31,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Content="Button1" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
-                <Button Content="Button2" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
+                <Button Content="Settings" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToSettings}" />
             </StackPanel>
             <Button Content="Logout" Height="75" Width="1000" FontSize="24" FontWeight="Bold" Command="{Binding Logout}" />
         </StackPanel>
