@@ -12,11 +12,9 @@ namespace tgsdesktop.models {
         }
 
         public int? Id { get; set; }
-        public Person Customer { get; set; }
-        public models.transaction.Transaction Transaction { get; set; }
+        public int TransactionId { get; set; }
         public string InvoiceNumber { get; set; }
         public int? PersonId { get; set; }
-        public int SeasonId { get; set; }
         public decimal SalesTax { get; set; }
 
         public List<SalesInvoiceItem> Items { get; private set; }

@@ -247,7 +247,7 @@
     <Compile Include="services\SqlUdtTypes.cs" />
     <Compile Include="services\TransactionService.cs" />
     <Compile Include="utilities\ResourceAccessor.cs" />
-    <Compile Include="utilities\RijndaelEnhanced.cs" />
+    <Compile Include="utilities\Encryption.cs" />
     <Compile Include="viewmodels\IDialogViewModel.cs" />
     <Compile Include="viewmodels\SalesInvoiceViewModel.cs" />
     <Compile Include="viewmodels\ProductViewModel.cs" />

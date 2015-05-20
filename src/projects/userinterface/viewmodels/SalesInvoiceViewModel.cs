@@ -66,8 +66,14 @@ namespace tgsdesktop.viewmodels {
 
             this.SelectedProduct = new ProductViewModel();
             this.AddItem = ReactiveCommand.Create(this.WhenAny(
-                vm => vm.CurrentCartItem,
-                vm => { return true || !string.IsNullOrEmpty(this.CurrentCartItem.Description); }));
+                vm => vm.CurrentCartItem.Description,
+                vm => vm.CurrentCartItem.UnitPrice,
+                vm => vm.CurrentCartItem.Quantity,
+                (d, p, q) => {
+                    return !string.IsNullOrEmpty(d.GetValue())
+                        && p.GetValue().HasValue
+                        && q.GetValue().HasValue;
+                }));
             this.AddItem.Subscribe(_ => {
                 var cartItem = new SalesInvoiceItemViewModel(this.SalesTaxRate) {
                     ProductId = this.CurrentCartItem.ProductId,

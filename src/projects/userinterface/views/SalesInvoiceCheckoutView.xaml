@@ -20,6 +20,10 @@
                 <TextBlock Text="Customer: "/>
                 <TextBlock Text="{Binding InvoiceViewModel.SelectedCustomer.Name}"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total: "/>
+                <TextBlock Text="{Binding InvoiceViewModel.Total}"/>
+            </StackPanel>
             <ItemsControl ItemsSource="{Binding Payments}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

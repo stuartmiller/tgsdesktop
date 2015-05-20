@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace tgsdesktop.utilities {
-    public class RijndaelEnhanced {
+    public class Encryption {
 
         #region Private members
         // If hashing algorithm is not specified, use SHA-1.
@@ -47,7 +47,7 @@ namespace tgsdesktop.utilities {
         /// <remarks>
         /// The passphrase and iv will be determined from the application resources
         /// </remarks>
-        public RijndaelEnhanced() :
+        public Encryption() :
             this(null, null) {
         }
         /// <summary>
@@ -68,7 +68,7 @@ namespace tgsdesktop.utilities {
         /// initialization vector and uses the ECB cipher mode, which is less
         /// secure than the CBC mode.
         /// </remarks>
-        public RijndaelEnhanced(string passPhrase) :
+        public Encryption(string passPhrase) :
             this(passPhrase, null) {
         }
 
@@ -91,7 +91,7 @@ namespace tgsdesktop.utilities {
         /// exactly 16 ASCII characters long. IV value does not have to be kept
         /// in secret.
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector) :
             this(passPhrase, initVector, -1) {
         }
@@ -121,7 +121,7 @@ namespace tgsdesktop.utilities {
         /// value is less than 4, the default min value will be used (currently 4
         /// bytes).
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector,
                                 int minSaltLen) :
             this(passPhrase, initVector, minSaltLen, -1) {
@@ -162,7 +162,7 @@ namespace tgsdesktop.utilities {
         /// salt will not be used and plain text value will be encrypted as is.
         /// In this case, salt will not be processed during decryption either.
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector,
                                 int minSaltLen,
                                 int maxSaltLen) :
@@ -206,7 +206,7 @@ namespace tgsdesktop.utilities {
         /// <param name="keySize">
         /// Size of symmetric key (in bits): 128, 192, or 256.
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector,
                                 int minSaltLen,
                                 int maxSaltLen,
@@ -253,7 +253,7 @@ namespace tgsdesktop.utilities {
         /// <param name="hashAlgorithm">
         /// Hashing algorithm: "MD5" or "SHA1". SHA1 is recommended.
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector,
                                 int minSaltLen,
                                 int maxSaltLen,
@@ -307,7 +307,7 @@ namespace tgsdesktop.utilities {
         /// not the same as the salt we will use during encryption. This parameter
         /// can be any string.
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector,
                                 int minSaltLen,
                                 int maxSaltLen,
@@ -366,7 +366,7 @@ namespace tgsdesktop.utilities {
         /// Number of iterations used to hash password. More iterations are
         /// considered more secure but may take longer.
         /// </param>
-        public RijndaelEnhanced(string passPhrase,
+        public Encryption(string passPhrase,
                                 string initVector,
                                 int minSaltLen,
                                 int maxSaltLen,
@@ -771,6 +771,22 @@ namespace tgsdesktop.utilities {
             return random.Next(minValue, maxValue + 1);
         }
         #endregion
+
+        static byte[] GenerateSaltedHash(byte[] plainText, byte[] salt) {
+            HashAlgorithm algorithm = new SHA256Managed();
+
+            byte[] plainTextWithSaltBytes =
+              new byte[plainText.Length + salt.Length];
+
+            for (int i = 0; i < plainText.Length; i++) {
+                plainTextWithSaltBytes[i] = plainText[i];
+            }
+            for (int i = 0; i < salt.Length; i++) {
+                plainTextWithSaltBytes[plainText.Length + i] = salt[i];
+            }
+
+            return algorithm.ComputeHash(plainTextWithSaltBytes);
+        }
     }
 
 }

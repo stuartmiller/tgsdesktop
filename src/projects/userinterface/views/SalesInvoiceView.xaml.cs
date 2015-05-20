@@ -25,10 +25,11 @@ namespace tgsdesktop.views {
             this.WhenAnyValue(x => x.ViewModel.CurrentCartItem.IsComplete)
                 .Subscribe(x => btnAddItem.IsDefault = x);
             this.Loaded += SalesInvoiceView_Loaded;
+
         }
 
         void SalesInvoiceView_Loaded(object sender, RoutedEventArgs e) {
-            txtCustomers.Focus();
+            txtInvoiceNumber.Focus();
         }
 
         public viewmodels.ISalesInvoiceViewModel ViewModel {

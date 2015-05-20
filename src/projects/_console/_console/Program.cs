@@ -26,15 +26,15 @@ namespace _console {
             // initialization vector, etc) and see the resulting cipher text;
             // encrypted values will be different.
             for (int i = 0; i < 10; i++) {
-                var initVector = tgsdesktop.utilities.RijndaelEnhanced.GenerateRandomString(16);
+                var initVector = tgsdesktop.utilities.Encryption.GenerateRandomString(16);
                 var rijndaelKey =
-                    new tgsdesktop.utilities.RijndaelEnhanced(passPhrase, initVector);
+                    new tgsdesktop.utilities.Encryption(passPhrase, initVector);
                 cipherText = rijndaelKey.Encrypt(plainText);
                 cipherText = initVector + cipherText;
                 System.Diagnostics.Debug.WriteLine(
                     String.Format("Encrypted #{0}: {1}", i, cipherText));
 
-                rijndaelKey = new tgsdesktop.utilities.RijndaelEnhanced(passPhrase, initVector);
+                rijndaelKey = new tgsdesktop.utilities.Encryption(passPhrase, initVector);
                 plainText = rijndaelKey.Decrypt(cipherText.Substring(16, cipherText.Length - 16));
             }
             Console.ReadLine();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace tgsdesktop.viewmodels.transaction {
 
@@ -35,6 +36,9 @@ namespace tgsdesktop.viewmodels.transaction {
                 this.Amount = payment.Amount;
                 this.CheckNumber = payment.CheckNumber;
             }
+            this.WhenAnyValue(vm => vm.PaymentMethod)
+                .Select(x => x.Key == (int)models.transaction.PaymentMethod.Check ? true : false)
+                .ToProperty(this, x => x.CheckNumberEnabled, out _checkNumberEnabled);
         }
 
         KeyValuePair<int, string> _paymentMethod;
@@ -49,6 +53,10 @@ namespace tgsdesktop.viewmodels.transaction {
 
         readonly ObservableAsPropertyHelper<string> _paymentString;
         public string PaymentString { get { return _paymentString.Value; } }
+        readonly ObservableAsPropertyHelper<bool> _checkNumberEnabled;
+        public bool CheckNumberEnabled {
+            get { return _checkNumberEnabled.Value; }
+        }
 
         public ReactiveCommand<object> DeletePayment { get; private set; }
 

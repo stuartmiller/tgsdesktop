@@ -16,7 +16,7 @@ namespace tgsdesktop.reporting {
             //
             InitializeComponent();
 
-            //this.InvoiceDataSource.ConnectionString = 
+            this.InvoiceDataSource.ConnectionString = Config.Instance.ConnectionString;
         }
     }
 }

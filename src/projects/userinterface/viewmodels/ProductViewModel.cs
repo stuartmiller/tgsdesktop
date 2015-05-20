@@ -64,7 +64,7 @@ namespace tgsdesktop.viewmodels {
                     if (!t.GetValue())
                         return 0;
                     return q.GetValue().HasValue && p.GetValue().HasValue ?
-                        (p.GetValue().Value * q.GetValue().Value) * taxRate : 0;
+                        decimal.Round(((p.GetValue().Value * q.GetValue().Value) * taxRate),2) : 0;
                 });
             this._tax = tax.ToProperty(this, vm => vm.Tax);
 
@@ -96,7 +96,9 @@ namespace tgsdesktop.viewmodels {
         string _description;
         public string Description {
             get { return _description; }
-            set { this.RaiseAndSetIfChanged(ref _description, value); }
+            set {
+                this.RaiseAndSetIfChanged(ref _description, value);
+            }
         }
 
         decimal? _unitCost;

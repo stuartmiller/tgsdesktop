@@ -18,40 +18,12 @@ namespace tgsdesktop.viewmodels {
             : base(screen) {
 
             this.InvoiceViewModel = invoice;
-
-            //this.CurrentPayment = 
-            this.Payments = new ReactiveList<transaction.PaymentViewModel>();
-            this.Payments.ChangeTrackingEnabled = true;
-            this.WhenAnyObservable(vm => vm.Payments.ItemChanged)
-                .Select(_ => this.Payments.Where(x => x.Amount.HasValue).Sum(x => x.Amount.Value))
-                .ToProperty(this, vm => vm.PaymentTotal, out _paymentTotal);
-            this.PaymentMethods = new ReactiveList<KeyValuePair<int, string>> {
-                models.transaction.PaymentMethod.Undefined.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.AmEx.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.Visa.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.Check.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.Cash.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.MasterCard.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.Discover.GetPaymentMethodKeyValuePair()
-            };
-            var pvm = new transaction.PaymentViewModel { Amount = invoice.Total, PaymentMethod = this.PaymentMethods[0] };
-            pvm.PaymentMethods.AddRange(this.PaymentMethods);
-            this.Payments.Add(pvm);
-            //if (invoice.Person != null && (invoice.Person.IsCamper || invoice.Person.IsStaff)){
-            //    this.CurrentPayment.PaymentMethod = models.transaction.PaymentMethod.Account.GetPaymentMethodKeyValuePair();
-            //    this.PaymentMethods.Insert(1, this.CurrentPayment.PaymentMethod);
-            //}
-            //this.CurrentPayment.Amount = invoice.Items.Sum(x => x.Price) - invoice.Items.Sum(x => x.Discount) + invoice.SalesTax;
-
-            this.WhenAnyValue(vm => vm.CurrentPayment)
-                .Select(x => x != null && x.PaymentMethod.Key == (int)models.transaction.PaymentMethod.Check ? true : false)
-                .ToProperty(this, x => x.CheckNumberEnabled, out _checkNumberEnabled);
-
             this.SaveButtonVisibility = Visibility.Visible;
             this.PrintButtonVisibility = Visibility.Collapsed;
 
-            this.Save = ReactiveCommand.Create(this.WhenAnyValue(vm => vm.PaymentTotal)
-                .Select(pt => pt == this.InvoiceViewModel.Total));
+            this.Save = ReactiveCommand.Create(this.WhenAnyObservable(vm => vm.Payments.ItemChanged)
+                .Select(_ => this.Payments.All(x => x.PaymentMethod.Key > 0)
+                    && this.Payments.Where(p => p.Amount.HasValue).Sum(p => p.Amount) == this.InvoiceViewModel.Total));
             this.Save.Subscribe(_ => {
 
                 this.SaveTransaction();
@@ -77,6 +49,28 @@ namespace tgsdesktop.viewmodels {
                 processor.PrintReport(reportSource, new System.Drawing.Printing.PrinterSettings());
             });
 
+            this.Payments = new ReactiveList<transaction.PaymentViewModel>();
+            this.Payments.ChangeTrackingEnabled = true;
+            this.WhenAnyObservable(vm => vm.Payments.ItemChanged)
+                .Select(_ =>  this.Payments.Where(x => x.Amount.HasValue).Sum(x => x.Amount.Value))
+                .ToProperty(this, vm => vm.PaymentTotal, out _paymentTotal);
+            this.PaymentMethods = new ReactiveList<KeyValuePair<int, string>> {
+                models.transaction.PaymentMethod.Undefined.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.AmEx.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.Visa.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.Check.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.Cash.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.MasterCard.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.Discover.GetPaymentMethodKeyValuePair()
+            };
+            var pvm = new transaction.PaymentViewModel();
+            this.Payments.Add(pvm);
+            pvm.Amount = invoice.Total;
+            if (invoice.SelectedCustomer != null && (invoice.SelectedCustomer.PersonModel.IsCamper || invoice.SelectedCustomer.PersonModel.IsStaff)) {
+                pvm.PaymentMethod = models.transaction.PaymentMethod.Account.GetPaymentMethodKeyValuePair();
+                this.PaymentMethods.Insert(1, pvm.PaymentMethod);
+            }
+            pvm.PaymentMethods.AddRange(this.PaymentMethods);
         }
 
         public models.SalesInvoice InvoiceModel;
@@ -111,7 +105,6 @@ namespace tgsdesktop.viewmodels {
 
         private void SaveTransaction() {
 
-
             var invoice = new models.AddSalesInvoiceModel {
                 Person = this.InvoiceViewModel.SelectedCustomer == null ? null : this.InvoiceViewModel.SelectedCustomer.PersonModel,
                 InvoiceNumber = this.InvoiceViewModel.InvoiceNumber,
@@ -129,6 +122,12 @@ namespace tgsdesktop.viewmodels {
                 ProductId = i.ProductId,
                 Quantity = i.Quantity.Value
             });
+            var payments = this.Payments.Where(p => p.Amount.HasValue).Select(p => new models.AddSalesInvoiceModel.Payment {
+                Amount = p.Amount.Value,
+                CheckNumber = p.CheckNumber,
+                Method = (models.transaction.PaymentMethod)p.PaymentMethod.Key
+            });
+            invoice.Payments.AddRange(payments);
             invoice.Items.AddRange(items);
 
             var posService = infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
@@ -141,9 +140,5 @@ namespace tgsdesktop.viewmodels {
             get { return _paymentTotal.Value; }
         }
 
-        readonly ObservableAsPropertyHelper<bool> _checkNumberEnabled;
-        public bool CheckNumberEnabled {
-            get { return _checkNumberEnabled.Value; }
-        }
     }
 }
