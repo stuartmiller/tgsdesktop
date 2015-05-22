@@ -92,7 +92,7 @@
         <telerik:RadExpander Grid.Row="2">
             <StackPanel Orientation="Horizontal" >
                 <telerik:RadComboBox ItemsSource="{Binding PaymentMethods}"
-                                     DisplayMemberPath="Name"
+                                     DisplayMemberPath="Value"
                                      Width="85"
                                      VerticalAlignment="Center"
                                      SelectedItem="{Binding CurrentPayment.PaymentMethod, Mode=TwoWay}"
