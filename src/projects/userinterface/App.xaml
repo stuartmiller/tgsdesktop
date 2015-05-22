@@ -1,6 +1,8 @@
 ﻿<Application
   x:Class="tgsdesktop.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:localvm="clr-namespace:tgsdesktop.viewmodels"
+    DispatcherUnhandledException="Application_DispatcherUnhandledException"
+
   StartupUri="MainWindow.xaml">
   <Application.Resources>
     <ResourceDictionary>
