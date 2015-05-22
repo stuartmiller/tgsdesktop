@@ -21,16 +21,17 @@ namespace tgsdesktop.viewmodels {
             this.SaveButtonVisibility = Visibility.Visible;
             this.PrintButtonVisibility = Visibility.Collapsed;
 
-            this.Save = ReactiveCommand.Create(this.WhenAnyObservable(vm => vm.Payments.ItemChanged)
-                .Select(_ => this.Payments.All(x => x.PaymentMethod.Key > 0)
-                    && this.Payments.Where(p => p.Amount.HasValue).Sum(p => p.Amount) == this.InvoiceViewModel.Total));
+            //var canExecute = this.WhenAny(vm =>
+            //    vm.Payments.
+            //    )
+
+            this.Save = ReactiveCommand.Create();
             this.Save.Subscribe(_ => {
 
                 this.SaveTransaction();
 
                 PrintButtonVisibility = Visibility.Visible;
                 SaveButtonVisibility = Visibility.Collapsed;
-                //this.HostScreen.Router.NavigateAndReset.Execute(new SalesInvoiceViewModel(HostScreen));
             });
 
             this.Cancel = ReactiveCommand.Create();
@@ -39,7 +40,6 @@ namespace tgsdesktop.viewmodels {
             this.NewInvoice.Subscribe(_ => this.HostScreen.Router.NavigateAndReset.Execute(new SalesInvoiceViewModel(HostScreen)));
             this.Print = ReactiveCommand.Create();
             this.Print.Subscribe(_ => {
-
                 
                 reporting.SalesInvoice salesInvoice = new reporting.SalesInvoice();
                 salesInvoice.ReportParameters[0].Value = this.InvoiceModel.Id;

@@ -93,8 +93,11 @@
     <Reference Include="Telerik.Reporting.Services.WebApi, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\Bin\Telerik.Reporting.Services.WebApi.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Telerik.Reporting.XpsRendering, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be" />
+    <Reference Include="Telerik.Reporting.XpsRendering, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Telerik.Windows.Controls, Version=2015.1.225.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Telerik\UI for WPF Q1 2015\Binaries\WPF45\Telerik.Windows.Controls.dll</HintPath>
       <Private>True</Private>
@@ -180,6 +183,7 @@
     <Reference Include="Telerik.ReportViewer.Wpf, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be">
       <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\bin\Telerik.ReportViewer.Wpf.dll</HintPath>
       <SpecificVersion>True</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock">
       <HintPath>..\..\..\lib\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>

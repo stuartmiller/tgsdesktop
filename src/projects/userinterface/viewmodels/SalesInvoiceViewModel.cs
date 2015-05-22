@@ -38,7 +38,7 @@ namespace tgsdesktop.viewmodels {
             this.SalesTaxRate = settingsAccessor.SalesTaxRate;
 
             this.WhenAnyObservable(vm => vm.Items.CountChanged)
-                .Select(_ => this.Items.Count == 0 ? 0m : this.Items.Sum(i => i.Tax ))
+                .Select(_ => this.Items.Count == 0 ? 0m : decimal.Round((this.Items.Where(i => i.IsTaxable).Sum(i => i.Total ) * this.SalesTaxRate),2))
                 .ToProperty(this, vm => vm.SalesTax, out _salesTax);
             this.WhenAnyObservable(vm => vm.Items.CountChanged)
                 .Select(_ => this.Items.Count == 0 ? 0m : this.Items.Sum(i => i.Total))

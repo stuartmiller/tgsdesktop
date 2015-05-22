@@ -56,17 +56,17 @@ namespace tgsdesktop.viewmodels {
                         p.GetValue().Value * q.GetValue().Value : 0;
                 });
             this._total = total.ToProperty(this, vm => vm.Total);
-            var tax = this.WhenAny(
-                vm => vm.Quantity,
-                vm => vm.UnitPrice,
-                vm => vm.IsTaxable,
-                (q, p, t) => {
-                    if (!t.GetValue())
-                        return 0;
-                    return q.GetValue().HasValue && p.GetValue().HasValue ?
-                        decimal.Round(((p.GetValue().Value * q.GetValue().Value) * taxRate),2) : 0;
-                });
-            this._tax = tax.ToProperty(this, vm => vm.Tax);
+            //var tax = this.WhenAny(
+            //    vm => vm.Quantity,
+            //    vm => vm.UnitPrice,
+            //    vm => vm.IsTaxable,
+            //    (q, p, t) => {
+            //        if (!t.GetValue())
+            //            return 0;
+            //        return q.GetValue().HasValue && p.GetValue().HasValue ?
+            //            decimal.Round(((p.GetValue().Value * q.GetValue().Value) * taxRate),2) : 0;
+            //    });
+            //this._tax = tax.ToProperty(this, vm => vm.Tax);
 
             this.WhenAnyValue(vm => vm.UnitPrice, vm => vm.Quantity, vm => vm.Description)
                 .Select(x => x.Item1.HasValue && x.Item2.HasValue && !string.IsNullOrEmpty(x.Item3))
@@ -124,9 +124,6 @@ namespace tgsdesktop.viewmodels {
             get { return _isTaxable; }
             set { this.RaiseAndSetIfChanged(ref _isTaxable, value); }
         }
-
-        readonly ObservableAsPropertyHelper<decimal> _tax;
-        public decimal Tax { get { return _tax.Value; } }
 
         int? _quantity;
         public int? Quantity { get { return _quantity; } set { this.RaiseAndSetIfChanged(ref _quantity, value); } }
