@@ -10,15 +10,15 @@
         <Label Content="Home"/>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <Button Content="Store Sales" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToStoreSales}" />
+                <Button Content="Sales Invoice" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToSalesInvoice}" />
                 <Button Content="Account Detail" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToAccountDetails}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Content="Payment Entry" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToPaymentEntry}" />
+                <Button Content="General Journal Entry" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding MakeGeneralJournalEntries}" />
                 <Button Content="Print Labels" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding PrintLabels}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Content="POS Register" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToSalesInvoice}" />
+                <Button Content="" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
                 <Button Content="Hyper Drive" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding MakeGeneralJournalEntries}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">

@@ -78,12 +78,14 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <telerik:RadDatePicker SelectedValue="{Binding EffectiveDate, Mode=TwoWay}"
                                    Margin="3"
+                                   FontSize="14"
                                    Width="100"/>
             <telerik:RadWatermarkTextBox Name="txtInvoiceNumber"
                                          Text="{Binding InvoiceNumber, Mode=TwoWay}"
                                          Margin="3"
                                          WatermarkContent="Invoice#"
                                          SelectionOnFocus="SelectAll"
+                                         FontSize="14"
                                          Width="100" />
             <telerik:RadAutoCompleteBox Name="txtCustomers"
                                         Width="500"
@@ -101,6 +103,7 @@
                                         TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
                                         DropDownItemTemplate="{StaticResource CustomerSearchAutoComplete}"
                                         SelectionChanged="txtCustomers_SelectionChanged"
+                                        FontSize="14"
                                         SelectionMode="Single"/>
         </StackPanel>
         <!-- subtotal and account balance -->
@@ -120,16 +123,16 @@
                     <ColumnDefinition Width="190"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                    <Label Width="60" Content="Subtotal: " />
-                    <TextBlock Text="{Binding SubTotal, StringFormat={}{0:C}}" />
+                    <TextBlock Width="60" Text="Subtotal: " FontSize="12" />
+                    <TextBlock Text="{Binding SubTotal, StringFormat={}{0:C}}" FontSize="12" />
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                    <Label Width="60" Content="Tax: " />
-                    <TextBlock Text="{Binding SalesTax, StringFormat={}{0:C}}" />
+                    <TextBlock Width="60" Text="Tax: " FontSize="12" />
+                    <TextBlock Text="{Binding SalesTax, StringFormat={}{0:C}}" FontSize="12" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
-                    <Label Width="60" Content="Total: " />
-                    <TextBlock Text="{Binding Total, StringFormat={}{0:C}}" />
+                    <TextBlock Width="60" Text="Total: " FontSize="12" />
+                    <TextBlock Text="{Binding Total, StringFormat={}{0:C}}" FontSize="12" />
                 </StackPanel>
                 <Grid Grid.Column="1" Grid.RowSpan="5">
                     <StackPanel Orientation="Vertical" Margin="3">
@@ -148,12 +151,12 @@
                     <TextBlock Text="{Binding SelectedCustomer.ParentNames}" Visibility="{Binding SelectedCustomer.ParentNamesVisibility}" />
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                    <Label Width="120" Content="Current Balance: " />
-                    <TextBlock Text="{Binding SelectedCustomer.Balance, StringFormat={}{0:C}}" />
+                    <TextBlock Width="120" Text="Current Balance: " FontSize="12" />
+                    <TextBlock Text="{Binding SelectedCustomer.Balance, StringFormat={}{0:C}}" FontSize="12" />
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal">
-                    <Label Width="120" Content="Balance less invoice: " />
-                    <TextBlock Text="{Binding BalanceLessInvoice, StringFormat={}{0:C}}" />
+                    <TextBlock Width="120" Text="Balance less invoice: " FontSize="12" />
+                    <TextBlock Text="{Binding BalanceLessInvoice, StringFormat={}{0:C}}" FontSize="12" />
                 </StackPanel>
             </Grid>
         </Grid>

@@ -78,6 +78,7 @@
     <Reference Include="System.Reactive.Windows.Threading">
       <HintPath>..\..\..\lib\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
@@ -218,12 +219,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="infrastructure\Cache.cs" />
     <Compile Include="infrastructure\EnumerationManager.cs" />
     <Compile Include="infrastructure\IAccountReceivableService.cs" />
+    <Compile Include="infrastructure\ICacheProvider.cs" />
     <Compile Include="infrastructure\IGeneralJournalService.cs" />
     <Compile Include="infrastructure\IMainViewModel.cs" />
     <Compile Include="infrastructure\IocContainer.cs" />
     <Compile Include="infrastructure\IPointOfSaleService.cs" />
+    <Compile Include="infrastructure\model\CacheMetadata.cs" />
     <Compile Include="models\AddSalesInvoiceModel.cs" />
     <Compile Include="models\KeyNamePair.cs" />
     <Compile Include="models\ListItem.cs" />

@@ -11,7 +11,7 @@ namespace tgsdesktop.models {
             this.Items = new List<SalesInvoiceItem>();
         }
 
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public int TransactionId { get; set; }
         public string InvoiceNumber { get; set; }
         public int? PersonId { get; set; }

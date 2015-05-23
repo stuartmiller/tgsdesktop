@@ -51,55 +51,66 @@ FROM tbl_salesItem i";
         }
 
 
-        public List<models.SalesInvoice> GetSalesInvoices(IList<int> ids) {
+        public List<models.SalesInvoice> GetSalesInvoices(IEnumerable<int> ids) {
 
-            this.Reset();
-            this.Command.CommandText = @"SELECT si.id, si.txnId, si.invoiceNo, si.personId 
+            ids = ids.Distinct();
+            var cache = infrastructure.IocContainer.Resolve<infrastructure.ICacheProvider>();
+            var retVal = cache.GetItems<models.SalesInvoice>(ids.Select(x => "model.salesinvoice:pk:" + x.ToString()));
+
+            var missingIds = ids.Except(retVal.Select(x => x.Id)).ToList();
+
+            if (missingIds.Count > 0) {
+
+                this.Reset();
+                this.Command.CommandText = @"SELECT si.id, si.txnId, si.invoiceNo, si.personId 
 FROM tbl_salesInvoice si INNER JOIN @keys k ON si.id=k.id";
-            var idTable = SqlUdtTypes.GetIdArrayTable(ids.Distinct());
-            var keysParam = this.Command.Parameters.AddWithValue("@keys", SqlDbType.Structured);
-            keysParam.TypeName = "udt_intIdArray";
-            keysParam.Value = idTable;
+                var idTable = SqlUdtTypes.GetIdArrayTable(missingIds);
+                var keysParam = this.Command.Parameters.AddWithValue("@keys", SqlDbType.Structured);
+                keysParam.TypeName = "udt_intIdArray";
+                keysParam.Value = idTable;
 
-            var dict = new Dictionary<int, models.SalesInvoice>();
-            using (var dr = this.ExecuteReader()) {
-                while (dr.Read()) {
-                    int i = 0;
-                    var id = dr.GetInt32(i++);
-                    dict.Add(id, new models.SalesInvoice {
-                        Id = id,
-                        TransactionId = dr.GetInt32(i++),
-                        InvoiceNumber = dr.GetString(i),
-                        PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i)
-                    });
+                var dict = new Dictionary<int, models.SalesInvoice>();
+                using (var dr = this.ExecuteReader()) {
+                    while (dr.Read()) {
+                        int i = 0;
+                        var id = dr.GetInt32(i++);
+                        dict.Add(id, new models.SalesInvoice {
+                            Id = id,
+                            TransactionId = dr.GetInt32(i++),
+                            InvoiceNumber = dr.GetString(i),
+                            PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i)
+                        });
+                    }
                 }
-            }
 
-            this.Command.CommandText = @"SELECT i.id, i.description, i.invoiceId, i.productId, i.itemId, i.quantity, i.unitCost,
+                this.Command.CommandText = @"SELECT i.id, i.description, i.invoiceId, i.productId, i.itemId, i.quantity, i.unitCost,
     i.unitPrice, i.isTaxable, i.discount
 FROM tbl_salesInvoiceItem i
     INNER JOIN @keys k ON i.invoiceId=k.id";
 
-            using (var dr = this.ExecuteReader()) {
-                while (dr.Read()) {
-                    int i = 0;
-                    var item = new models.SalesInvoice.SalesInvoiceItem {
-                        Id = dr.GetInt32(i++),
-                        Description = dr.GetString(i++),
-                        InvoiceId = dr.GetInt32(i),
-                        ProductId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
-                        ItemId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
-                        Quantity = dr.GetInt32(++i),
-                        Cost = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
-                        Price = dr.GetDecimal(++i),
-                        IsTaxable = dr.GetBoolean(++i),
-                        Discount = dr.GetDecimal(++i)
-                    };
-                    dict[item.InvoiceId].Items.Add(item);
+                using (var dr = this.ExecuteReader()) {
+                    while (dr.Read()) {
+                        int i = 0;
+                        var item = new models.SalesInvoice.SalesInvoiceItem {
+                            Id = dr.GetInt32(i++),
+                            Description = dr.GetString(i++),
+                            InvoiceId = dr.GetInt32(i),
+                            ProductId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                            ItemId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                            Quantity = dr.GetInt32(++i),
+                            Cost = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
+                            Price = dr.GetDecimal(++i),
+                            IsTaxable = dr.GetBoolean(++i),
+                            Discount = dr.GetDecimal(++i)
+                        };
+                        dict[item.InvoiceId].Items.Add(item);
+                    }
                 }
+                var items = dict.Values.ToList();   
+                cache.AddItems(items.Select(x => new infrastructure.model.CacheItem { Key = "model.salesinvoice:pk:" + x.Id.ToString(), Value = x }));
+                retVal.AddRange(items);
             }
-
-            return dict.Values.ToList();
+            return retVal;
         }
 
         public models.SalesInvoice AddSalesInvoice(models.AddSalesInvoiceModel invoice) {
