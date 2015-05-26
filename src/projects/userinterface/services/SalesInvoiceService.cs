@@ -8,6 +8,31 @@ using System.Threading.Tasks;
 namespace tgsdesktop.services {
     public class SalesInvoiceService : ServiceBase, infrastructure.ISalesInvoiceService {
 
+        public models.Product GetItem(int itemId) {
+
+            models.Product retVal = null;
+
+            this.Reset();
+            this.Command.CommandText = @"SELECT i.id, i.description, i.cost, i.price, i.isTaxable
+FROM tbl_salesItem i
+WHERE id=@itemId";
+            this.Command.Parameters.AddWithValue("@itemId", itemId);
+            using (var dr = this.ExecuteReader(CommandBehavior.SingleRow)) {
+                while (dr.Read()) {
+                    var i = 0;
+                    retVal = new models.Product {
+                        Id = dr.GetInt32(i++),
+                        IsWebProduct = false,
+                        Name = dr.GetString(i),
+                        Cost = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
+                        Price = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
+                        IsTaxable = dr.GetBoolean(++i)
+                    };
+                }
+            }
+            return retVal;
+        }
+
         public IList<models.Product> GetProducts() {
 
             this.Reset();
@@ -49,7 +74,6 @@ FROM tbl_salesItem i";
             }
             return retVal;
         }
-
 
         public List<models.SalesInvoice> GetSalesInvoices(IEnumerable<int> ids) {
 
@@ -148,7 +172,10 @@ FROM tbl_salesInvoiceItem i
 
             var id = Convert.ToInt32(idParam.Value);
 
+            new AccountReceivableService().RefreshBalances();
+
             return this.GetSalesInvoices(new int[] { id}).FirstOrDefault();
+
         }
     }
 }

@@ -13,27 +13,27 @@
         </Style>
         <Style x:Key="ProductAutoCompleteStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="Foreground" Value="#FF0A0A0A" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="NameAutoCompleteStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="#FF0A0A0A" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="BalanceAutoCompleteStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Foreground" Value="{Binding BalanceColor}" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="AutoCompleteStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="FontStyle" Value="Italic"/>
             <Setter Property="Foreground" Value="#FF0A0A0A" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -78,14 +78,14 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <telerik:RadDatePicker SelectedValue="{Binding EffectiveDate, Mode=TwoWay}"
                                    Margin="3"
-                                   FontSize="14"
+                                   FontSize="16"
                                    Width="100"/>
             <telerik:RadWatermarkTextBox Name="txtInvoiceNumber"
                                          Text="{Binding InvoiceNumber, Mode=TwoWay}"
                                          Margin="3"
                                          WatermarkContent="Invoice#"
                                          SelectionOnFocus="SelectAll"
-                                         FontSize="14"
+                                         FontSize="16"
                                          Width="100" />
             <telerik:RadAutoCompleteBox Name="txtCustomers"
                                         Width="500"
@@ -95,15 +95,15 @@
                                         Margin="3"
                                         WatermarkContent="Customer"
                                         DisplayMemberPath="DisplayText"
-                                        DropDownWidth="Auto"
                                         TextSearchPath="SearchText"
                                         AutoCompleteMode="SuggestAppend"
-                                        TextSearchMode="StartsWith"
+                                        TextSearchMode="Contains"
                                         SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
                                         TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
                                         DropDownItemTemplate="{StaticResource CustomerSearchAutoComplete}"
                                         SelectionChanged="txtCustomers_SelectionChanged"
-                                        FontSize="14"
+                                        FontSize="16"
+                                        MaxDropDownHeight="700"
                                         SelectionMode="Single"/>
         </StackPanel>
         <!-- subtotal and account balance -->
@@ -136,20 +136,14 @@
                 </StackPanel>
                 <Grid Grid.Column="1" Grid.RowSpan="5">
                     <StackPanel Orientation="Vertical" Margin="3">
-                        <TextBlock Text="{Binding SelectedCustomer.Name}" FontSize="14" FontWeight="Bold" />
-                        <TextBlock Text="{Binding SelectedCustomer.InfoLine1}" />
-                        <TextBlock Text="{Binding SelectedCustomer.Household.Address1}" Visibility="{Binding SelectedCustomer.Household.Address1Visibility}" />
-                        <TextBlock Text="{Binding SelectedCustomer.Household.Address2}" Visibility="{Binding SelectedCustomer.Household.Address2Visibility}" />
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding SelectedCustomer.Household.City}" Visibility="{Binding SelectedCustomer.Household.CityVisibility}" />
-                            <Label Content=", " Visibility="{Binding SelectedCustomer.Household.StateProvinceVisibility}" />
-                            <TextBlock Text="{Binding SelectedCustomer.Household.StateProvince}" Visibility="{Binding SelectedCustomer.Household.StateProvinceVisibility}" />
-                        </StackPanel>
+                        <TextBlock Text="{Binding CustomerInfo.InfoHeader}" FontSize="14" FontWeight="Bold" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine1}" FontSize="12" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine2}" Visibility="{Binding CustomerInfo.InfoLine2Visibility}" FontSize="12" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine3}" Visibility="{Binding CustomerInfo.InfoLine3Visibility}" FontSize="12" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine4}" Visibility="{Binding CustomerInfo.InfoLine4Visibility}" FontSize="12" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine5}" Visibility="{Binding CustomerInfo.InfoLine5Visibility}" FontSize="12" />
                     </StackPanel>
                 </Grid>
-                <StackPanel Grid.Column="2" Grid.RowSpan="5" Margin="3">
-                    <TextBlock Text="{Binding SelectedCustomer.ParentNames}" Visibility="{Binding SelectedCustomer.ParentNamesVisibility}" />
-                </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
                     <TextBlock Width="120" Text="Current Balance: " FontSize="12" />
                     <TextBlock Text="{Binding SelectedCustomer.Balance, StringFormat={}{0:C}}" FontSize="12" />
@@ -181,11 +175,11 @@
                                             TextSearchPath="Name"
                                             TextSearchMode="Contains"
                                             AutoCompleteMode="SuggestAppend"
-                                            SearchText="{Binding ProductDescription, Mode=TwoWay}"
-                                            DropDownWidth="Auto"
+                                            SearchText="{Binding CurrentCartItem.Description2, Mode=TwoWay}"
                                             SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
                                             DropDownItemTemplate="{StaticResource ProductSearchAutoComplete}"
                                             TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
+                                            FontSize="16"
                                             SelectionChanged="txtProducts_SelectionChanged" />
                 <telerik:RadWatermarkTextBox x:Name="txtPrice"
                                              Grid.Column="1"
@@ -193,6 +187,7 @@
                                              Margin="3"
                                              SelectionOnFocus="SelectAll"
                                              WatermarkContent="Price"
+                                             FontSize="16"
                                              Text="{Binding CurrentCartItem.UnitPrice, StringFormat={}{0:C}}" />
                 <telerik:RadWatermarkTextBox x:Name="txtQuantity"
                                              Grid.Column="2"
@@ -200,11 +195,12 @@
                                              Margin="3"
                                              SelectionOnFocus="SelectAll"
                                              WatermarkContent="Qty"
+                                             FontSize="16"
                                              Text="{Binding CurrentCartItem.Quantity, Mode=TwoWay}" />
                 <StackPanel Orientation="Horizontal"
                             Grid.Column="3"
                             HorizontalAlignment="Stretch">
-                    <Label Content="Taxable"/>
+                    <Label Content="Taxable" FontSize="16"/>
                     <CheckBox IsChecked="{Binding CurrentCartItem.IsTaxable}"
                               IsTabStop="False"/>
                 </StackPanel>
@@ -212,6 +208,7 @@
                            Grid.Column="4"
                            HorizontalAlignment="Stretch"
                            Margin="3"
+                           FontSize="16"
                            TextAlignment="Right"/>
                 <Button x:Name="btnAddItem"
                         Content="Add Item"
@@ -230,6 +227,7 @@
                              ShowColumnSortIndexes="False"
                              AutoGenerateColumns="False"
                              ShowGroupPanel="False"
+                             FontSize="18"
                              CanUserSelect="False" >
 
             <telerik:RadGridView.Columns>
@@ -245,7 +243,7 @@
                 <telerik:GridViewColumn>
                     <telerik:GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <telerik:RadButton Content="Remove" Command="{Binding RemoveItem}" />
+                            <telerik:RadButton Content="Remove" Command="{Binding RemoveItem}" Height="50" />
                         </DataTemplate>
                     </telerik:GridViewColumn.CellTemplate>
                 </telerik:GridViewColumn>

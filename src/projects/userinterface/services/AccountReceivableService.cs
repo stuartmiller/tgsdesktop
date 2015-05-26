@@ -4,12 +4,38 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace tgsdesktop.services {
     public class AccountReceivableService : ServiceBase, infrastructure.IAccountReceivableService {
 
-        static Dictionary<int, List<models.Person>> _seasonAccounts = new Dictionary<int, List<models.Person>>();
+        static readonly object _refreshLock = new object();
+        static DateTime _lastRefresh = DateTime.UtcNow.AddYears(-100);
+        static Dictionary<int, decimal> _accountBalances;
+        static System.Timers.Timer _timer;
+
+        public AccountReceivableService() {
+            lock (_refreshLock)	{
+                if (_accountBalances == null){
+		            _accountBalances = new Dictionary<int, decimal>();
+                    this.RefreshBalances();
+
+                    _timer = new System.Timers.Timer(30000);
+                    _timer.Elapsed += _timer_Elapsed;
+                    _timer.Enabled = true;
+                    _timer.Start();
+                }
+            }
+        }
+
+        void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            try {
+                this.RefreshBalances();
+            } catch { }
+        }
+
+        static readonly Dictionary<int, List<models.Person>> _seasonAccounts = new Dictionary<int, List<models.Person>>();
 
         public IList<models.Person> GetPeople(models.PersonType? typeFilter = null, int? seasonId = null) {
 
@@ -27,7 +53,6 @@ namespace tgsdesktop.services {
     CAST(CASE WHEN cs.personId IS NOT NULL THEN 1 ELSE 0 END AS bit) AS isCamper,
     CAST(CASE WHEN ps.personId IS NOT NULL THEN 1 ELSE 0 END AS bit) AS isParent,
     CAST(CASE WHEN ss.personId IS NOT NULL THEN 1 ELSE 0 END AS bit) AS isStaff,
-    ISNULL(ab.signedBalance,0),
     p.cmFamilyRole,
     cs.cmSessionId, sess.name, cs.cmCabinId, c.name
 FROM tbl_person p
@@ -54,13 +79,13 @@ ORDER BY p.lastName, p.firstName";
                             IsCamper = dr.GetBoolean(++i),
                             IsParent = dr.GetBoolean(++i),
                             IsStaff = dr.GetBoolean(++i),
-                            Balance = dr.IsDBNull(++i) ? 0 : dr.GetDecimal(i),
                             HouseholdRoleId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i)
                         };
                         int? sessionId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i);
                         var sessionName = dr.IsDBNull(++i) ? null : dr.GetString(i);
                         var cabinId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i);
                         var cabinName = dr.IsDBNull(++i) ? null : dr.GetString(i);
+                        p.Balance = _accountBalances.ContainsKey(p.Id) ? _accountBalances[p.Id] : 0m;
 
                         if (p.IsCamper) {
                             var camper = new models.Camper {
@@ -150,6 +175,38 @@ WHERE EXISTS(SELECT * FROM tbl_person WHERE householdId=hhld.id)";
             gjeParam.Value = gjeDt;
 
             this.Execute();
+        }
+
+        internal void RefreshBalances() {
+                var db = new Db();
+                db.Command.CommandText = "SELECT GETUTCDATE()";
+                var lastRefhresh = DateTime.SpecifyKind(db.ExecuteScaler<DateTime>(), DateTimeKind.Utc);
+                db.Reset();
+                db.Command.CommandText = @"SELECT p.id AS personId,
+	ISNULL((SELECT SUM(signedAmt) FROM dbo.view_generalJournal WHERE personId=p.id AND accountId=101),0) AS balance
+FROM tbl_person p
+WHERE EXISTS(SELECT * FROM dbo.tbl_generalJournal WHERE personId=p.id)
+	AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.reversedUtc END) FROM dbo.tbl_transaction t
+		INNER JOIN dbo.tbl_generalJournal gj ON t.id=gj.txnId WHERE gj.personId=p.id)>=@date";
+                db.Command.Parameters.AddWithValue("@date", _lastRefresh);
+ 
+                var accountBalances = new Dictionary<int, decimal>();
+
+                using (var dr = db.ExecuteReader()) {
+                    while (dr.Read()) {
+                        int id = dr.GetInt32(0);
+                        var balance = dr.GetDecimal(1);
+                        accountBalances.Add(id, balance);
+                        var person = _seasonAccounts.SelectMany(x => x.Value).SingleOrDefault(x => x.Id == id);
+                        if (person != null)
+                            person.Balance = balance;
+                    }
+                }
+                lock (_refreshLock) {
+                    foreach (var key in accountBalances.Keys)
+                        _accountBalances[key] = accountBalances[key];
+                    _lastRefresh = lastRefhresh;
+                }
         }
 
     }

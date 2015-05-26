@@ -14,7 +14,7 @@
                 <Button Content="Account Detail" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToAccountDetails}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Content="General Journal Entry" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding MakeGeneralJournalEntries}" />
+                <Button Content="Sales Invoice (Simple)" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding GoToSalesInvoice2}" />
                 <Button Content="Print Labels" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding PrintLabels}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">

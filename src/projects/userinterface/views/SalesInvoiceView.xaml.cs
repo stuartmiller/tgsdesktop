@@ -24,6 +24,8 @@ namespace tgsdesktop.views {
 
             this.WhenAnyValue(x => x.ViewModel.CurrentCartItem.IsComplete)
                 .Subscribe(x => btnAddItem.IsDefault = x);
+            this.WhenAnyObservable(x => x.ViewModel.AddItem)
+                .Subscribe(_ => this.txtProducts.Focus());
             this.Loaded += SalesInvoiceView_Loaded;
 
         }
@@ -44,9 +46,6 @@ namespace tgsdesktop.views {
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register("ViewModel", typeof(viewmodels.ISalesInvoiceViewModel), typeof(SalesInvoiceView), new PropertyMetadata(null));
 
-        private void acProducts_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        }
-
         private void txtCustomers_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (txtCustomers.SelectedItem != null)
                 txtProducts.Focus();
@@ -54,14 +53,15 @@ namespace tgsdesktop.views {
 
         private void txtProducts_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 
-            if (this.ViewModel.SelectedProduct == null) {
-                if (!this.txtProducts.IsFocused)
-                    this.txtProducts.Focus();
-            } else {
+            if (this.ViewModel.SelectedProduct != null) {
                 if (this.ViewModel.SelectedProduct.Price.HasValue)
                     this.txtQuantity.Focus();
                 else
                     this.txtPrice.Focus();
+            } else {
+                return;
+                if (!this.txtProducts.IsFocused)
+                    this.txtProducts.Focus();
             }
         }
 

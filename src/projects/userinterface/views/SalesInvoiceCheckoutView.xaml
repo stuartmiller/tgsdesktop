@@ -7,43 +7,47 @@
              mc:Ignorable="d">
     <Grid Width="800">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Sales Invoice Checkout" />
+            <TextBlock Text="Sales Invoice Checkout" FontSize="21" FontWeight="Bold" TextAlignment="Center" Width="800" />
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Invoice #: "/>
-                <TextBlock Text="{Binding InvoiceViewModel.InvoiceNumber}"/>
+                <TextBlock Text="Invoice #: " FontSize="20" FontWeight="Bold"/>
+                <TextBlock Text="{Binding InvoiceNumber}" FontSize="20" FontWeight="Bold" Foreground="Red" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Date: "/>
-                <TextBlock Text="{Binding InvoiceViewModel.EffectiveDate, StringFormat=d}"/>
+                <TextBlock Text="Date: " FontSize="18" />
+                <TextBlock Text="{Binding InvoiceViewModel.EffectiveDate, StringFormat=d}" FontSize="18"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Customer: "/>
-                <TextBlock Text="{Binding InvoiceViewModel.SelectedCustomer.Name}"/>
+                <TextBlock Text="Customer: " FontSize="18"/>
+                <TextBlock Text="{Binding InvoiceViewModel.SelectedCustomer.Name}" FontSize="18"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Total: "/>
-                <TextBlock Text="{Binding InvoiceViewModel.Total, StringFormat={}{0:C}}"/>
+                <TextBlock Text="Total: " FontSize="18"/>
+                <TextBlock Text="{Binding InvoiceViewModel.Total, StringFormat={}{0:C}}" FontSize="18"/>
             </StackPanel>
             <ItemsControl ItemsSource="{Binding Payments}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <telerik:RadComboBox ItemsSource="{Binding PaymentMethods}"
-                                     Width="400"
+                                     Width="400" FontSize="18"
+                                                 Margin="0,3,0,3"
                                      SelectedItem="{Binding PaymentMethod, Mode=TwoWay}"
                                      DisplayMemberPath="Value"
                                      SelectedValuePath="Key"/>
                             <telerik:RadWatermarkTextBox WatermarkContent="Amount"
-                                             Width="150"
+                                             Width="150" FontSize="18"
+                                                 Margin="0,3,0,3"
                                              Text="{Binding Amount, Mode=TwoWay, StringFormat={}{0:C}}"/>
                             <telerik:RadWatermarkTextBox WatermarkContent="Check Number"
-                                             Width="250"
+                                             Width="250" FontSize="18" Height="50"
+                                                 Margin="0,3,0,3"
                                              IsEnabled="{Binding CheckNumberEnabled}"
                                              Text="{Binding CheckNumber}"/>
                             <telerik:RadWatermarkTextBox Grid.Row="1"
-                                             Grid.ColumnSpan="3"
-                                             WatermarkContent="Memo"
-                                             Text="{Binding TransactionMemo}"/>
+                                                         Grid.ColumnSpan="3"
+                                                         FontSize="18"
+                                                         WatermarkContent="Memo"
+                                                         Text="{Binding TransactionMemo}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -52,24 +56,37 @@
                 <telerik:RadButton Content="Print"
                                    Command="{Binding Print}"
                                    IsDefault="True"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Height="75"
                                    Width="400"
                                    Visibility="{Binding PrintButtonVisibility}"/>
                 <telerik:RadButton Content="Save"
                                    Command="{Binding Save}"
                                    IsDefault="True"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Height="75"
                                    Width="400"
                                    Visibility="{Binding SaveButtonVisibility}" />
                 <telerik:RadButton Content="Back to Invoice"
                                    Command="{Binding Cancel}"
                                    IsCancel="True"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Height="75"
                                    Width="400"
                                    Visibility="{Binding SaveButtonVisibility}"/>
                 <telerik:RadButton Content="New Invoice"
                                    Command="{Binding NewInvoice}"
                                    IsCancel="True"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Height="75"
                                    Width="400"
                                    Visibility="{Binding PrintButtonVisibility}"/>
             </StackPanel>
+            <TextBlock Text="{Binding DebugOutput}" />
         </StackPanel>
 
     </Grid>

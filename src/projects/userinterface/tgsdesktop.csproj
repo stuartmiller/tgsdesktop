@@ -180,6 +180,7 @@
     <Reference Include="Telerik.Reporting, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be">
       <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\bin\Telerik.Reporting.dll</HintPath>
       <SpecificVersion>True</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Telerik.ReportViewer.Wpf, Version=9.0.15.225, Culture=neutral, PublicKeyToken=a9d7983dfcc261be">
       <HintPath>C:\Program Files (x86)\Telerik\Reporting Q1 2015\bin\Telerik.ReportViewer.Wpf.dll</HintPath>
@@ -215,6 +216,7 @@
     <Compile Include="dal\DbLocal.cs" />
     <Compile Include="dal\GlobalSettingsAccessor.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="extensions\DateTimeExtensions.cs" />
     <Compile Include="extensions\KeyValuePairExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -248,6 +250,7 @@
     <Compile Include="reporting\SalesInvoice.Designer.cs">
       <DependentUpon>SalesInvoice.cs</DependentUpon>
     </Compile>
+    <Compile Include="services\Db.cs" />
     <Compile Include="services\SalesInvoiceService.cs" />
     <Compile Include="services\transaction\GeneralJournalService.cs" />
     <Compile Include="services\ServiceBase.cs" />
@@ -257,6 +260,7 @@
     <Compile Include="utilities\ResourceAccessor.cs" />
     <Compile Include="utilities\Encryption.cs" />
     <Compile Include="viewmodels\IDialogViewModel.cs" />
+    <Compile Include="viewmodels\SalesInvoice2ViewModel.cs" />
     <Compile Include="viewmodels\SalesInvoiceViewModel.cs" />
     <Compile Include="viewmodels\ProductViewModel.cs" />
     <Compile Include="viewmodels\SalesInviceCheckoutViewModel.cs" />
@@ -268,6 +272,9 @@
     <Compile Include="viewmodels\transaction\GeneralJournalViewModel.cs" />
     <Compile Include="viewmodels\transaction\HouseholdViewModel.cs" />
     <Compile Include="viewmodels\transaction\PaymentViewModel.cs" />
+    <Compile Include="views\SalesInvoice2View.xaml.cs">
+      <DependentUpon>SalesInvoice2View.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\SalesInvoiceView.xaml.cs">
       <DependentUpon>SalesInvoiceView.xaml</DependentUpon>
     </Compile>
@@ -306,7 +313,6 @@
     <Compile Include="infrastructure\ITransactionService.cs" />
     <Compile Include="infrastructure\ITypeFinder.cs" />
     <Compile Include="models\AccountReceivableTransaction.cs" />
-    <Compile Include="models\ArAccount.cs" />
     <Compile Include="models\CamperTransaction.cs" />
     <Compile Include="models\CmLinkedPerson.cs" />
     <Compile Include="models\InvalidLoginException.cs" />
@@ -378,6 +384,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="views\SalesInvoice2View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="views\SalesInvoiceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

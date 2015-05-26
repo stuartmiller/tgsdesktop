@@ -53,7 +53,8 @@ namespace tgsdesktop.services.transaction {
             return _accountList.Where(x => includeArchived ? true : !x.Archived.HasValue).ToList();
         }
 
-        public models.transaction.Transaction AddTransaction(models.transaction.Transaction transaction) {
+        public models.transaction.Transaction AddTransaction(models.transaction.Transaction transaction,
+            IEnumerable<tgsdesktop.models.transaction.Payment> payments) {
 
             this.Reset();
             this.Command.CommandText = "proc_addTransactionJournalEntries";
@@ -79,7 +80,7 @@ namespace tgsdesktop.services.transaction {
 
             this.Command.Parameters.AddWithValue("@userId", User.Person.Id);
 
-            foreach (var pmt in transaction.Payments)
+            foreach (var pmt in payments)
                 pmtDt.Rows.Add(pmt.MethodId, pmt.Amount, pmt.CheckNumber);
             foreach (var je in transaction.JournalEntries)
                 gjeDt.Rows.Add(je.AccountId, je.SeasonId, je.Amount, je.IsCredit, je.CustomerId, je.Memo);
@@ -148,27 +149,27 @@ FROM tbl_generalJournal gj
             }
 
 
-            this.Command.CommandText = @"SELECT p.id, p.txnId, p.methodId, p.amount, p.checkNo, p.depositId, p.createdUtc, p.orderIndex
-FROM tbl_payment p
-    INNER JOIN @keys k ON p.txnId=k.id";
+//            this.Command.CommandText = @"SELECT p.id, p.txnId, p.methodId, p.amount, p.checkNo, p.depositId, p.createdUtc, p.orderIndex
+//FROM tbl_payment p
+//    INNER JOIN @keys k ON p.txnId=k.id";
 
-            using (var dr = this.ExecuteReader()) {
-                while (dr.Read()) {
-                    var i = 0;
-                    var id = dr.GetInt32(i++);
-                    var txnId = dr.GetInt32(i++);
-                    retVal[txnId].Payments.Add(new models.transaction.Payment {
-                        Id = id,
-                        TransactionId = txnId,
-                        Method = (models.transaction.PaymentMethod)dr.GetInt32(i++),
-                        Amount = dr.GetDecimal(i),
-                        CheckNumber = dr.IsDBNull(++i) ? null : dr.GetString(i),
-                        DepositId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
-                        Created = DateTime.SpecifyKind(dr.GetDateTime(++i), DateTimeKind.Utc),
-                        DepositOrderIndex = dr.GetInt32(++i)
-                    });
-                }
-            }
+//            using (var dr = this.ExecuteReader()) {
+//                while (dr.Read()) {
+//                    var i = 0;
+//                    var id = dr.GetInt32(i++);
+//                    var txnId = dr.GetInt32(i++);
+//                    retVal[txnId].Payments.Add(new models.transaction.Payment {
+//                        Id = id,
+//                        TransactionId = txnId,
+//                        Method = (models.transaction.PaymentMethod)dr.GetInt32(i++),
+//                        Amount = dr.GetDecimal(i),
+//                        CheckNumber = dr.IsDBNull(++i) ? null : dr.GetString(i),
+//                        DepositId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+//                        Created = DateTime.SpecifyKind(dr.GetDateTime(++i), DateTimeKind.Utc),
+//                        DepositOrderIndex = dr.GetInt32(++i)
+//                    });
+//                }
+//            }
 
             return retVal.Values.ToList();
 

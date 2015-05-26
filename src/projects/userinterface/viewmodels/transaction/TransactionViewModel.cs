@@ -22,8 +22,8 @@ namespace tgsdesktop.viewmodels.transaction {
                     null : (decimal?)transaction.JournalEntries.Sum(x => x.Amount);
                 this.InvoiceNumber = transaction.InvoiceNumber;
                 this.Memo = transaction.Memo;
-                if (transaction.Payments.Count > 0)
-                    this.Payments.AddRange(transaction.Payments.Select(p => new PaymentViewModel(p)));
+                //if (transaction.Payments.Count > 0)
+                //    this.Payments.AddRange(transaction.Payments.Select(p => new PaymentViewModel(p)));
                 if (transaction.JournalEntries.Count > 0)
                     this.JouranlEntries.AddRange(transaction.JournalEntries.Select(je => new GeneralJournalViewModel(je)));
             }

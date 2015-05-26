@@ -1,0 +1,101 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" x:Class="tgsdesktop.views.SalesInvoice2View" 
+             mc:Ignorable="d"
+             xmlns:tgs="clr-namespace:tgsdesktop.views"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <tgs:NavigationView Grid.Row="0"  x:Name="NavigationBar" />
+        <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Date: " />
+                <telerik:RadDatePicker Width="150"
+                                       SelectedValue="{Binding InvoiceDate, Mode=TwoWay}"
+                                       TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Invoice Number: " />
+                <telerik:RadWatermarkTextBox Name="txtInvoiceNumber"
+                                             Width="150"
+                                             Text="{Binding InvoiceNumber, StringFormat=\{0:C\}}"
+                                             SelectionOnFocus="SelectAll"
+                                             TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Taxable Amt: " />
+                <telerik:RadWatermarkTextBox Width="150"
+                         Text="{Binding TaxableAmt, StringFormat=\{0:C\}}"
+                         SelectionOnFocus="SelectAll"
+                         TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="How many stamps: " />
+                <telerik:RadWatermarkTextBox Width="150"
+                         Text="{Binding StampsQty}"
+                         SelectionOnFocus="SelectAll"
+                         TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Discount: " />
+                <telerik:RadWatermarkTextBox Width="150"                                               
+                         Text="{Binding DiscountPercentage, StringFormat={}{0}%}"
+                         SelectionOnFocus="SelectAll"
+                         TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Subtotal: " />
+                <TextBlock Width="150" Text="{Binding Subtotal, StringFormat=\{0:C\}}" TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Less Discount: " />
+                <TextBlock Width="150" Text="{Binding Discount, StringFormat=\{0:C\}}" TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Sales Tax: " />
+                <TextBlock Width="150" Text="{Binding SalesTax, StringFormat=\{0:C\}}" TextAlignment="Right" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Total: " />
+                <TextBlock Width="150" Text="{Binding Total, StringFormat=\{0:C\}}" TextAlignment="Right" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Payments}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <telerik:RadComboBox ItemsSource="{Binding PaymentMethods}"
+                                                 SelectedItem="{Binding PaymentMethod, Mode=TwoWay}"
+                                                 DisplayMemberPath="Value"
+                                                 SelectedValuePath="Key"
+                                                 IsTextSearchEnabled="True"
+                                                 OpenDropDownOnFocus="True"
+                                                 Width="100" />
+                            <telerik:RadWatermarkTextBox WatermarkContent="Amount"
+                                                         Text="{Binding Amount, StringFormat={}{0:C}}"
+                                                         SelectionOnFocus="SelectAll"
+                                                         Width="75" />
+                            <telerik:RadWatermarkTextBox WatermarkContent="Check #"
+                                                         Text="{Binding CheckNumber}"
+                                                         IsEnabled="{Binding CheckNumberEnabled}"
+                                                         SelectionOnFocus="SelectAll"
+                                                         Width="75" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadButton Width="250"
+                                   Content="Save"
+                                   IsDefault="{Binding InvoiceInBalance}"
+                                   Command="{Binding SaveTransaction}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

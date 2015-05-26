@@ -47,6 +47,7 @@ namespace tgsdesktop.viewmodels {
         public SalesInvoiceItemViewModel(decimal taxRate) {
 
             this.Quantity = 1;
+            this.IsTaxable = true;
 
             var total = this.WhenAny(
                 vm => vm.Quantity,
@@ -68,8 +69,8 @@ namespace tgsdesktop.viewmodels {
             //    });
             //this._tax = tax.ToProperty(this, vm => vm.Tax);
 
-            this.WhenAnyValue(vm => vm.UnitPrice, vm => vm.Quantity, vm => vm.Description)
-                .Select(x => x.Item1.HasValue && x.Item2.HasValue && !string.IsNullOrEmpty(x.Item3))
+            this.WhenAnyValue(vm => vm.UnitPrice, vm => vm.Quantity, vm => vm.Description, vm => vm.Description2)
+                .Select(x => x.Item1.HasValue && x.Item2.HasValue && (!string.IsNullOrEmpty(x.Item3) || !string.IsNullOrEmpty(x.Item4)))
                 .ToProperty(this, x => x.IsComplete, out _isComplete);
 
             this.RemoveItem = ReactiveCommand.Create();
@@ -82,48 +83,30 @@ namespace tgsdesktop.viewmodels {
         }
 
         int? _itemId;
-        public int? ItemId {
-            get { return _itemId; }
-            set { this.RaiseAndSetIfChanged(ref _itemId, value); }
-        }
+        public int? ItemId { get { return _itemId; } set { this.RaiseAndSetIfChanged(ref _itemId, value); } }
 
         int? _invoiceId;
-        public int? InvoiceId {
-            get { return _invoiceId; }
-            set { this.RaiseAndSetIfChanged(ref _invoiceId, value); }
-        }
+        public int? InvoiceId { get { return _invoiceId; } set { this.RaiseAndSetIfChanged(ref _invoiceId, value); } }
 
         string _description;
-        public string Description {
-            get { return _description; }
-            set {
-                this.RaiseAndSetIfChanged(ref _description, value);
-            }
-        }
+        public string Description { get { return _description; } set { this.RaiseAndSetIfChanged(ref _description, value); } }
+
+        string _description2;
+        public string Description2 { get { return _description2; } set {
+            this.RaiseAndSetIfChanged(ref _description2, value);
+        } }
 
         decimal? _unitCost;
-        public decimal? UnitCost {
-            get { return _unitCost; }
-            set { this.RaiseAndSetIfChanged(ref _unitCost, value); }
-        }
+        public decimal? UnitCost { get { return _unitCost; } set { this.RaiseAndSetIfChanged(ref _unitCost, value); } }
 
         decimal? _unitPrice;
-        public decimal? UnitPrice {
-            get { return _unitPrice; }
-            set { this.RaiseAndSetIfChanged(ref _unitPrice, value); }
-        }
+        public decimal? UnitPrice { get { return _unitPrice; } set { this.RaiseAndSetIfChanged(ref _unitPrice, value); } }
 
         decimal _discount;
-        public decimal Discount {
-            get { return _discount; }
-            set { this.RaiseAndSetIfChanged(ref _discount, value); }
-        }
+        public decimal Discount { get { return _discount; } set { this.RaiseAndSetIfChanged(ref _discount, value); } }
 
         bool _isTaxable;
-        public bool IsTaxable {
-            get { return _isTaxable; }
-            set { this.RaiseAndSetIfChanged(ref _isTaxable, value); }
-        }
+        public bool IsTaxable { get { return _isTaxable; } set { this.RaiseAndSetIfChanged(ref _isTaxable, value); } }
 
         int? _quantity;
         public int? Quantity { get { return _quantity; } set { this.RaiseAndSetIfChanged(ref _quantity, value); } }

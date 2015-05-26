@@ -29,10 +29,10 @@ namespace tgsdesktop.reporting {
             this.textBox6 = new Telerik.Reporting.TextBox();
             this.textBox5 = new Telerik.Reporting.TextBox();
             this.textBox4 = new Telerik.Reporting.TextBox();
-            this.textBox3 = new Telerik.Reporting.TextBox();
             this.textBox1 = new Telerik.Reporting.TextBox();
             this.txtInvoiceNumber = new Telerik.Reporting.TextBox();
             this.textBox25 = new Telerik.Reporting.TextBox();
+            this.textBox26 = new Telerik.Reporting.TextBox();
             this.groupFooterSection1 = new Telerik.Reporting.GroupFooterSection();
             this.groupHeaderSection1 = new Telerik.Reporting.GroupHeaderSection();
             this.textBox13 = new Telerik.Reporting.TextBox();
@@ -85,7 +85,7 @@ namespace tgsdesktop.reporting {
             this.textBox19.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(5.1999998092651367D), Telerik.Reporting.Drawing.Unit.Inch(0.75841218233108521D));
             this.textBox19.Name = "textBox19";
             this.textBox19.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.79996085166931152D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
-            this.textBox19.Value = "= (Sum(Fields.unitPrice * Fields.quantity))*1.0675";
+            this.textBox19.Value = "= Fields.total";
             // 
             // shape3
             // 
@@ -145,10 +145,10 @@ namespace tgsdesktop.reporting {
             this.textBox6,
             this.textBox5,
             this.textBox4,
-            this.textBox3,
             this.textBox1,
             this.txtInvoiceNumber,
-            this.textBox25});
+            this.textBox25,
+            this.textBox26});
             this.groupHeaderSection.Name = "groupHeaderSection";
             // 
             // shape1
@@ -205,13 +205,6 @@ namespace tgsdesktop.reporting {
             this.textBox4.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.79996055364608765D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
             this.textBox4.Value = "Sold To:";
             // 
-            // textBox3
-            // 
-            this.textBox3.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3.5999999046325684D), Telerik.Reporting.Drawing.Unit.Inch(0.899921178817749D));
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(0.79996055364608765D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
-            this.textBox3.Value = "Invoice #";
-            // 
             // textBox1
             // 
             this.textBox1.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(0D), Telerik.Reporting.Drawing.Unit.Inch(0D));
@@ -223,19 +216,31 @@ namespace tgsdesktop.reporting {
             // 
             // txtInvoiceNumber
             // 
-            this.txtInvoiceNumber.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(4.4000000953674316D), Telerik.Reporting.Drawing.Unit.Inch(0.8999212384223938D));
+            this.txtInvoiceNumber.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3.6000006198883057D), Telerik.Reporting.Drawing.Unit.Inch(0.8999212384223938D));
             this.txtInvoiceNumber.Name = "txtInvoiceNumber";
-            this.txtInvoiceNumber.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(1.5999211072921753D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
-            this.txtInvoiceNumber.Value = "= Fields.invoiceNo";
+            this.txtInvoiceNumber.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.3999207019805908D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
+            this.txtInvoiceNumber.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Right;
+            this.txtInvoiceNumber.Value = "= \"Invoice #\" + Fields.invoiceNo";
             // 
             // textBox25
             // 
-            this.textBox25.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3.5999999046325684D), Telerik.Reporting.Drawing.Unit.Inch(0.30000001192092896D));
+            this.textBox25.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3.5999999046325684D), Telerik.Reporting.Drawing.Unit.Inch(0.20000000298023224D));
             this.textBox25.Name = "textBox25";
-            this.textBox25.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.4999210834503174D), Telerik.Reporting.Drawing.Unit.Inch(0.40000000596046448D));
+            this.textBox25.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.4999210834503174D), Telerik.Reporting.Drawing.Unit.Inch(0.30000001192092896D));
             this.textBox25.Style.Font.Bold = false;
             this.textBox25.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(15D);
+            this.textBox25.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Right;
             this.textBox25.Value = "= IIf(Fields.isCamper,\"CAMPER\", IIf(Fields.IsStaff,\"Staff\",\"\"))";
+            // 
+            // textBox26
+            // 
+            this.textBox26.Location = new Telerik.Reporting.Drawing.PointU(Telerik.Reporting.Drawing.Unit.Inch(3.6000006198883057D), Telerik.Reporting.Drawing.Unit.Inch(0.5D));
+            this.textBox26.Name = "textBox26";
+            this.textBox26.Size = new Telerik.Reporting.Drawing.SizeU(Telerik.Reporting.Drawing.Unit.Inch(2.4999210834503174D), Telerik.Reporting.Drawing.Unit.Inch(0.30000001192092896D));
+            this.textBox26.Style.Font.Bold = false;
+            this.textBox26.Style.Font.Size = Telerik.Reporting.Drawing.Unit.Point(12D);
+            this.textBox26.Style.TextAlign = Telerik.Reporting.Drawing.HorizontalAlign.Right;
+            this.textBox26.Value = "= Fields.sessionCabin";
             // 
             // groupFooterSection1
             // 
@@ -330,10 +335,12 @@ namespace tgsdesktop.reporting {
             // 
             // InvoiceDataSource
             // 
-            this.InvoiceDataSource.ConnectionString = "tgsdesktop.Properties.Settings.tgs1";
+            this.InvoiceDataSource.ConnectionString = "Data Source=leaf.arvixe.com;Initial Catalog=tgs_beta;User ID=stuart;Password=d33p" +
+    "br34th";
             this.InvoiceDataSource.Name = "InvoiceDataSource";
             this.InvoiceDataSource.Parameters.AddRange(new Telerik.Reporting.SqlDataSourceParameter[] {
             new Telerik.Reporting.SqlDataSourceParameter("@id", System.Data.DbType.Int32, "= Parameters.id.Value")});
+            this.InvoiceDataSource.ProviderName = "System.Data.SqlClient";
             this.InvoiceDataSource.SelectCommand = "SELECT * FROM view_report_salesInvoice WHERE id=@id";
             // 
             // SalesInvoice
@@ -389,7 +396,6 @@ namespace tgsdesktop.reporting {
         private Telerik.Reporting.TextBox textBox6;
         private Telerik.Reporting.TextBox textBox5;
         private Telerik.Reporting.TextBox textBox4;
-        private Telerik.Reporting.TextBox textBox3;
         private Telerik.Reporting.TextBox textBox1;
         private Telerik.Reporting.TextBox txtInvoiceNumber;
         private Telerik.Reporting.GroupFooterSection groupFooterSection;
@@ -410,5 +416,6 @@ namespace tgsdesktop.reporting {
         private Telerik.Reporting.TextBox textBox23;
         private Telerik.Reporting.TextBox textBox24;
         private Telerik.Reporting.TextBox textBox25;
+        private Telerik.Reporting.TextBox textBox26;
     }
 }

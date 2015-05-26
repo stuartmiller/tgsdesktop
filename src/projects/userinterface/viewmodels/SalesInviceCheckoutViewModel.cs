@@ -29,7 +29,6 @@ namespace tgsdesktop.viewmodels {
             this.Save.Subscribe(_ => {
 
                 this.SaveTransaction();
-
                 PrintButtonVisibility = Visibility.Visible;
                 SaveButtonVisibility = Visibility.Collapsed;
             });
@@ -40,13 +39,20 @@ namespace tgsdesktop.viewmodels {
             this.NewInvoice.Subscribe(_ => this.HostScreen.Router.NavigateAndReset.Execute(new SalesInvoiceViewModel(HostScreen)));
             this.Print = ReactiveCommand.Create();
             this.Print.Subscribe(_ => {
-                
-                reporting.SalesInvoice salesInvoice = new reporting.SalesInvoice();
-                salesInvoice.ReportParameters[0].Value = this.InvoiceModel.Id;
-                var processor = new Telerik.Reporting.Processing.ReportProcessor();
-                var reportSource = new Telerik.Reporting.InstanceReportSource();
-                reportSource.ReportDocument = salesInvoice;
-                processor.PrintReport(reportSource, new System.Drawing.Printing.PrinterSettings());
+
+                try {
+                    reporting.SalesInvoice salesInvoice = new reporting.SalesInvoice();
+                    var standardPrintController = new System.Drawing.Printing.StandardPrintController();
+                    salesInvoice.ReportParameters[0].Value = this.InvoiceModel.Id;
+                    var processor = new Telerik.Reporting.Processing.ReportProcessor();
+                    processor.PrintController = standardPrintController;
+                    var reportSource = new Telerik.Reporting.InstanceReportSource();
+                    reportSource.ReportDocument = salesInvoice;
+                    processor.PrintReport(reportSource, new System.Drawing.Printing.PrinterSettings());
+                } catch (Exception ex) {
+                    this.DebugOutput += (Environment.NewLine + ex.Message);
+                }
+
             });
 
             this.Payments = new ReactiveList<transaction.PaymentViewModel>();
@@ -71,6 +77,18 @@ namespace tgsdesktop.viewmodels {
                 this.PaymentMethods.Insert(1, pvm.PaymentMethod);
             }
             pvm.PaymentMethods.AddRange(this.PaymentMethods);
+        }
+
+        private string GetDefaultPrinter() {
+            System.Drawing.Printing.PrinterSettings printerSettings = new System.Drawing.Printing.PrinterSettings();
+            foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters) {
+                printerSettings.PrinterName = printer;
+                if (printerSettings.IsDefaultPrinter) {
+                    return printerSettings.PrinterName;
+                    //return printer;
+                }
+            }
+            return string.Empty;
         }
 
         public models.SalesInvoice InvoiceModel;
@@ -132,12 +150,26 @@ namespace tgsdesktop.viewmodels {
 
             var posService = infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
             this.InvoiceModel = posService.AddSalesInvoice(invoice);
+            this.InvoiceNumber = invoice.InvoiceNumber;
         }
 
 
         readonly ObservableAsPropertyHelper<decimal> _paymentTotal;
         public Decimal PaymentTotal {
             get { return _paymentTotal.Value; }
+        }
+
+        string _invoiceNumber;
+        public string InvoiceNumber {
+            get { return _invoiceNumber; }
+            set { this.RaiseAndSetIfChanged(ref _invoiceNumber, value); }
+        }
+
+
+        string _debugOutput;
+        public string DebugOutput {
+            get { return _debugOutput; }
+            set { this.RaiseAndSetIfChanged(ref _debugOutput, value); }
         }
 
     }

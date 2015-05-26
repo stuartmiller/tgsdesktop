@@ -24,7 +24,7 @@ namespace tgsdesktop {
                 case models.transaction.PaymentMethod.Visa:
                     return new KeyValuePair<int, string>((int)paymentMethod, "Visa");
                 default:
-                    return new KeyValuePair<int, string>(0, "Choose a payment method");
+                    return new KeyValuePair<int, string>(0, "Payment method");
             }
         }
 

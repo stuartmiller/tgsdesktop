@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace tgsdesktop.viewmodels {
 
@@ -13,6 +14,7 @@ namespace tgsdesktop.viewmodels {
         ProductViewModel SelectedProduct { get; set; }
         SalesInvoiceItemViewModel CurrentCartItem { get; }
 
+        ReactiveCommand<object> AddItem { get; }
         ReactiveCommand<object> Save { get; }
     }
 
@@ -26,6 +28,24 @@ namespace tgsdesktop.viewmodels {
             this.EffectiveDate = DateTime.Now;
 
             this.Customers = new ReactiveList<transaction.CustomerViewModel>();
+            this.WhenAnyValue(vm => vm.SelectedCustomer).Subscribe(c => {
+                if (c == null)
+                    this.CustomerInfo = null;
+                else {
+                    if (c.PersonModel.IsCamper) {
+                        var camper = c.PersonModel as models.Camper;
+                        var age = camper.Dob.GetAge();
+                        var sessionName = camper.Session.Name;
+                        var cabinName = camper.Cabin == null ? null : camper.Cabin.Name;
+                        this.CustomerInfo = new CustomerInfoViewModel {
+                            InfoHeader = c.Name,
+                            InfoLine1 = sessionName + (cabinName == null ? string.Empty : " / " + cabinName),
+                            InfoLine2 = age.HasValue ? (camper.Dob.Value.ToShortDateString() + " / " + camper.Dob.GetAge().Value.ToString()) : string.Empty,
+                            InfoLine3 = camper.Household.City + ", " + camper.Household.StateProvince
+                        };
+                    }
+                }
+            });
 
             var posService = infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
             this.Products = new ReactiveList<ProductViewModel>();
@@ -36,9 +56,10 @@ namespace tgsdesktop.viewmodels {
 
             var settingsAccessor = infrastructure.IocContainer.Resolve<infrastructure.IGlobalSettingsAccessor>();
             this.SalesTaxRate = settingsAccessor.SalesTaxRate;
+            this.CurrentCartItem = new SalesInvoiceItemViewModel(this.SalesTaxRate);
 
             this.WhenAnyObservable(vm => vm.Items.CountChanged)
-                .Select(_ => this.Items.Count == 0 ? 0m : decimal.Round((this.Items.Where(i => i.IsTaxable).Sum(i => i.Total ) * this.SalesTaxRate),2))
+                .Select(_ => this.Items.Count == 0 ? 0m : decimal.Round((this.Items.Where(i => i.IsTaxable).Sum(i => i.Total) * this.SalesTaxRate), 2, MidpointRounding.AwayFromZero))
                 .ToProperty(this, vm => vm.SalesTax, out _salesTax);
             this.WhenAnyObservable(vm => vm.Items.CountChanged)
                 .Select(_ => this.Items.Count == 0 ? 0m : this.Items.Sum(i => i.Total))
@@ -55,10 +76,8 @@ namespace tgsdesktop.viewmodels {
 
             this.WhenAnyValue(vm => vm.SelectedProduct)
                 .Subscribe(_ => {
-                    if (this.CurrentCartItem == null)
-                        this.CurrentCartItem = new SalesInvoiceItemViewModel(this.SalesTaxRate);
                     this.CurrentCartItem.ProductId = this.SelectedProduct == null ? null : this.SelectedProduct.Id;
-                    this.CurrentCartItem.Description = this.SelectedProduct == null ? this.ProductDescription : this.SelectedProduct.Name;
+                    this.CurrentCartItem.Description = this.SelectedProduct == null ? null : this.SelectedProduct.Name;
                     this.CurrentCartItem.UnitPrice = this.SelectedProduct == null ? null : this.SelectedProduct.Price;
                     this.CurrentCartItem.UnitCost = this.SelectedProduct == null ? null : this.SelectedProduct.Cost;
                     this.CurrentCartItem.IsTaxable = this.SelectedProduct == null ? true : this.SelectedProduct.IsTaxable;
@@ -67,24 +86,34 @@ namespace tgsdesktop.viewmodels {
             this.SelectedProduct = new ProductViewModel();
             this.AddItem = ReactiveCommand.Create(this.WhenAny(
                 vm => vm.CurrentCartItem.Description,
+                vm => vm.CurrentCartItem.Description2,
                 vm => vm.CurrentCartItem.UnitPrice,
                 vm => vm.CurrentCartItem.Quantity,
-                (d, p, q) => {
-                    return !string.IsNullOrEmpty(d.GetValue())
+                (d1, d2, p, q) => {
+                    return (!string.IsNullOrEmpty(d1.GetValue()) || !string.IsNullOrEmpty(d2.GetValue()))
                         && p.GetValue().HasValue
                         && q.GetValue().HasValue;
                 }));
             this.AddItem.Subscribe(_ => {
                 var cartItem = new SalesInvoiceItemViewModel(this.SalesTaxRate) {
                     ProductId = this.CurrentCartItem.ProductId,
-                    Description = this.ProductDescription,
+                    Description = string.IsNullOrEmpty(this.CurrentCartItem.Description) ? this.CurrentCartItem.Description2 : this.CurrentCartItem.Description,
                     InvoiceId = this.CurrentCartItem.InvoiceId,
                     IsTaxable = this.CurrentCartItem.IsTaxable,
                     Quantity = this.CurrentCartItem.Quantity,
                     UnitCost = this.CurrentCartItem.UnitCost,
                     UnitPrice = this.CurrentCartItem.UnitPrice
                 };
-                this.Items.Add(cartItem);
+                var existingCartItem = this.Items.SingleOrDefault(ci => ci.Description == cartItem.Description
+                    && ci.Description2 == cartItem.Description2
+                    && ci.UnitPrice == cartItem.UnitPrice);
+                if (existingCartItem != null) {
+                    cartItem.Quantity += existingCartItem.Quantity;
+                    var index = this.Items.IndexOf(existingCartItem);
+                    this.Items.Remove(existingCartItem);
+                    this.Items.Insert(index, cartItem);
+                } else
+                    this.Items.Add(cartItem);
                 cartItem.RemoveItem.Subscribe(ci => {
                     this.Items.Remove(cartItem);
                 });
@@ -98,13 +127,8 @@ namespace tgsdesktop.viewmodels {
             });
             this.Cancel = this.RegisterNavigationCommand(() => new SalesInvoiceViewModel(HostScreen));
 
+            this.RefreshCustomers();
 
-            // get the customers, and put them in a list
-            var accountService = infrastructure.IocContainer.Resolve<infrastructure.IAccountReceivableService>();
-            this.Customers.AddRange(accountService.GetPeople(
-                models.PersonType.Camper
-                | models.PersonType.Staff
-                | models.PersonType.Other).Select(x => new transaction.CustomerViewModel(x as models.Person)));
         }
 
         private decimal SalesTaxRate { get; set; }
@@ -125,11 +149,6 @@ namespace tgsdesktop.viewmodels {
         public ProductViewModel SelectedProduct { get { return _selectedProduct; } set {
             this.RaiseAndSetIfChanged(ref _selectedProduct, value);
         } }
-        string _productDescription;
-        public string ProductDescription {
-            get { return _productDescription; }
-            set { this.RaiseAndSetIfChanged(ref _productDescription, value); }
-        }
 
         SalesInvoiceItemViewModel _currentCartItem;
         public SalesInvoiceItemViewModel CurrentCartItem { get { return _currentCartItem; } set { this.RaiseAndSetIfChanged(ref _currentCartItem, value); } }
@@ -143,6 +162,9 @@ namespace tgsdesktop.viewmodels {
         readonly ObservableAsPropertyHelper<decimal> _subTotal;
         public decimal SubTotal { get { return _subTotal.Value; } }
 
+        readonly ObservableAsPropertyHelper<decimal> _discounts;
+        public decimal Discounts { get { return _discounts.Value; } }
+
         readonly ObservableAsPropertyHelper<decimal> _salesTax;
         public decimal SalesTax { get { return _salesTax.Value; } }
 
@@ -153,5 +175,42 @@ namespace tgsdesktop.viewmodels {
         public decimal BalanceLessInvoice { get { return _balanceLessInvoice.Value; } }
 
         public override string UrlPathSegment { get { return "posregister"; } }
+
+        CustomerInfoViewModel _customerInfo;
+        public CustomerInfoViewModel CustomerInfo {
+            get { return _customerInfo; }
+            set { this.RaiseAndSetIfChanged(ref _customerInfo, value); }
+        }
+
+        void RefreshCustomers() {
+            var accountService = infrastructure.IocContainer.Resolve<infrastructure.IAccountReceivableService>();
+            this.Customers.Clear();
+            var customers = accountService.GetPeople(models.PersonType.Camper | models.PersonType.Staff)
+                .Where(c => {
+                    if (c.IsStaff)
+                        return true;
+                    else {
+                        var camper = c as models.Camper;
+                        if (camper != null)
+                            if(camper.Session.Key == 369)
+                                return true;
+                    }
+                    return false;
+                });
+
+            this.Customers.AddRange(customers.Select(x => new transaction.CustomerViewModel(x as models.Person)));
+            this.Customers.Reset();
+        }
+
+        public class CustomerInfoViewModel {
+
+            public string InfoHeader { get; set; }
+            public string InfoLine1 { get; set; }
+            public System.Windows.Visibility InfoLine1Visibility { get { return string.IsNullOrEmpty(this.InfoLine1) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
+            public string InfoLine2 { get; set; }
+            public System.Windows.Visibility InfoLine2Visibility { get { return string.IsNullOrEmpty(this.InfoLine2) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
+            public string InfoLine3 { get; set; }
+            public System.Windows.Visibility InfoLine3Visibility { get { return string.IsNullOrEmpty(this.InfoLine3) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace tgsdesktop.infrastructure {
     public interface ISalesInvoiceService {
 
         IList<models.Product> GetProducts();
+        models.Product GetItem(int itemId);
         models.SalesInvoice AddSalesInvoice(models.AddSalesInvoiceModel invoice);
     }
 }

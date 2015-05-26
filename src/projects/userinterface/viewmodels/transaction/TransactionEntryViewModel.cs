@@ -140,7 +140,8 @@ namespace tgsdesktop.viewmodels.transaction {
                     Memo = this.Memo
                 };
 
-                transaction.Payments.AddRange(this.Payments.Select(p => new models.transaction.Payment {
+                List<tgsdesktop.models.transaction.Payment> payments = new List<models.transaction.Payment>();
+                payments.AddRange(this.Payments.Select(p => new models.transaction.Payment {
                     Method = (models.transaction.PaymentMethod)p.PaymentMethod.Key,
                     Amount = p.Amount.Value,
                     CheckNumber = p.CheckNumber
@@ -153,7 +154,7 @@ namespace tgsdesktop.viewmodels.transaction {
                     Memo = je.Memo,
                     SeasonId = je.SeasonId.Value
                 }));
-                var txn = transService.AddTransaction(transaction);
+                var txn = transService.AddTransaction(transaction, payments);
                 this.Transactions.Add(new TransactionViewModel(txn));
                 this.InvoiceNumber = null;
                 this.Memo = null;

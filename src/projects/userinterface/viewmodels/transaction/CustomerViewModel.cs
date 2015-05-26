@@ -40,12 +40,11 @@ namespace tgsdesktop.viewmodels.transaction {
             infoLines.Add(sb.ToString());
             
             sb = new StringBuilder();
-            if (customer.Dob.HasValue) {
+            var age = customer.Dob.GetAge();
+            if (age.HasValue) {
                 sb.Append(customer.Dob.Value.ToString("d"));
                 sb.Append(" - ");
-                int age = DateTime.Now.Year - customer.Dob.Value.Year;
-                if (DateTime.Now.Month < customer.Dob.Value.Month || (DateTime.Now.Month == customer.Dob.Value.Month && DateTime.Now.Day < customer.Dob.Value.Day)) age--;
-                sb.Append(age);
+                sb.Append(age.Value.ToString());
                 infoLines.Add(sb.ToString());
             }
             for (int i = 0; i < infoLines.Count; i++) {
