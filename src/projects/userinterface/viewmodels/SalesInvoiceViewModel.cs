@@ -76,7 +76,8 @@ namespace tgsdesktop.viewmodels {
 
             this.WhenAnyValue(vm => vm.SelectedProduct)
                 .Subscribe(_ => {
-                    this.CurrentCartItem.ProductId = this.SelectedProduct == null ? null : this.SelectedProduct.Id;
+                    this.CurrentCartItem.ProductId = this.SelectedProduct == null ? null : this.SelectedProduct.ProductId;
+                    this.CurrentCartItem.ItemId = this.SelectedProduct == null ? null : this.SelectedProduct.ItemId;
                     this.CurrentCartItem.Description = this.SelectedProduct == null ? null : this.SelectedProduct.Name;
                     this.CurrentCartItem.UnitPrice = this.SelectedProduct == null ? null : this.SelectedProduct.Price;
                     this.CurrentCartItem.UnitCost = this.SelectedProduct == null ? null : this.SelectedProduct.Cost;
@@ -97,6 +98,7 @@ namespace tgsdesktop.viewmodels {
             this.AddItem.Subscribe(_ => {
                 var cartItem = new SalesInvoiceItemViewModel(this.SalesTaxRate) {
                     ProductId = this.CurrentCartItem.ProductId,
+                    ItemId = this.CurrentCartItem.ItemId,
                     Description = string.IsNullOrEmpty(this.CurrentCartItem.Description) ? this.CurrentCartItem.Description2 : this.CurrentCartItem.Description,
                     InvoiceId = this.CurrentCartItem.InvoiceId,
                     IsTaxable = this.CurrentCartItem.IsTaxable,

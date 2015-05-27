@@ -16,15 +16,19 @@ namespace tgsdesktop.viewmodels {
         }
         public ProductViewModel(models.Product product) : this() {
 
-            this.Id = product.Id;
+            this.ProductId = product.ProductId;
+            this.ItemId = product.ItemId;
             this.Name = product.Name;
             this.Price = product.Price;
             this.Cost = product.Cost;
             this.IsTaxable = product.IsTaxable;
         }
 
-        int? _id;
-        public int? Id { get { return _id; } set { this.RaiseAndSetIfChanged(ref _id, value); } }
+        int? _productId;
+        public int? ProductId { get { return _productId; } set { this.RaiseAndSetIfChanged(ref _productId, value); } }
+
+        int? _itemId;
+        public int? ItemId { get { return _itemId; } set { this.RaiseAndSetIfChanged(ref _itemId, value); } }
 
         string _name;
         public string Name { get { return _name; } set { this.RaiseAndSetIfChanged(ref _name, value); } }
@@ -79,7 +83,9 @@ namespace tgsdesktop.viewmodels {
         int? _productId;
         public int? ProductId {
             get { return _productId; }
-            set { this.RaiseAndSetIfChanged(ref _productId, value); }
+            set {
+                this.RaiseAndSetIfChanged(ref _productId, value);
+            }
         }
 
         int? _itemId;

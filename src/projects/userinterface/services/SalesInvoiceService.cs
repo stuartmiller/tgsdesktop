@@ -21,8 +21,7 @@ WHERE id=@itemId";
                 while (dr.Read()) {
                     var i = 0;
                     retVal = new models.Product {
-                        Id = dr.GetInt32(i++),
-                        IsWebProduct = false,
+                        ItemId = dr.GetInt32(i++),
                         Name = dr.GetString(i),
                         Cost = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
                         Price = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
@@ -45,8 +44,7 @@ WHERE Published=1 AND Deleted=0";
                 while (dr.Read()) {
                     var i = 0;
                     retVal.Add(new models.Product {
-                        Id = dr.GetInt32(i++),
-                        IsWebProduct = true,
+                        ProductId = dr.GetInt32(i++),
                         Name = dr.GetString(i++),
                         Cost = dr.GetDecimal(i++),
                         Price = dr.GetDecimal(i++),
@@ -63,8 +61,7 @@ FROM tbl_salesItem i";
                 while (dr.Read()) {
                     var i = 0;
                     retVal.Add(new models.Product {
-                        Id = dr.GetInt32(i++),
-                        IsWebProduct = false,
+                        ItemId = dr.GetInt32(i++),
                         Name = dr.GetString(i),
                         Cost = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
                         Price = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),

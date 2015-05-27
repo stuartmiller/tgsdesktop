@@ -96,7 +96,8 @@ namespace tgsdesktop.viewmodels {
                 if (this.StampsQty > 0)
                     item.Items.Add(new models.AddSalesInvoiceModel.Item {
                         Description = "Stamps",
-                        ItemId = this.Stamps.Id,
+                        ProductId = this.Stamps.ProductId,
+                        ItemId = this.Stamps.ItemId,
                         IsTaxable = false,
                         Price = this.Stamps.Price.Value,
                         Quantity = this.StampsQty
