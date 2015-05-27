@@ -117,40 +117,40 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="190"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Width="60" Text="Subtotal: " FontSize="12" />
-                    <TextBlock Text="{Binding SubTotal, StringFormat={}{0:C}}" FontSize="12" />
+                    <TextBlock Width="60" Text="Subtotal: " FontSize="14" />
+                    <TextBlock Text="{Binding SubTotal, StringFormat={}{0:C}}" FontSize="14" />
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Width="60" Text="Tax: " FontSize="12" />
-                    <TextBlock Text="{Binding SalesTax, StringFormat={}{0:C}}" FontSize="12" />
+                    <TextBlock Width="60" Text="Tax: " FontSize="14" />
+                    <TextBlock Text="{Binding SalesTax, StringFormat={}{0:C}}" FontSize="14" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Width="60" Text="Total: " FontSize="12" />
-                    <TextBlock Text="{Binding Total, StringFormat={}{0:C}}" FontSize="12" />
+                    <TextBlock Width="60" Text="Total: " FontSize="14" />
+                    <TextBlock Text="{Binding Total, StringFormat={}{0:C}}" FontSize="14" />
                 </StackPanel>
                 <Grid Grid.Column="1" Grid.RowSpan="5">
                     <StackPanel Orientation="Vertical" Margin="3">
-                        <TextBlock Text="{Binding CustomerInfo.InfoHeader}" FontSize="14" FontWeight="Bold" />
-                        <TextBlock Text="{Binding CustomerInfo.InfoLine1}" FontSize="12" />
-                        <TextBlock Text="{Binding CustomerInfo.InfoLine2}" Visibility="{Binding CustomerInfo.InfoLine2Visibility}" FontSize="12" />
-                        <TextBlock Text="{Binding CustomerInfo.InfoLine3}" Visibility="{Binding CustomerInfo.InfoLine3Visibility}" FontSize="12" />
-                        <TextBlock Text="{Binding CustomerInfo.InfoLine4}" Visibility="{Binding CustomerInfo.InfoLine4Visibility}" FontSize="12" />
-                        <TextBlock Text="{Binding CustomerInfo.InfoLine5}" Visibility="{Binding CustomerInfo.InfoLine5Visibility}" FontSize="12" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoHeader}" FontSize="16" FontWeight="Bold" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine1}" FontSize="14" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine2}" Visibility="{Binding CustomerInfo.InfoLine2Visibility}" FontSize="14" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine3}" Visibility="{Binding CustomerInfo.InfoLine3Visibility}" FontSize="14" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine4}" Visibility="{Binding CustomerInfo.InfoLine4Visibility}" FontSize="14" />
+                        <TextBlock Text="{Binding CustomerInfo.InfoLine5}" Visibility="{Binding CustomerInfo.InfoLine5Visibility}" FontSize="14" />
                     </StackPanel>
                 </Grid>
                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                    <TextBlock Width="120" Text="Current Balance: " FontSize="12" />
-                    <TextBlock Text="{Binding SelectedCustomer.Balance, StringFormat={}{0:C}}" FontSize="12" />
+                    <TextBlock Width="120" Text="Current Balance: " FontSize="16" />
+                    <TextBlock Text="{Binding SelectedCustomer.Balance, StringFormat={}{0:C}}" FontSize="16" />
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal">
-                    <TextBlock Width="120" Text="Balance less invoice: " FontSize="12" />
-                    <TextBlock Text="{Binding BalanceLessInvoice, StringFormat={}{0:C}}" FontSize="12" />
+                    <TextBlock Width="120" Text="Balance less invoice: " FontSize="16" />
+                    <TextBlock Text="{Binding BalanceLessInvoice, StringFormat={}{0:C}}" FontSize="16" />
                 </StackPanel>
             </Grid>
         </Grid>

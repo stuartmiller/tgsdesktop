@@ -21,6 +21,9 @@ namespace tgsdesktop.viewmodels {
             this.InvoiceDate = DateTime.Now;
             this.InvoiceNumber = DateTime.Now.ToString("Hmmssff");
 
+            this.Customers = new ReactiveList<transaction.CustomerViewModel>();
+            this.RefreshCustomers();
+
             var salesTaxRate = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.IGlobalSettingsAccessor>().SalesTaxRate;
 
             this.Payments = new ReactiveList<transaction.PaymentViewModel>();
@@ -108,9 +111,13 @@ namespace tgsdesktop.viewmodels {
                         CheckNumber = p.CheckNumber,
                         Method = (models.transaction.PaymentMethod)p.PaymentMethod.Key
                     });
+                if (SelectedCustomer != null) {
+                    item.Person = this.SelectedCustomer.PersonModel;
+                }
                 svc.AddSalesInvoice(item);
 
                 this.InvoiceNumber = DateTime.Now.ToString("Hmmssff");
+                this.SelectedCustomer = null;
                 this.TaxableAmt = 0;
                 this.DiscountPercentage = 0;
                 this.StampsQty = 0;
@@ -121,6 +128,7 @@ namespace tgsdesktop.viewmodels {
         }
 
         public ReactiveCommand<object> SaveTransaction { get; private set; }
+        public ReactiveList<tgsdesktop.viewmodels.transaction.CustomerViewModel> Customers { get; private set; }
 
         models.Product Stamps { get; set; }
 
@@ -134,6 +142,12 @@ namespace tgsdesktop.viewmodels {
         public string InvoiceNumber {
             get { return _invoiceNumber; }
             set { this.RaiseAndSetIfChanged(ref _invoiceNumber, value); }
+        }
+
+        tgsdesktop.viewmodels.transaction.CustomerViewModel _selectedCustomer;
+        public tgsdesktop.viewmodels.transaction.CustomerViewModel SelectedCustomer {
+            get { return _selectedCustomer; }
+            set { this.RaiseAndSetIfChanged(ref _selectedCustomer, value); }
         }
 
         decimal _taxableAmt;
@@ -173,5 +187,15 @@ namespace tgsdesktop.viewmodels {
 
         readonly ObservableAsPropertyHelper<bool> _invoiceInBalance;
         public bool InvoiceInBalance { get { return _invoiceInBalance.Value; } }
+
+
+        void RefreshCustomers() {
+            var accountService = infrastructure.IocContainer.Resolve<infrastructure.IAccountReceivableService>();
+            this.Customers.Clear();
+            var customers = accountService.GetPeople();
+
+            this.Customers.AddRange(customers.Select(x => new transaction.CustomerViewModel(x as models.Person)));
+            this.Customers.Reset();
+        }
     }
 }

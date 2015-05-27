@@ -22,7 +22,8 @@ namespace tgsdesktop.viewmodels.transaction {
                 models.transaction.PaymentMethod.Check.GetPaymentMethodKeyValuePair(),
                 models.transaction.PaymentMethod.Cash.GetPaymentMethodKeyValuePair(),
                 models.transaction.PaymentMethod.MasterCard.GetPaymentMethodKeyValuePair(),
-                models.transaction.PaymentMethod.Discover.GetPaymentMethodKeyValuePair()
+                models.transaction.PaymentMethod.Discover.GetPaymentMethodKeyValuePair(),
+                models.transaction.PaymentMethod.Account.GetPaymentMethodKeyValuePair()
             });
 
             var paymentString = this.WhenAny(
