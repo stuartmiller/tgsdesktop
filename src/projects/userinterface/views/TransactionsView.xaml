@@ -4,68 +4,29 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="400">
-    <Grid x:Name="LayoutRoot"
-		  Background="White">
-        <telerik:RadGridView  x:Name="RadGridView1" GroupRenderMode="Flat"
-							  ItemsSource="{Binding Orders}"
-							  Foreground="Black"
-							  Height="250"
-							  RowIndicatorVisibility="Collapsed"
-							  AutoGenerateColumns="False"
-							  CanUserFreezeColumns="False"
-							  BorderThickness="0"
-							  CanUserResizeColumns="False"
-							  ShowGroupPanel="False"
-							  BorderBrush="{x:Null}"
-							  Margin="0">
-            <telerik:RadGridView.Resources>
-                <Style x:Key="GridViewToggleButtonColumnStyle" TargetType="telerik:GridViewCell" BasedOn="{StaticResource GridViewCellStyle}">
-                    <Setter Property="Padding" Value="0,0,0,0" />
-                </Style>
-            </telerik:RadGridView.Resources>
-            <telerik:RadGridView.RowDetailsTemplate>
-                <DataTemplate>
-                    <telerik:RadGridView AutoGenerateColumns="False"
-										 IsFilteringAllowed="False"
-										 ItemsSource="{Binding Details}"
-										 CanUserReorderColumns="False"
-										 CanUserFreezeColumns="False"
-										 CanUserResizeColumns="False"
-										 ShowGroupPanel="False"
-										 Margin="6"
-										 Foreground="Black">
-                        <telerik:RadGridView.Columns>
-                            <telerik:GridViewDataColumn Header="Item"
-														DataMemberBinding="{Binding Product.ProductName}" />
-                            <telerik:GridViewDataColumn Header="UnitPrice"
-														DataMemberBinding="{Binding UnitPrice, StringFormat=c2}" />
-                            <telerik:GridViewDataColumn Header="Quantity"
-														DataMemberBinding="{Binding Quantity}" />
-                            <telerik:GridViewDataColumn Header="Discount"
-														DataMemberBinding="{Binding Discount, StringFormat=P}" />
-                        </telerik:RadGridView.Columns>
-                    </telerik:RadGridView>
-                </DataTemplate>
-            </telerik:RadGridView.RowDetailsTemplate>
+             mc:Ignorable="d" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <telerik:RadGridView
+            ItemsSource="{Binding Transactions}"
+            GroupRenderMode="Flat"
+            IsReadOnly="True"
+            ShowColumnSortIndexes="True"
+            AutoGenerateColumns="False">
             <telerik:RadGridView.Columns>
-                <telerik:GridViewToggleRowDetailsColumn CellStyle="{StaticResource GridViewToggleButtonColumnStyle}" />
-                <telerik:GridViewDataColumn Header="Order ID"
-											DataMemberBinding="{Binding OrderID}" />
-                <telerik:GridViewDataColumn Header="Order Date"
-											DataMemberBinding="{Binding OrderDate}" />
-                <telerik:GridViewDataColumn Header="Customer"
-											DataMemberBinding="{Binding ShipName}"
-											Width="4*" />
-                <telerik:GridViewExpressionColumn Header="Order Value"
-												  UniqueName="TotalValue"
-												  DataFormatString="{}{0:c2}"
-												  IsReadOnly="True" />
-                <telerik:GridViewDataColumn Header="City"
-											DataMemberBinding="{Binding ShipCity}" />
-                <telerik:GridViewDataColumn Header="Country"
-											DataMemberBinding="{Binding ShipCountry}" />
+                <telerik:GridViewToggleRowDetailsColumn />
+                <telerik:GridViewDataColumn Header="Id" DataMemberBinding="{Binding Id}"/>
+                <telerik:GridViewDataColumn Header="Date" DataMemberBinding="{Binding EffectiveDate}"/>
+                <telerik:GridViewDataColumn Header="Invoice#" DataMemberBinding="{Binding InvoiceNumber}"/>
+                <telerik:GridViewDataColumn Header="Customer" DataMemberBinding="{Binding Customer}"/>
+                <telerik:GridViewDataColumn Header="Taxable" DataMemberBinding="{Binding TaxableSales}"/>
+                <telerik:GridViewDataColumn Header="NonTaxable" DataMemberBinding="{Binding NonTaxableSales}"/>
+                <telerik:GridViewDataColumn Header="Discount" DataMemberBinding="{Binding Discount}"/>
+                <telerik:GridViewDataColumn Header="Tax" DataMemberBinding="{Binding SalesTax}"/>
+                <telerik:GridViewDataColumn Header="Total" DataMemberBinding="{Binding Total}"/>
             </telerik:RadGridView.Columns>
         </telerik:RadGridView>
     </Grid>

@@ -58,6 +58,13 @@ namespace tgsdesktop.viewmodels {
             this.SalesTaxRate = settingsAccessor.SalesTaxRate;
             this.CurrentCartItem = new SalesInvoiceItemViewModel(this.SalesTaxRate);
 
+            // need to remove and re-add the item to get the total to change
+            this.WhenAnyObservable(vm => vm.Items.ItemChanged)
+                .Subscribe(i => {
+                    var index = this.Items.IndexOf(i.Sender);
+                    this.Items.Remove(i.Sender);
+                    this.Items.Insert(index, i.Sender);
+                });
             this.WhenAnyObservable(vm => vm.Items.CountChanged)
                 .Select(_ => this.Items.Count == 0 ? 0m : decimal.Round((this.Items.Where(i => i.IsTaxable).Sum(i => i.Total) * this.SalesTaxRate), 2, MidpointRounding.AwayFromZero))
                 .ToProperty(this, vm => vm.SalesTax, out _salesTax);
