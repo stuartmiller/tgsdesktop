@@ -174,5 +174,34 @@ FROM tbl_salesInvoiceItem i
             return this.GetSalesInvoices(new int[] { id}).FirstOrDefault();
 
         }
+
+        public List<models.SalesInvoiceSummary> GetTransactionSummaries() {
+            this.Db.Reset();
+            this.Db.Command.CommandText = @"SELECT id, effectiveDate, invoiceNo, personId, name, taxableSales,
+    nontaxableSales, discounts, salesTax, total, refunded
+FROM view_salesInvoiceSummary
+ORDER BY effectiveDate DESC, id DESC";
+            var retVal = new List<models.SalesInvoiceSummary>();
+            using (var dr = Db.ExecuteReader()) {
+                while (dr.Read()) {
+                    int i = 0;
+                    retVal.Add(new models.SalesInvoiceSummary {
+                        Id = dr.GetInt32(i++),
+                        EffectiveDate = dr.GetDateTime(i++),
+                        InvoiceNumber = dr.GetString(i),
+                        PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                        PersonName = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        TaxableSales = dr.GetDecimal(++i),
+                        NonTaxableSales = dr.GetDecimal(++i),
+                        Discounts = dr.GetDecimal(++i),
+                        SalesTax = dr.GetDecimal(++i),
+                        Total = dr.GetDecimal(++i),
+                        Refunded = dr.GetDecimal(++i),
+                    });
+                }
+            }
+
+            return retVal;
+        }
     }
 }

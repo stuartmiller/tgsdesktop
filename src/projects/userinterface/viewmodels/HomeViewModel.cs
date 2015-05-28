@@ -16,13 +16,11 @@ namespace tgsdesktop.viewmodels {
         public HomeViewModel(IScreen screen)
             : base(screen) {
 
-            this.GoToSalesInvoice = this.RegisterNavigationCommand(() => new SalesInvoiceViewModel(HostScreen));
-            this.GoToSalesInvoice2 = this.RegisterNavigationCommand(() => new SalesInvoice2ViewModel(HostScreen));
-            //this.GoToAccountDetails = this.RegisterNavigationCommand(() => new account.HomeViewModel(HostScreen));
-            //this.GoToPaymentEntry = this.RegisterNavigationCommand(() => new account.PaymentEntryViewModel(HostScreen));
-            //this.PrintLabels = this.RegisterNavigationCommand(() => new reporting.ReportViewerViewModel(HostScreen));
-            this.MakeGeneralJournalEntries = this.RegisterNavigationCommand(() => new transaction.TransactionEntryViewModel(HostScreen));
-            this.GoToSettings = this.RegisterNavigationCommand(() => new SettingsViewModel(HostScreen));
+            this.GoToSalesInvoice = this.RegisterNavigationCommand(() => new SalesInvoiceViewModel(this.HostScreen));
+            this.GoToSalesInvoice2 = this.RegisterNavigationCommand(() => new SalesInvoice2ViewModel(this.HostScreen));
+            this.GoToSalesTransactions = this.RegisterNavigationCommand(() => new SalesTransactionsViewModel(this.HostScreen));
+            this.MakeGeneralJournalEntries = this.RegisterNavigationCommand(() => new transaction.TransactionEntryViewModel(this.HostScreen));
+            this.GoToSettings = this.RegisterNavigationCommand(() => new SettingsViewModel(this.HostScreen));
 
 
         }
@@ -31,6 +29,7 @@ namespace tgsdesktop.viewmodels {
 
         public ReactiveCommand<object> GoToStoreSales { get; private set; }
         public ReactiveCommand<object> GoToAccountDetails { get; private set; }
+        public ReactiveCommand<object> GoToSalesTransactions { get; private set; }
         public ReactiveCommand<object> GoToPaymentEntry { get; private set; }
         public ReactiveCommand<object> PrintLabels { get; private set; }
         public ReactiveCommand<object> MakeGeneralJournalEntries { get; private set; }

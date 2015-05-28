@@ -18,6 +18,7 @@ namespace tgsdesktop.services {
         protected static models.User User { get; set; }
 
         public ServiceBase() {
+            this.Db = new Db();
             this.Cn = new SqlConnection(this.ConnectionString);
             this.Command = Cn.CreateCommand();
         }
@@ -26,6 +27,8 @@ namespace tgsdesktop.services {
                                                                .Replace("\\", ".")
                                                                .Replace("/", ".");
         }
+
+        internal Db Db {get; set;}
 
         string ConnectionString {
             get { return Config.Instance.ConnectionString; }

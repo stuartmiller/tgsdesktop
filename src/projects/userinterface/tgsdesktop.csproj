@@ -235,6 +235,7 @@
     <Compile Include="models\ListItem.cs" />
     <Compile Include="models\Product.cs" />
     <Compile Include="models\SalesInvoice.cs" />
+    <Compile Include="models\SalesInvoiceSummary.cs" />
     <Compile Include="models\Settings.cs" />
     <Compile Include="models\ShippingAddress.cs" />
     <Compile Include="models\transaction\Account.cs" />
@@ -264,6 +265,7 @@
     <Compile Include="viewmodels\SalesInvoiceViewModel.cs" />
     <Compile Include="viewmodels\ProductViewModel.cs" />
     <Compile Include="viewmodels\SalesInviceCheckoutViewModel.cs" />
+    <Compile Include="viewmodels\SalesTransactionsViewModel.cs" />
     <Compile Include="viewmodels\SettingsViewModel.cs" />
     <Compile Include="viewmodels\transaction\AccountType.cs" />
     <Compile Include="viewmodels\transaction\AccountViewModel.cs" />
@@ -282,6 +284,9 @@
     <Compile Include="viewmodels\transaction\TransactionViewModel.cs" />
     <Compile Include="views\SalesInvoiceCheckoutView.xaml.cs">
       <DependentUpon>SalesInvoiceCheckoutView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\SalesTransactionView.xaml.cs">
+      <DependentUpon>SalesTransactionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -366,8 +371,8 @@
     <Compile Include="views\StoreSalesView.xaml.cs">
       <DependentUpon>StoreSalesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="views\TransactionsView.xaml.cs">
-      <DependentUpon>TransactionsView.xaml</DependentUpon>
+    <Compile Include="views\SalesTransactionsView.xaml.cs">
+      <DependentUpon>SalesTransactionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\transaction\TransactionView.xaml.cs">
       <DependentUpon>TransactionView.xaml</DependentUpon>
@@ -405,6 +410,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\SalesInvoiceCheckoutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\SalesTransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -472,7 +481,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="views\TransactionsView.xaml">
+    <Page Include="views\SalesTransactionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

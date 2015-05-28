@@ -10,5 +10,6 @@ namespace tgsdesktop.infrastructure {
         IList<models.Product> GetProducts();
         models.Product GetItem(int itemId);
         models.SalesInvoice AddSalesInvoice(models.AddSalesInvoiceModel invoice);
+        List<models.SalesInvoiceSummary> GetTransactionSummaries();
     }
 }
