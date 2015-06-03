@@ -24,6 +24,7 @@ namespace tgsdesktop {
 
         public MainWindow() {
             InitializeComponent();
+            this.WindowState = WindowState.Maximized;
 
             this.AppBootstrapper = new viewmodels.AppBootStrapper();
             DataContext = this.AppBootstrapper;

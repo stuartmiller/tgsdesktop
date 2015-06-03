@@ -38,6 +38,7 @@ namespace tgsdesktop.viewmodels {
             dependencyResolver.Register(() => new views.SalesInvoice2View(), typeof(IViewFor<SalesInvoice2ViewModel>));
             dependencyResolver.Register(() => new views.SalesTransactionsView(), typeof(IViewFor<SalesTransactionsViewModel>));
             dependencyResolver.Register(() => new views.SettingsView(), typeof(IViewFor<SettingsViewModel>));
+            dependencyResolver.Register(() => new views.CustomerView(), typeof(IViewFor<CustomerViewModel>));
             //dependencyResolver.Register(() => new views.account.HomeView(), typeof(IViewFor<viewmodels.account.HomeViewModel>));
             //dependencyResolver.Register(() => new views.account.PaymentEntryView(), typeof(IViewFor<viewmodels.account.PaymentEntryViewModel>));
             //dependencyResolver.Register(() => new views.account.AccountSearchView(), typeof(IViewFor<viewmodels.account.AccountSearchViewModel>));
