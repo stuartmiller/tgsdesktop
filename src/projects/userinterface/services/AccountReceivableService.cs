@@ -215,5 +215,61 @@ AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.revers
             }
         }
 
+        public List<tgsdesktop.models.CustomerTransaction> GetCustomerTransactions(IEnumerable<int> customerIds) {
+            this.Db.Reset();
+            this.Db.Command.CommandText = @"SELECT gj.personId, txn.id AS txnId, txn.effectiveDate, gj.signedAmt,
+	CASE
+		WHEN si.id IS NOT NULL THEN 'Invoice #' + si.invoiceNo
+		WHEN sir.id IS NOT NULL THEN 'Return'
+		WHEN pmt.id IS NOT NULL THEN 'Payment ' +
+			CASE WHEN pmt.methodId=2 THEN 'Check #' + pmt.checkNo
+				WHEN pmt.methodId=1 THEN 'Cash'
+				WHEN pmt.methodId=3 THEN 'Amex'
+				WHEN pmt.methodId=4 THEN 'Visa'
+				WHEN pmt.methodId=5 THEN 'MasterCard'
+				WHEN pmt.methodId=6 THEN 'Discover'
+			END
+		WHEN ISNULL(gj.memo,'')<>'' THEN gj.memo
+		ELSE txn.memo
+	END
+FROM tbl_generalJournal gj
+	INNER JOIN @keys k ON gj.personId=k.id
+	INNER JOIN tbl_transaction txn ON gj.txnId=txn.id
+	LEFT OUTER JOIN tbl_payment pmt ON txn.id=pmt.txnId
+	LEFT OUTER JOIN tbl_salesInvoice si ON txn.id=si.txnId
+	LEFT OUTER JOIN tbl_salesInvoiceReturn sir ON txn.id=sir.txnId
+WHERE gj.accountId=101
+	AND txn.reversedUtc IS NULL
+ORDER BY gj.personId, txn.effectiveDate, txn.id";
+
+            var sqlDataRecords = customerIds.Distinct().Select(x => {
+                var dataRecord = new SqlDataRecord(new SqlMetaData[] {
+                    new SqlMetaData("id", SqlDbType.Int)
+                });
+                dataRecord.SetInt32(0, x);
+                return dataRecord;
+            });
+
+            var pkParam = this.Db.Command.Parameters.AddWithValue("@keys", sqlDataRecords);
+            pkParam.SqlDbType = SqlDbType.Structured;
+            pkParam.TypeName = "udt_intIdArray";
+
+            var retVal = new List<models.CustomerTransaction>();
+            using (var dr = this.Db.ExecuteReader()) {
+                while (dr.Read()) {
+                    int i = 0;
+                    retVal.Add(new models.CustomerTransaction {
+                        PersonId = dr.GetInt32(i++),
+                        TransactionId = dr.GetInt32(i++),
+                        EffectiveDate = dr.GetDateTime(i++),
+                        Amount = System.Math.Abs(dr.GetDecimal(i)),
+                        IsCredit = dr.GetDecimal(i) > 0 ? false : true,
+                        Memo =dr.IsDBNull(++i) ? null : dr.GetString(i)
+                    });
+                }
+            }
+            return retVal;
+        }
+
     }
 }
