@@ -21,12 +21,22 @@
             IsReadOnly="True"
             ShowColumnSortIndexes="True"
             AutoGenerateColumns="False">
+            <telerik:RadGridView.GroupDescriptors>
+                <telerik:GroupDescriptor 
+                    Member="EffectiveDate"
+                    SortDirection="Descending" />
+            </telerik:RadGridView.GroupDescriptors>
+            <telerik:RadGridView.SortDescriptors>
+                <telerik:SortDescriptor Member="Id"
+                                        SortDirection="Descending"/>
+            </telerik:RadGridView.SortDescriptors>
             <telerik:RadGridView.Columns>
                 <telerik:GridViewDataColumn Header="Id" DataMemberBinding="{Binding Id}"/>
                 <telerik:GridViewDataColumn Header="Date" DataMemberBinding="{Binding EffectiveDate, StringFormat={}{0:d}}">
                     <telerik:GridViewDataColumn.AggregateFunctions>
+                        <telerik:CountFunction Caption="TxnCount"/>
                         <telerik:SumFunction Caption="Taxable" ResultFormatString="{}{0:c}" SourceField="TaxableSales" />
-                        <telerik:SumFunction Caption="NonTaxable" ResultFormatString="{}{0:c}" SourceField="NonTaxableSales" />
+                        <telerik:SumFunction  Caption="NonTaxable" ResultFormatString="{}{0:c}" SourceField="NonTaxableSales" />
                         <telerik:SumFunction Caption="Discounts" ResultFormatString="{}{0:c}" SourceField="Discount" />
                         <telerik:SumFunction Caption="Tax" ResultFormatString="{}{0:c}" SourceField="SalesTax" />
                         <telerik:SumFunction Caption="Total" ResultFormatString="{}{0:c}" SourceField="Total" />

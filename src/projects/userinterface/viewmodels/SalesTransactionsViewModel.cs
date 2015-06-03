@@ -16,8 +16,12 @@ namespace tgsdesktop.viewmodels {
         public SalesTransactionsViewModel(IScreen screen)
             : base(screen) {
 
+                this.SalesInvoices = new ReactiveList<SalesInvoiceSummaryViewModel>();
             var svc = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
-            this.SalesInvoices = new ReactiveList<SalesInvoiceSummaryViewModel>(svc.GetTransactionSummaries().Select(x => new SalesInvoiceSummaryViewModel(x)));
+            svc.GetTransactionSummariesAsync()
+                .ContinueWith(res => this.SalesInvoices.AddRange(
+                new ReactiveList<SalesInvoiceSummaryViewModel>(res.Result.Select(x => new SalesInvoiceSummaryViewModel(x))))
+            );
         }
 
         public ReactiveList<SalesInvoiceSummaryViewModel> SalesInvoices { get; private set; }

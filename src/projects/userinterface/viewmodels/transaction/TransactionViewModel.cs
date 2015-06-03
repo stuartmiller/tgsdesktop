@@ -9,7 +9,7 @@ namespace tgsdesktop.viewmodels.transaction {
 
     public class TransactionViewModel : ReactiveObject {
 
-        public TransactionViewModel(models.transaction.Transaction transaction) {
+        public TransactionViewModel(models.transaction.Transaction2 transaction) {
             this.Reverse = ReactiveCommand.Create();
 
             this.Payments = new ReactiveList<PaymentViewModel>();

@@ -31,6 +31,9 @@ namespace tgsdesktop.viewmodels.transaction {
                 var camper = customer as models.Camper;
                 infoLines.Add(camper.Session.Name + (camper.Cabin == null ? string.Empty :
                     " " + camper.Cabin.Name));
+            } else if (customer.IsParent) {
+                var parent = customer as models.Parent;
+                infoLines.Add(string.Join(", ", parent.Campers.Select(c => c.FirstName)));
             }
 
             var sb = new StringBuilder();
@@ -86,6 +89,8 @@ namespace tgsdesktop.viewmodels.transaction {
         public System.Windows.Visibility InfoLine2Visibility { get { return string.IsNullOrEmpty(this.InfoLine2) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
         public string InfoLine3 { get; set; }
         public System.Windows.Visibility InfoLine3Visibility { get { return string.IsNullOrEmpty(this.InfoLine3) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
+        public string InfoLine4 { get; set; }
+        public System.Windows.Visibility InfoLine4Visibility { get { return string.IsNullOrEmpty(this.InfoLine4) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
         public decimal Balance { get; set; }
         public string BalanceString { get; set; }
         public System.Windows.Visibility BalanceVisibility { get { return Balance == 0 ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }

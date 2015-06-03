@@ -20,6 +20,8 @@ namespace tgsdesktop.viewmodels {
 
     public class SalesInvoiceViewModel : ViewModelBase, ISalesInvoiceViewModel {
 
+        System.Timers.Timer _timer;
+
         public SalesInvoiceViewModel(IScreen screen)
             : base(screen) {
 
@@ -137,7 +139,6 @@ namespace tgsdesktop.viewmodels {
             this.Cancel = this.RegisterNavigationCommand(() => new SalesInvoiceViewModel(HostScreen));
 
             this.RefreshCustomers();
-
         }
 
         private decimal SalesTaxRate { get; set; }
@@ -195,17 +196,7 @@ namespace tgsdesktop.viewmodels {
             var accountService = infrastructure.IocContainer.Resolve<infrastructure.IAccountReceivableService>();
             this.Customers.Clear();
             var customers = accountService.GetPeople(models.PersonType.Camper | models.PersonType.Staff)
-                .Where(c => {
-                    if (c.IsStaff)
-                        return true;
-                    else {
-                        var camper = c as models.Camper;
-                        if (camper != null)
-                            if(camper.Session.Key == 369)
-                                return true;
-                    }
-                    return false;
-                });
+                .Where(c =>  true);
 
             this.Customers.AddRange(customers.Select(x => new transaction.CustomerViewModel(x as models.Person)));
             this.Customers.Reset();

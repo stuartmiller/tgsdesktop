@@ -8,11 +8,17 @@ using System.Threading.Tasks;
 namespace tgsdesktop.services {
     internal static class SqlUdtTypes {
 
-        internal static DataTable GetAccountPaymentEntryTable() {
+        internal static DataTable GetPaymentEntryTable() {
             var dt = new DataTable("udt_payment");
             dt.Columns.Add("methodId", typeof(int));
             dt.Columns.Add("amount", typeof(decimal));
             dt.Columns.Add("checkNo", typeof(string));
+            return dt;
+        }
+        internal static DataTable GetAccountPaymentEntryTable() {
+            var dt = new DataTable("udt_payment");
+            dt.Columns.Add("personId", typeof(int));
+            dt.Columns.Add("amount", typeof(decimal));
             return dt;
         }
 

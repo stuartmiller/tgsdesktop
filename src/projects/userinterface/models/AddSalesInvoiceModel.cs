@@ -9,6 +9,7 @@ namespace tgsdesktop.models {
     public class AddSalesInvoiceModel {
         public AddSalesInvoiceModel() {
             this.Payments = new List<Payment>();
+            this.AccountPayments = new List<AccountPayment>();
             this.Items = new List<Item>();
         }
 
@@ -19,6 +20,7 @@ namespace tgsdesktop.models {
         public models.Person Person { get; set; }
         public decimal SalesTax { get; set; }
         public List<Payment> Payments { get; private set; }
+        public List<AccountPayment> AccountPayments { get; set; }
         public List<Item> Items { get; private set; }
 
         public class Item {
@@ -35,6 +37,10 @@ namespace tgsdesktop.models {
             public models.transaction.PaymentMethod Method { get; set; }
             public decimal Amount { get; set; }
             public string CheckNumber { get; set; }
+        }
+        public class AccountPayment {
+            public int PersonId { get; set; }
+            public decimal Amount { get; set; }
         }
 
     }

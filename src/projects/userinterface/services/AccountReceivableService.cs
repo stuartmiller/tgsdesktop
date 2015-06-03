@@ -12,19 +12,12 @@ namespace tgsdesktop.services {
 
         static readonly object _refreshLock = new object();
         static DateTime _lastRefresh = DateTime.UtcNow.AddYears(-100);
-        static Dictionary<int, decimal> _accountBalances;
+        static readonly Dictionary<int, decimal> _accountBalances = new Dictionary<int,decimal>();
         static System.Timers.Timer _timer;
 
         public AccountReceivableService() {
             lock (_refreshLock)	{
                 if (_accountBalances == null){
-		            _accountBalances = new Dictionary<int, decimal>();
-                    this.RefreshBalances();
-
-                    _timer = new System.Timers.Timer(30000);
-                    _timer.Elapsed += _timer_Elapsed;
-                    _timer.Enabled = true;
-                    _timer.Start();
                 }
             }
         }
@@ -35,16 +28,14 @@ namespace tgsdesktop.services {
             } catch { }
         }
 
-        static readonly Dictionary<int, List<models.Person>> _seasonAccounts = new Dictionary<int, List<models.Person>>();
+        static readonly List<models.Person> _people = new List<models.Person>();
 
         public IList<models.Person> GetPeople(models.PersonType? typeFilter = null, int? seasonId = null) {
 
             if (!seasonId.HasValue)
                 seasonId = new SettingsService().GetSettings().CurrentSeasonId;
 
-            var retVal = new List<models.Person>();
-
-            if (!_seasonAccounts.ContainsKey(seasonId.Value)) {
+            if (_people.Count == 0) {
 
                 var households = this.GetHouseholds(seasonId.Value);
 
@@ -85,7 +76,6 @@ ORDER BY p.lastName, p.firstName";
                         var sessionName = dr.IsDBNull(++i) ? null : dr.GetString(i);
                         var cabinId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i);
                         var cabinName = dr.IsDBNull(++i) ? null : dr.GetString(i);
-                        p.Balance = _accountBalances.ContainsKey(p.Id) ? _accountBalances[p.Id] : 0m;
 
                         if (p.IsCamper) {
                             var camper = new models.Camper {
@@ -94,19 +84,31 @@ ORDER BY p.lastName, p.firstName";
                             };
                             p.ToPerson(camper);
                             p = camper;
+                        } else if (p.IsParent) {
+                            var parent = new models.Parent();
+                            p.ToPerson(parent);
+                            p = parent;
                         }
-                        retVal.Add(p);
+                        _people.Add(p);
                     }
-                };
-                foreach (var h in households) {
-                    h.People.AddRange(retVal.Where(p => p.Household == h));
                 }
-                _seasonAccounts.Add(seasonId.Value, retVal);
-            } else
-                retVal = _seasonAccounts[seasonId.Value];
+                foreach (var h in households) {
+                    h.People.AddRange(_people.Where(p => p.Household == h));
+                }
+                var parents = _people.Where(p => p.IsParent);
+                foreach(var p in parents) {
+                    var parent = p as models.Parent;
+                    parent.Campers.AddRange(_people.Where(c => c.IsCamper && c.Household == p.Household).Select(c => c as models.Camper));
+                }
+                this.RefreshBalances();
+                _timer = new System.Timers.Timer(30000);
+                _timer.Elapsed += _timer_Elapsed;
+                _timer.Enabled = true;
+                _timer.Start();
+            }
 
             if (typeFilter.HasValue)
-                return retVal.Where(x =>
+                return _people.Where(x =>
                     (((typeFilter & models.PersonType.Camper) == models.PersonType.Camper))
                     ||
                     (((typeFilter & models.PersonType.Staff) == models.PersonType.Staff))
@@ -115,7 +117,7 @@ ORDER BY p.lastName, p.firstName";
                     ||
                     (((typeFilter & models.PersonType.Other) == models.PersonType.Other))
                 ).ToList();
-            return retVal;
+            return _people;
         }
 
         IList<models.Household> GetHouseholds(int seasonId) {
@@ -152,7 +154,7 @@ WHERE EXISTS(SELECT * FROM tbl_person WHERE householdId=hhld.id)";
             this.Command.CommandText = "proc_addTransactionJournalEntries";
             this.Command.CommandType = CommandType.StoredProcedure;
 
-            var pmtDt = SqlUdtTypes.GetAccountPaymentEntryTable();
+            var pmtDt = SqlUdtTypes.GetPaymentEntryTable();
             var gjeDt = SqlUdtTypes.GetAccountJournalEntryTable();
 
             var effectiveDateParam = this.Command.Parameters.Add("@effectiveDate", SqlDbType.Date);
@@ -178,35 +180,39 @@ WHERE EXISTS(SELECT * FROM tbl_person WHERE householdId=hhld.id)";
         }
 
         internal void RefreshBalances() {
-                var db = new Db();
-                db.Command.CommandText = "SELECT GETUTCDATE()";
-                var lastRefhresh = DateTime.SpecifyKind(db.ExecuteScaler<DateTime>(), DateTimeKind.Utc);
-                db.Reset();
-                db.Command.CommandText = @"SELECT p.id AS personId,
-	ISNULL((SELECT SUM(signedAmt) FROM dbo.view_generalJournal WHERE personId=p.id AND accountId=101),0) AS balance
+            var db = new Db();
+            db.Command.CommandText = "SELECT GETUTCDATE()";
+            var lastRefhresh = DateTime.SpecifyKind(db.ExecuteScaler<DateTime>(), DateTimeKind.Utc);
+            db.Reset();
+            db.Command.CommandText = @"SELECT p.id AS personId,
+ISNULL((SELECT SUM(signedAmt) FROM dbo.view_generalJournal WHERE personId=p.id AND accountId=101),0) AS balance
 FROM tbl_person p
 WHERE EXISTS(SELECT * FROM dbo.tbl_generalJournal WHERE personId=p.id)
-	AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.reversedUtc END) FROM dbo.tbl_transaction t
-		INNER JOIN dbo.tbl_generalJournal gj ON t.id=gj.txnId WHERE gj.personId=p.id)>=@date";
-                db.Command.Parameters.AddWithValue("@date", _lastRefresh);
+AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.reversedUtc END) FROM dbo.tbl_transaction t
+	INNER JOIN dbo.tbl_generalJournal gj ON t.id=gj.txnId WHERE gj.personId=p.id)>=@date";
+            db.Command.Parameters.AddWithValue("@date", _lastRefresh);
  
-                var accountBalances = new Dictionary<int, decimal>();
+            var accountBalances = new Dictionary<int, decimal>();
 
-                using (var dr = db.ExecuteReader()) {
-                    while (dr.Read()) {
-                        int id = dr.GetInt32(0);
-                        var balance = dr.GetDecimal(1);
-                        accountBalances.Add(id, balance);
-                        var person = _seasonAccounts.SelectMany(x => x.Value).SingleOrDefault(x => x.Id == id);
-                        if (person != null)
-                            person.Balance = balance;
-                    }
+            using (var dr = db.ExecuteReader()) {
+                while (dr.Read()) {
+                    int id = dr.GetInt32(0);
+                    var balance = dr.GetDecimal(1);
+                    accountBalances.Add(id, balance);
+                    var person = _people.SingleOrDefault(x => x.Id == id);
+                    if (person != null)
+                        person.Balance = balance;
                 }
-                lock (_refreshLock) {
-                    foreach (var key in accountBalances.Keys)
-                        _accountBalances[key] = accountBalances[key];
-                    _lastRefresh = lastRefhresh;
-                }
+            }
+            var parents = _people.Where(p => p.IsParent).Select(p => p as models.Parent);
+            foreach (var p in parents) {
+                p.Balance = p.Balance + p.Campers.Sum(x => x.Balance);
+            }
+            lock (_refreshLock) {
+                foreach (var key in accountBalances.Keys)
+                    _accountBalances[key] = accountBalances[key];
+                _lastRefresh = lastRefhresh;
+            }
         }
 
     }

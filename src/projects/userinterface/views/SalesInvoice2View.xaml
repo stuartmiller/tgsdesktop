@@ -126,6 +126,17 @@
                 <TextBlock Width="100" Text="Total: " />
                 <TextBlock Width="150" Text="{Binding Total, StringFormat=\{0:C\}}" TextAlignment="Right" />
             </StackPanel>
+            <TextBlock Width="250" Text="-Payments-" Margin="3" TextAlignment="Center" FontSize="15" FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding AccountPayments}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Width="100" Text="{Binding AccountName}" />
+                            <TextBox Width="150" Text="{Binding Amount}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <ItemsControl ItemsSource="{Binding Payments}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -150,6 +161,8 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <TextBlock Width="250" Text="{Binding TotalPayments}" Margin="3" TextAlignment="Center" FontSize="15" FontWeight="Bold" />
             <StackPanel Orientation="Horizontal">
                 <telerik:RadButton Width="250"
                                    Content="Save"

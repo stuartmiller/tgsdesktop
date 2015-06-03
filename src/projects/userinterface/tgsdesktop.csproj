@@ -230,6 +230,7 @@
     <Compile Include="infrastructure\IocContainer.cs" />
     <Compile Include="infrastructure\IPointOfSaleService.cs" />
     <Compile Include="infrastructure\model\CacheMetadata.cs" />
+    <Compile Include="models\AccountPayment.cs" />
     <Compile Include="models\AddSalesInvoiceModel.cs" />
     <Compile Include="models\KeyNamePair.cs" />
     <Compile Include="models\ListItem.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="services\TransactionService.cs" />
     <Compile Include="utilities\ResourceAccessor.cs" />
     <Compile Include="utilities\Encryption.cs" />
+    <Compile Include="utilities\SimpleHash.cs" />
     <Compile Include="viewmodels\IDialogViewModel.cs" />
     <Compile Include="viewmodels\SalesInvoice2ViewModel.cs" />
     <Compile Include="viewmodels\SalesInvoiceViewModel.cs" />
@@ -290,6 +292,9 @@
     </Compile>
     <Compile Include="views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\ThemeShirtEntryView.xaml.cs">
+      <DependentUpon>ThemeShirtEntryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\transaction\TransactionEntryView.xaml.cs">
       <DependentUpon>TransactionEntryView.xaml</DependentUpon>
@@ -418,6 +423,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\ThemeShirtEntryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

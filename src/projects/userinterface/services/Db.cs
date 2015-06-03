@@ -40,6 +40,15 @@ namespace tgsdesktop.services {
             return this.Command.ExecuteReader(behavior);
         }
 
+        internal Task<SqlDataReader> ExecuteReaderAsync(CommandBehavior behavior = CommandBehavior.CloseConnection) {
+            this.InitializeCommand();
+
+            if (this.Cn.State != ConnectionState.Open)
+                this.Cn.Open();
+
+            return this.Command.ExecuteReaderAsync(behavior);
+        }
+
         internal int Execute() {
             this.InitializeCommand();
             var cnState = this.Cn.State;

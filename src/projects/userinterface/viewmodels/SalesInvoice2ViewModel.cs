@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace tgsdesktop.viewmodels {
 
@@ -27,11 +28,48 @@ namespace tgsdesktop.viewmodels {
             var salesTaxRate = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.IGlobalSettingsAccessor>().SalesTaxRate;
 
             this.Payments = new ReactiveList<transaction.PaymentViewModel>();
-            Payments.Add(new transaction.PaymentViewModel());
             this.Payments.ChangeTrackingEnabled = true;
-            this.WhenAnyObservable(vm => vm.Payments.ItemChanged)
-                .Select(_ => this.Payments.Where(p => p.IsValid).Sum(p => p.Amount.Value))
+            this.Payments.Add(new transaction.PaymentViewModel());
+            this.AccountPayments = new ReactiveList<AccountPaymentViewModel>();
+            this.AccountPayments.ChangeTrackingEnabled = true;
+
+            this.WhenAnyObservable(a => a.Payments.ItemChanged)
+                .Select(_ => Unit.Default)
+                .Merge(this.WhenAnyObservable(a => a.AccountPayments.ItemChanged)
+                    .Select(_ => Unit.Default))
+                .Select(vm => this.Payments.Where(x => x.Amount.HasValue).Sum(x => x.Amount.Value)
+                    + this.AccountPayments.Where(x => x.Amount.HasValue).Sum(x => x.Amount.Value))
                 .ToProperty(this, vm => vm.TotalPayments, out _totalPayments);
+
+
+            this.WhenAnyObservable(vm => vm.Payments.ItemChanged)
+                .Subscribe(p => {
+                    if (p.PropertyName == "Amount") {
+                        if (p.Sender.Amount.HasValue && this.TotalPayments != this.Total && !this.Payments.Any(x => !x.Amount.HasValue || x.Amount.Value == 0))
+                            this.Payments.Add(new transaction.PaymentViewModel());
+                    }
+                });
+
+            this.WhenAnyValue(vm => vm.SelectedCustomer)
+                .Subscribe(c => {
+                    if (c == null)
+                        this.AccountPayments.Clear();
+                    else {
+                        this.AccountPayments.Add(new AccountPaymentViewModel {
+                            AccountName = "On Account",
+                            PersonId = c.PersonModel.Id
+                        });
+                        var parent = c.PersonModel as models.Parent;
+                        if (parent != null) {
+                            foreach (var camper in parent.Campers) {
+                                this.AccountPayments.Add(new AccountPaymentViewModel {
+                                    AccountName = camper.FirstName,
+                                    PersonId = camper.Id
+                                });
+                            }
+                        }
+                    }
+                });
 
             // get the stamps item for calculating price
             this.Stamps = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>().GetItem(100);
@@ -67,6 +105,26 @@ namespace tgsdesktop.viewmodels {
                     return total > 0 && total == totalPmt;
                 })
                 .ToProperty(this, vm => vm.InvoiceInBalance, out _invoiceInBalance);
+
+            this.WhenAnyObservable(vm => vm.AccountPayments.ItemChanged)
+                .Subscribe(ap => {
+                    if (ap.Sender.Amount.HasValue && ap.Sender.Amount.Value == this.Total) {
+                        this.Payments.Clear();
+                        foreach (var x in this.AccountPayments)
+                            if (x != ap.Sender)
+                                x.Amount = null;
+                    }
+
+                });
+
+            this.WhenAnyValue(vm => vm.TotalPayments)
+                .Subscribe(_ => {
+                    if (this.TotalPayments > 0 && this.TotalPayments == this.Total) {
+                        var zeroAmtPmts = this.Payments.Where(x => !x.Amount.HasValue || x.Amount.Value == 0).ToArray();
+                        this.Payments.RemoveAll(zeroAmtPmts);
+                    } else if (this.TotalPayments > 0 && this.TotalPayments < this.Total && !this.Payments.Any(x => !x.Amount.HasValue || x.Amount.Value == 0))
+                        this.Payments.Add(new transaction.PaymentViewModel());
+                });
 
             this.SaveTransaction = ReactiveCommand.Create(
                 this.WhenAny(
@@ -105,11 +163,16 @@ namespace tgsdesktop.viewmodels {
                         Price = this.Stamps.Price.Value,
                         Quantity = this.StampsQty
                     });
-                foreach (var p in this.Payments)
+                foreach (var p in this.Payments.Where(x => x.Amount.HasValue && x.Amount.Value > 0))
                     item.Payments.Add(new models.AddSalesInvoiceModel.Payment {
                         Amount = p.Amount.Value,
                         CheckNumber = p.CheckNumber,
                         Method = (models.transaction.PaymentMethod)p.PaymentMethod.Key
+                    });
+                foreach (var p in this.AccountPayments.Where(x => x.Amount.HasValue && x.Amount.Value > 0))
+                    item.AccountPayments.Add(new models.AddSalesInvoiceModel.AccountPayment {
+                        PersonId = p.PersonId,
+                        Amount = p.Amount.Value
                     });
                 if (SelectedCustomer != null) {
                     item.Person = this.SelectedCustomer.PersonModel;
@@ -169,6 +232,7 @@ namespace tgsdesktop.viewmodels {
         }
 
         public ReactiveList<transaction.PaymentViewModel> Payments { get; private set; }
+        public ReactiveList<AccountPaymentViewModel> AccountPayments { get; private set; }
 
         readonly ObservableAsPropertyHelper<decimal> _discount;
         public decimal Discount { get { return _discount.Value; } }
@@ -196,6 +260,15 @@ namespace tgsdesktop.viewmodels {
 
             this.Customers.AddRange(customers.Select(x => new transaction.CustomerViewModel(x as models.Person)));
             this.Customers.Reset();
+        }
+
+        public class AccountPaymentViewModel : ReactiveObject {
+
+            public int PersonId { get; set; }
+            public string AccountName { get; set; }
+
+            decimal? _amount;
+            public decimal? Amount { get { return _amount; } set { this.RaiseAndSetIfChanged(ref _amount, value); } }
         }
     }
 }

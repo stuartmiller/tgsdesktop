@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace tgsdesktop.viewmodels.transaction {
     public class GeneralJournalViewModel : ReactiveObject {
 
-        public GeneralJournalViewModel(models.transaction.JournalEntry journalEntry = null) {
+        public GeneralJournalViewModel(models.transaction.JournalEntry2 journalEntry = null) {
 
             var debitAmount = this.WhenAny(
                 vm => vm.IsCredit,

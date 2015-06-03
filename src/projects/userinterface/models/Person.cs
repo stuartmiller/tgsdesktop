@@ -75,5 +75,14 @@ namespace tgsdesktop.models {
         public KeyNamePair<int, string> Session { get; set; }
         public int SeasonId { get; set; }
     }
+    public class Parent : Person {
+        public Parent()
+            : base() {
+
+            this.Campers = new List<Camper>();
+        }
+
+        public List<Camper> Campers { get; private set; }
+    }
 
 }

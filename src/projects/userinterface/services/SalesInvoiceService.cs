@@ -147,18 +147,25 @@ FROM tbl_salesInvoiceItem i
             var txnMemoParam = this.Command.Parameters.Add("@txnMemo", SqlDbType.NVarChar, 300);
             txnMemoParam.Value = string.IsNullOrEmpty(invoice.TxnMemo) ? (object)DBNull.Value : invoice.TxnMemo;
 
-            var pmtDt = SqlUdtTypes.GetAccountPaymentEntryTable();
+            var pmtDt = SqlUdtTypes.GetPaymentEntryTable();
+            var aPmtDt = SqlUdtTypes.GetAccountPaymentEntryTable();
             var itmDt = SqlUdtTypes.GetSalesInvoiceItemTable();
             var itemsParam = this.Command.Parameters.Add("@items", SqlDbType.Structured);
             var pmtParam = this.Command.Parameters.Add("@payments", SqlDbType.Structured);
+            var actPmtParam = this.Command.Parameters.Add("@accountPayments", SqlDbType.Structured);
 
             foreach (var pmt in invoice.Payments)
                 pmtDt.Rows.Add((int)pmt.Method, pmt.Amount, pmt.CheckNumber);
+            foreach (var pmt in invoice.AccountPayments)
+                aPmtDt.Rows.Add(pmt.PersonId, pmt.Amount);
             foreach (var item in invoice.Items)
                 itmDt.Rows.Add(item.Description, item.ProductId, item.ItemId, item.Price, item.Cost,
                     item.Quantity, item.IsTaxable, item.Discount);
 
-            pmtParam.Value = pmtDt;
+            if (pmtDt.Rows.Count > 0)
+                pmtParam.Value = pmtDt;
+            if (aPmtDt.Rows.Count > 0)
+                actPmtParam.Value = aPmtDt;
             itemsParam.Value = itmDt;
 
             this.Command.Parameters.AddWithValue("@personId", invoice.Person == null ? (object)DBNull.Value : invoice.Person.Id);
@@ -175,14 +182,45 @@ FROM tbl_salesInvoiceItem i
 
         }
 
-        public List<models.SalesInvoiceSummary> GetTransactionSummaries() {
-            this.Db.Reset();
-            this.Db.Command.CommandText = @"SELECT id, effectiveDate, invoiceNo, personId, name, taxableSales,
+
+        static List<models.SalesInvoiceSummary> _salesInvoiceSummaryList;
+        static object _salesInvoiceSummaryListLock = new object();
+        static DateTime _lastFetch = DateTime.Now.AddYears(-100);
+        static System.Timers.Timer _timer;
+
+        public async Task<List<models.SalesInvoiceSummary>> GetTransactionSummariesAsync() {
+            if (_salesInvoiceSummaryList == null) {
+                await RefreshTransactionSummariesAsync();
+                _timer = new System.Timers.Timer();
+                _timer.Interval = 60000;
+                _timer.Elapsed += _timer_Elapsed;
+                _timer.Enabled = true;
+                _timer.Start();
+            }
+            return _salesInvoiceSummaryList;
+        }
+
+        void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            _timer.Stop();
+            RefreshTransactionSummariesAsync();
+            _timer.Start();
+        }
+
+        static async Task RefreshTransactionSummariesAsync() {
+            var db = new Db();
+            db.Reset();
+            db.Command.CommandText = "SELECT GETUTCDATE()";
+            var dt = DateTime.SpecifyKind(db.ExecuteScaler<DateTime>(), DateTimeKind.Utc);
+
+            db.Command.CommandText = @"SELECT id, effectiveDate, invoiceNo, personId, name, taxableSales,
     nontaxableSales, discounts, salesTax, total, refunded
 FROM view_salesInvoiceSummary
+WHERE postDateUtc>=@lastFetch
 ORDER BY effectiveDate DESC, id DESC";
+            db.Command.Parameters.AddWithValue("@lastFetch", _lastFetch);
+
             var retVal = new List<models.SalesInvoiceSummary>();
-            using (var dr = Db.ExecuteReader()) {
+            using (var dr = await db.ExecuteReaderAsync()) {
                 while (dr.Read()) {
                     int i = 0;
                     retVal.Add(new models.SalesInvoiceSummary {
@@ -200,8 +238,14 @@ ORDER BY effectiveDate DESC, id DESC";
                     });
                 }
             }
-
-            return retVal;
+            lock (_salesInvoiceSummaryListLock) {
+                if (_salesInvoiceSummaryList == null)
+                    _salesInvoiceSummaryList = retVal;
+                else {
+                    _salesInvoiceSummaryList.AddRange(retVal);
+                }
+                _lastFetch = dt;
+            }
         }
     }
 }

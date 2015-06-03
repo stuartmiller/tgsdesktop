@@ -53,17 +53,17 @@ namespace tgsdesktop.services.transaction {
             return _accountList.Where(x => includeArchived ? true : !x.Archived.HasValue).ToList();
         }
 
-        public models.transaction.Transaction AddTransaction(models.transaction.Transaction transaction,
+        public models.transaction.Transaction2 AddTransaction(models.transaction.Transaction2 transaction,
             IEnumerable<tgsdesktop.models.transaction.Payment> payments) {
 
             this.Reset();
             this.Command.CommandText = "proc_addTransactionJournalEntries";
             this.Command.CommandType = CommandType.StoredProcedure;
 
-            var pmtDt = SqlUdtTypes.GetAccountPaymentEntryTable();
+            var pmtDt = SqlUdtTypes.GetPaymentEntryTable();
             var gjeDt = SqlUdtTypes.GetAccountJournalEntryTable();
 
-            this.Command.Parameters.AddWithValue("@invoiceNo", transaction.InvoiceNumber);
+            //this.Command.Parameters.AddWithValue("@invoiceNo", transaction.InvoiceNumber);
             var postDateParam = this.Command.Parameters.Add("@postDate", SqlDbType.DateTime);
             postDateParam.Direction = ParameterDirection.Output;
             var effectiveDateParam = this.Command.Parameters.AddWithValue("@effectiveDate",
@@ -95,7 +95,7 @@ namespace tgsdesktop.services.transaction {
             return this.GetTransactions(new int[] { id }).First();
         }
 
-        public IList<models.transaction.Transaction> GetTransactions(IEnumerable<int> ids) {
+        public IList<models.transaction.Transaction2> GetTransactions(IEnumerable<int> ids) {
             this.Reset();
             this.Command.CommandText = @"SELECT t.id, t.postDateUtc, t.effectiveDate, t.invoiceNo, t.memo, t.modifiedUtc, t.reversedUtc, t.version
 FROM tbl_transaction t
@@ -106,12 +106,12 @@ FROM tbl_transaction t
             keysParam.TypeName = "udt_intIdArray";
             keysParam.Value = idTable;
 
-            var retVal = new Dictionary<int, models.transaction.Transaction>();
+            var retVal = new Dictionary<int, models.transaction.Transaction2>();
             using (var dr = this.ExecuteReader()) {
                 while (dr.Read()) {
                     var i = 0;
                     var id = dr.GetInt32(i++);
-                    var t = new models.transaction.Transaction {
+                    var t = new models.transaction.Transaction2 {
                         Id = id,
                         PostDate = DateTime.SpecifyKind(dr.GetDateTime(i++), DateTimeKind.Utc),
                         EffectiveDate = dr.GetDateTime(i).Date,
@@ -135,7 +135,7 @@ FROM tbl_generalJournal gj
                     var i = 0;
                     var id = dr.GetInt32(i++);
                     var txnId = dr.GetInt32(i++);
-                    retVal[txnId].JournalEntries.Add(new models.transaction.JournalEntry {
+                    retVal[txnId].JournalEntries.Add(new models.transaction.JournalEntry2 {
                         Id = id,
                         TxnId = txnId,
                         SeasonId = dr.GetInt32(i++),

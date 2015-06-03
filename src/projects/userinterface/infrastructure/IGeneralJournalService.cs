@@ -11,6 +11,6 @@ namespace tgsdesktop.infrastructure {
 
         IList<models.transaction.Account> GetAccounts(bool includeArchived = false);
 
-        models.transaction.Transaction AddTransaction(models.transaction.Transaction transaction, IEnumerable<tgsdesktop.models.transaction.Payment> payments);
+        models.transaction.Transaction2 AddTransaction(models.transaction.Transaction2 transaction, IEnumerable<tgsdesktop.models.transaction.Payment> payments);
     }
 }
