@@ -15,8 +15,6 @@ namespace tgsdesktop.services {
 
         protected const string SINGLE_KEY_ID_PARAM_NAME = "@ids";
 
-        protected static models.User User { get; set; }
-
         public ServiceBase() {
             this.Db = new Db();
             this.Cn = new SqlConnection(this.ConnectionString);
@@ -27,6 +25,8 @@ namespace tgsdesktop.services {
                                                                .Replace("\\", ".")
                                                                .Replace("/", ".");
         }
+
+        public static models.User User { get; protected set; }
 
         internal Db Db {get; set;}
 

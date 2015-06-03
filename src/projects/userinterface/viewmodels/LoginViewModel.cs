@@ -19,7 +19,7 @@ namespace tgsdesktop.viewmodels {
         public LoginViewModel(IScreen screen)
             : base(screen) {
 
-            var loginService = infrastructure.IocContainer.Resolve<infrastructure.ILoginService>();
+            var loginService = infrastructure.IocContainer.Resolve<infrastructure.IUserService>();
 
             this.LoginCommand = ReactiveCommand.Create(this.WhenAny(x => x.FormComplete, (a) => a.Value == true));
             this.LoginCommand.Subscribe(_ => {

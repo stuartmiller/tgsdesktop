@@ -49,9 +49,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\userinterface\tgsdesktop.csproj">
+    <ProjectReference Include="..\..\userinterface\tgsdesktop.csproj.bak.csproj">
       <Project>{0e710a81-af14-4543-b2bd-51fc34f43490}</Project>
-      <Name>tgsdesktop</Name>
+      <Name>tgsdesktop.csproj.bak</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

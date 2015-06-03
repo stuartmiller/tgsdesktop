@@ -14,6 +14,7 @@
 using System;
 using System.Text;
 using System.Security.Cryptography;
+using System.Linq;
 
 /// <summary>
 /// This class generates and compares hashes using MD5, SHA1, SHA256, SHA384, 
@@ -51,25 +52,61 @@ public class SimpleHash {
     /// <returns>
     /// Hash value formatted as a base64-encoded string.
     /// </returns>
-    public static string ComputeHash(string plainText,
-                                     string hashAlgorithm,
-                                     byte[] saltBytes) {
-        // If salt is not specified, generate it on the fly.
+    public static string ComputeHashString(string plainText, string hashAlgorithm, byte[] saltBytes = null) {
+        var hashWithSaltBytes = ComputeHash(plainText, hashAlgorithm, saltBytes);
+
+        // Convert result into a base64-encoded string.
+        string hashValue = Convert.ToBase64String(hashWithSaltBytes);
+
+        // Return the result.
+        return hashValue;
+    }
+    public static byte[] ComputeHash(string plainText, string hashAlgorithm, byte[] saltBytes = null) {
+
+        int saltSize = 32;
+
+        // Because we support multiple hashing algorithms, we must define
+        // hash object as a common (abstract) base class. We will specify the
+        // actual hashing algorithm class later during object creation.
+        HashAlgorithm hash;
+
+        // Make sure hashing algorithm name is specified.
+        if (hashAlgorithm == null)
+            hashAlgorithm = "";
+
+        // Initialize appropriate hashing algorithm class.
+        switch (hashAlgorithm.ToUpper()) {
+            case "SHA1":
+                hash = new SHA1Managed();
+                saltSize = 20;
+                break;
+
+            case "SHA256":
+                hash = new SHA256Managed();
+                saltSize = 32;
+                break;
+
+            case "SHA384":
+                hash = new SHA384Managed();
+                saltSize = 48;
+                break;
+
+            case "SHA512":
+                hash = new SHA512Managed();
+                saltSize = 64;
+                break;
+
+            default:
+                hash = new MD5CryptoServiceProvider();
+                saltSize = 64;
+                break;
+        }
+
         if (saltBytes == null) {
-            // Define min and max salt sizes.
-            int minSaltSize = 64;
-            int maxSaltSize = 96;
-
-            // Generate a random number for the size of the salt.
-            Random random = new Random();
-            int saltSize = random.Next(minSaltSize, maxSaltSize);
-
             // Allocate a byte array, which will hold the salt.
             saltBytes = new byte[saltSize];
-
             // Initialize a random number generator.
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-
             // Fill the salt with cryptographically strong byte values.
             rng.GetNonZeroBytes(saltBytes);
         }
@@ -89,37 +126,6 @@ public class SimpleHash {
         for (int i = 0; i < saltBytes.Length; i++)
             plainTextWithSaltBytes[plainTextBytes.Length + i] = saltBytes[i];
 
-        // Because we support multiple hashing algorithms, we must define
-        // hash object as a common (abstract) base class. We will specify the
-        // actual hashing algorithm class later during object creation.
-        HashAlgorithm hash;
-
-        // Make sure hashing algorithm name is specified.
-        if (hashAlgorithm == null)
-            hashAlgorithm = "";
-
-        // Initialize appropriate hashing algorithm class.
-        switch (hashAlgorithm.ToUpper()) {
-            case "SHA1":
-                hash = new SHA1Managed();
-                break;
-
-            case "SHA256":
-                hash = new SHA256Managed();
-                break;
-
-            case "SHA384":
-                hash = new SHA384Managed();
-                break;
-
-            case "SHA512":
-                hash = new SHA512Managed();
-                break;
-
-            default:
-                hash = new MD5CryptoServiceProvider();
-                break;
-        }
 
         // Compute hash value of our plain text with appended salt.
         byte[] hashBytes = hash.ComputeHash(plainTextWithSaltBytes);
@@ -136,11 +142,7 @@ public class SimpleHash {
         for (int i = 0; i < saltBytes.Length; i++)
             hashWithSaltBytes[hashBytes.Length + i] = saltBytes[i];
 
-        // Convert result into a base64-encoded string.
-        string hashValue = Convert.ToBase64String(hashWithSaltBytes);
-
-        // Return the result.
-        return hashValue;
+        return hashWithSaltBytes;
     }
 
     /// <summary>
@@ -165,11 +167,15 @@ public class SimpleHash {
     /// If computed hash mathes the specified hash the function the return
     /// value is true; otherwise, the function returns false.
     /// </returns>
-    public static bool VerifyHash(string plainText,
-                                  string hashAlgorithm,
-                                  string hashValue) {
+    public static bool VerifyHashString(string plainText, string hashAlgorithm, string hashValue) {
         // Convert base64-encoded hash value into a byte array.
         byte[] hashWithSaltBytes = Convert.FromBase64String(hashValue);
+        return VerifyHash(plainText, hashAlgorithm, hashWithSaltBytes);
+
+    }
+    public static bool VerifyHash(string plainText,
+                                  string hashAlgorithm,
+                                  byte[] hashWithSaltBytes) {
 
         // We must know size of hash (without salt).
         int hashSizeInBits, hashSizeInBytes;
@@ -217,11 +223,17 @@ public class SimpleHash {
             saltBytes[i] = hashWithSaltBytes[hashSizeInBytes + i];
 
         // Compute a new hash string.
-        string expectedHashString =
-                    ComputeHash(plainText, hashAlgorithm, saltBytes);
+        var expectedHash = ComputeHash(plainText, hashAlgorithm, saltBytes);
 
         // If the computed hash matches the specified hash,
         // the plain text value must be correct.
-        return (hashValue == expectedHashString);
+        return (hashWithSaltBytes.SequenceEqual(expectedHash));
+    }
+
+    public static string ByteArrayToString(byte[] ba) {
+        StringBuilder hex = new StringBuilder(ba.Length * 2);
+        foreach (byte b in ba)
+            hex.AppendFormat("{0:x2}", b);
+        return hex.ToString();
     }
 }

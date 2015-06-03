@@ -15,7 +15,7 @@ namespace tgsdesktop.infrastructure {
             if (BaseContainer == null) {
                 var builder = new ContainerBuilder();
                 builder.RegisterType<infrastructure.Cache>().As<infrastructure.ICacheProvider>().SingleInstance();
-                builder.RegisterType<services.LoginService>().As<ILoginService>();
+                builder.RegisterType<services.UserService>().As<IUserService>();
                 builder.RegisterType<services.AccountReceivableService>().As<IAccountReceivableService>();
                 builder.RegisterType<services.TransactionService>().As<ITransactionService>();
                 builder.RegisterType<services.transaction.GeneralJournalService>().As<IGeneralJournalService>();

@@ -10,12 +10,13 @@ namespace _console {
     class Program {
         static void Main(string[] args) {
 
-            var plaintextpassword = "password1";
+            var plaintextpassword = "123";
 
-            //var hash = SimpleHash.ComputeHash(plaintextpassword, "sha256", null);
-            //System.Diagnostics.Debug.WriteLine(hash);
+            var hash = SimpleHash.ComputeHash(plaintextpassword, "sha256");
+            var hashString = SimpleHash.ByteArrayToString(hash);
+            System.Diagnostics.Debug.WriteLine(hashString);
 
-            //var verified = SimpleHash.VerifyHash(plaintextpassword, "sha256", hash);
+            var verified = SimpleHash.VerifyHash(plaintextpassword, "sha256", hash);
 
         }
 
