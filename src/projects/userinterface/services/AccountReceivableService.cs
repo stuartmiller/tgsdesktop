@@ -206,7 +206,7 @@ AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.revers
             }
             var parents = _people.Where(p => p.IsParent).Select(p => p as models.Parent);
             foreach (var p in parents) {
-                p.Balance = p.Balance + p.Campers.Sum(x => x.Balance);
+                p.Balance = p.Campers.Sum(x => x.Balance);
             }
             lock (_refreshLock) {
                 foreach (var key in accountBalances.Keys)
@@ -215,7 +215,7 @@ AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.revers
             }
         }
 
-        public List<tgsdesktop.models.CustomerTransaction> GetCustomerTransactions(IEnumerable<int> customerIds) {
+        public List<tgsdesktop.models.CustomerTransactionSummary> GetCustomerTransactions(IEnumerable<int> customerIds) {
             this.Db.Reset();
             this.Db.Command.CommandText = @"SELECT gj.personId, txn.id AS txnId, txn.effectiveDate, gj.signedAmt,
 	CASE
@@ -254,11 +254,11 @@ ORDER BY gj.personId, txn.effectiveDate, txn.id";
             pkParam.SqlDbType = SqlDbType.Structured;
             pkParam.TypeName = "udt_intIdArray";
 
-            var retVal = new List<models.CustomerTransaction>();
+            var retVal = new List<models.CustomerTransactionSummary>();
             using (var dr = this.Db.ExecuteReader()) {
                 while (dr.Read()) {
                     int i = 0;
-                    retVal.Add(new models.CustomerTransaction {
+                    retVal.Add(new models.CustomerTransactionSummary {
                         PersonId = dr.GetInt32(i++),
                         TransactionId = dr.GetInt32(i++),
                         EffectiveDate = dr.GetDateTime(i++),

@@ -8,6 +8,6 @@ namespace tgsdesktop.infrastructure {
     public interface IAccountReceivableService {
         IList<models.Person> GetPeople(models.PersonType? typeFilter = null, int? seasonId = null);
         void AddPayment(models.transaction.Payment2 payment);
-        List<tgsdesktop.models.CustomerTransaction> GetCustomerTransactions(IEnumerable<int> customerIds);
+        List<tgsdesktop.models.CustomerTransactionSummary> GetCustomerTransactions(IEnumerable<int> customerIds);
     }
 }

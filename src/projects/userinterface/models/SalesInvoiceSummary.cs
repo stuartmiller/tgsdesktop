@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 namespace tgsdesktop.models {
     public class SalesInvoiceSummary {
 
+        public SalesInvoiceSummary() {
+            this.Items = new List<SalesInvoiceItem>();
+        }
+
         public int Id { get; set; }
         public DateTime EffectiveDate { get; set; }
         public string InvoiceNumber { get; set; }
@@ -18,5 +22,15 @@ namespace tgsdesktop.models {
         public decimal SalesTax { get; set; }
         public decimal Total { get; set; }
         public decimal Refunded { get; set; }
+
+        public List<SalesInvoiceItem> Items { get; private set; }
+
+        public class SalesInvoiceItem {
+            public int Id { get; set; }
+            public string Description { get; set; }
+            public decimal Price { get; set; }
+            public int Quantity { get; set; }
+            public int Refunded { get; set; }
+        }
     }
 }

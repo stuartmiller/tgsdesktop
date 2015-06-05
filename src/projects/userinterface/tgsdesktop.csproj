@@ -232,7 +232,7 @@
     <Compile Include="infrastructure\model\CacheMetadata.cs" />
     <Compile Include="models\AccountPayment.cs" />
     <Compile Include="models\AddSalesInvoiceModel.cs" />
-    <Compile Include="models\CustomerTransaction.cs" />
+    <Compile Include="models\CustomerTransactionSummary.cs" />
     <Compile Include="models\KeyNamePair.cs" />
     <Compile Include="models\ListItem.cs" />
     <Compile Include="models\Product.cs" />

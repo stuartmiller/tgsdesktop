@@ -35,11 +35,11 @@
                 <telerik:GridViewDataColumn Header="Date" DataMemberBinding="{Binding EffectiveDate, StringFormat={}{0:d}}">
                     <telerik:GridViewDataColumn.AggregateFunctions>
                         <telerik:CountFunction Caption="TxnCount"/>
-                        <telerik:SumFunction Caption="Taxable" ResultFormatString="{}{0:c}" SourceField="TaxableSales" />
+                        <!--<telerik:SumFunction Caption="Taxable" ResultFormatString="{}{0:c}" SourceField="TaxableSales" />
                         <telerik:SumFunction  Caption="NonTaxable" ResultFormatString="{}{0:c}" SourceField="NonTaxableSales" />
                         <telerik:SumFunction Caption="Discounts" ResultFormatString="{}{0:c}" SourceField="Discount" />
                         <telerik:SumFunction Caption="Tax" ResultFormatString="{}{0:c}" SourceField="SalesTax" />
-                        <telerik:SumFunction Caption="Total" ResultFormatString="{}{0:c}" SourceField="Total" />
+                        <telerik:SumFunction Caption="Total" ResultFormatString="{}{0:c}" SourceField="Total" />-->
                     </telerik:GridViewDataColumn.AggregateFunctions>
                 </telerik:GridViewDataColumn>
                 <telerik:GridViewDataColumn Header="Invoice#" DataMemberBinding="{Binding InvoiceNumber}"/>
