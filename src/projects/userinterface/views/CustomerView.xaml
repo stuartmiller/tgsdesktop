@@ -165,5 +165,13 @@
                 </telerik:RadGridView>
             </Grid>
         </Grid>
+        <!-- Refund -->
+        <Grid Visibility="Collapsed">
+
+        </Grid>
+        <!-- Reverse -->
+        <Grid Visibility="Collapsed">
+
+        </Grid>
     </Grid>
 </UserControl>
