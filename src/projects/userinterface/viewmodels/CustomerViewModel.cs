@@ -27,7 +27,7 @@ namespace tgsdesktop.viewmodels {
             this.Customers.Reset();
 
             Transactions = new ReactiveList<CustomerTransactionViewModel>();
-            this.WhenAnyValue(vm => vm.SelectedCustomer)
+            this.WhenAnyValue(vm => vm.SelectedCustomer.Changed)
                 .Subscribe(_ => {
                     this.Transactions.Clear();
                     if (this.SelectedCustomer != null) {
@@ -49,35 +49,63 @@ namespace tgsdesktop.viewmodels {
                                     NontaxableAmount = t.Invoice.NontaxableAmount,
                                     SalesTax = t.Invoice.SalesTax
                                 };
-                                //tvm.ReverseTransaction.CanExecute = tvm.Invoice.WhenAnyObservable(inv => inv.items);
-                                tvm.ReverseTransaction.Subscribe(inv => {
-                                });
                             }
+                            tvm.ReverseTransaction.Subscribe(__ => this.TransactionToReverse = tvm);
+                            tvm.Cancel.Subscribe(__ => this.TransactionToReverse = null);
                             this.Transactions.Add(tvm);
                         }
-
                     }
                 });
             this.WhenAnyObservable(vm => vm.Transactions.ItemsAdded)
                 .Select(_ => this.Transactions.Where(t => t.CreditAmount.HasValue).Sum(t => t.CreditAmount.Value) - this.Transactions.Where(t => t.DebitAmount.HasValue).Sum(t => t.DebitAmount.Value))
                 .ToProperty(this, vm => vm.Balance, out _balance);
 
+            this.ConfirmReverseTransaction = ReactiveCommand.Create();
+            this.ConfirmReverseTransaction.Subscribe(_ => {
+                if (this.TransactionToReverse != null)
+                    this.TransactionToReverse = null;
+            });
+
+            this.WhenAnyValue(vm => vm.TransactionToReverse)
+                .Select(_ => this.TransactionToReverse != null)
+                .ToProperty(this, vm => vm.ReverseTransactionVisible, out _reverseTransactionVisible, initialValue: false);
+            this.WhenAnyValue(vm => vm.TransactionToRefund)
+                .Select(_ => this.TransactionToRefund != null)
+                .ToProperty(this, vm => vm.RefundInvoiceVisible, out _refundInvoiceVisible, initialValue: false);
+            this.WhenAny(
+                vm => vm.TransactionToReverse,
+                vm => vm.TransactionToRefund,
+                (a, b) => a.GetValue() == null && b.GetValue() == null)
+                .ToProperty(this, vm => vm.TransactionsVisible, out _transactionsVisible);
         }
 
         public ReactiveList<transaction.CustomerViewModel> Customers { get; private set; }
         transaction.CustomerViewModel _selectedCustomer;
         public transaction.CustomerViewModel SelectedCustomer { get { return _selectedCustomer; } set { this.RaiseAndSetIfChanged(ref _selectedCustomer, value); } }
+        CustomerTransactionViewModel _selectedTransaction;
+        public CustomerTransactionViewModel SelectedTransaction { get { return _selectedTransaction; } set { this.RaiseAndSetIfChanged(ref _selectedTransaction, value); } }
 
         public ReactiveList<CustomerTransactionViewModel> Transactions { get; private set; }
 
         readonly ObservableAsPropertyHelper<decimal> _balance;
         public decimal Balance { get{ return _balance.Value;} }
 
-        readonly ObservableAsPropertyHelper<bool> _isRefundInvoiceVisible;
-        public bool IsRefundInvoiceVisible { get { return _isRefundInvoiceVisible.Value; } }
-        readonly ObservableAsPropertyHelper<bool> _isReverseTransactionVisible;
-        public bool IsReverseTransactionVisible { get { return _isReverseTransactionVisible.Value; } }
+        readonly ObservableAsPropertyHelper<bool> _transactionsVisible;
+        public bool TransactionsVisible { get { return _transactionsVisible.Value; } }
+        readonly ObservableAsPropertyHelper<bool> _refundInvoiceVisible;
+        public bool RefundInvoiceVisible { get { return _refundInvoiceVisible.Value; } }
+        readonly ObservableAsPropertyHelper<bool> _reverseTransactionVisible;
+        public bool ReverseTransactionVisible { get { return _reverseTransactionVisible.Value; } }
+        readonly ObservableAsPropertyHelper<bool> _invoiceVisible;
+        public bool InvoiceVisible { get { return _invoiceVisible.Value; } }
 
+        CustomerTransactionViewModel _transactionToReverse;
+        public CustomerTransactionViewModel TransactionToReverse { get { return _transactionToReverse; } set { this.RaiseAndSetIfChanged(ref _transactionToReverse, value); } }
+
+        CustomerTransactionViewModel _transactionToRefund;
+        public CustomerTransactionViewModel TransactionToRefund { get { return _transactionToRefund; } set { this.RaiseAndSetIfChanged(ref _transactionToRefund, value); } }
+
+        public ReactiveCommand<object> ConfirmReverseTransaction { get; private set; }
 
         public class CustomerTransactionViewModel : ReactiveObject {
 

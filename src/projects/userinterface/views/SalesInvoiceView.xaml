@@ -80,6 +80,7 @@
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <telerik:RadDatePicker Grid.Column="0"
                                    Margin="3"
@@ -109,6 +110,17 @@
                                         FontSize="16"
                                         MaxDropDownHeight="700"
                                         SelectionMode="Single"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="3">
+                <TextBlock Text="Discount:"
+                           FontSize="12"
+                           HorizontalAlignment="Center"/>
+                <telerik:RadWatermarkTextBox WatermarkContent="Discount"
+                                             SelectionOnFocus="SelectAll"
+                                             Text="{Binding Path=InvoiceDiscount, StringFormat={}{0}%}"
+                                             FontSize="16"
+                                             Width="50"
+                                             Margin="0, 3,3,3"/>
+            </StackPanel>
         </Grid>
         <!-- subtotal and account balance -->
         <Grid Grid.Row="2">

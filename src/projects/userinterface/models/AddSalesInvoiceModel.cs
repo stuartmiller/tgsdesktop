@@ -14,6 +14,7 @@ namespace tgsdesktop.models {
         }
 
         public string InvoiceNumber { get; set; }
+        public decimal DiscountPercentage { get; set; }
         public int? SeasonId { get; set; }
         public DateTime? EffectiveDate { get; set; }
         public string TxnMemo { get; set; }

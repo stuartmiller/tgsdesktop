@@ -83,7 +83,7 @@ FROM tbl_salesItem i";
             if (missingIds.Count > 0) {
 
                 this.Reset();
-                this.Command.CommandText = @"SELECT si.id, si.txnId, si.invoiceNo, si.personId 
+                this.Command.CommandText = @"SELECT si.id, si.txnId, si.invoiceNo, si.discountPercentage, si.personId 
 FROM tbl_salesInvoice si INNER JOIN @keys k ON si.id=k.id";
                 var idTable = SqlUdtTypes.GetIdArrayTable(missingIds);
                 var keysParam = this.Command.Parameters.AddWithValue("@keys", SqlDbType.Structured);
@@ -98,7 +98,8 @@ FROM tbl_salesInvoice si INNER JOIN @keys k ON si.id=k.id";
                         dict.Add(id, new models.SalesInvoice {
                             Id = id,
                             TransactionId = dr.GetInt32(i++),
-                            InvoiceNumber = dr.GetString(i),
+                            InvoiceNumber = dr.GetString(i++),
+                            DiscountPercentage = dr.GetDecimal(i),
                             PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i)
                         });
                     }
@@ -141,6 +142,7 @@ FROM tbl_salesInvoiceItem i
             var idParam = this.Command.Parameters.Add("@id", SqlDbType.Int);
             idParam.Direction = System.Data.ParameterDirection.Output;
             this.Command.Parameters.AddWithValue("@invoiceNo", invoice.InvoiceNumber);
+            this.Command.Parameters.AddWithValue("@discountPercentage", invoice.DiscountPercentage);
             this.Command.Parameters.AddWithValue("seasonId", invoice.SeasonId);
             this.Command.Parameters.AddWithValue("@effectiveDate", invoice.EffectiveDate.HasValue ?
                 invoice.EffectiveDate.Value : (object)DBNull.Value);
@@ -181,7 +183,6 @@ FROM tbl_salesInvoiceItem i
             return this.GetSalesInvoices(new int[] { id}).FirstOrDefault();
 
         }
-
 
         static List<models.SalesInvoiceSummary> _salesInvoiceSummaryList;
         static object _salesInvoiceSummaryListLock = new object();

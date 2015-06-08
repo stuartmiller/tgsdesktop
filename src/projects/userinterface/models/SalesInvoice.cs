@@ -16,6 +16,7 @@ namespace tgsdesktop.models {
         public string InvoiceNumber { get; set; }
         public int? PersonId { get; set; }
         public decimal SalesTax { get; set; }
+        public decimal DiscountPercentage { get; set; }
 
         public List<SalesInvoiceItem> Items { get; private set; }
 

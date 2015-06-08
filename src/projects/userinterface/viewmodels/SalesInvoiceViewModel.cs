@@ -153,6 +153,8 @@ namespace tgsdesktop.viewmodels {
 
         string _invoiceNumber;
         public string InvoiceNumber { get { return _invoiceNumber; } set { this.RaiseAndSetIfChanged(ref _invoiceNumber, value); } }
+        int _invoiceDiscount;
+        public int InvoiceDiscount { get { return _invoiceDiscount; } set { this.RaiseAndSetIfChanged(ref _invoiceDiscount, value); } }
         transaction.CustomerViewModel _selectedCustomer;
         public transaction.CustomerViewModel SelectedCustomer { get { return _selectedCustomer; } set { this.RaiseAndSetIfChanged(ref _selectedCustomer, value); } }
         ProductViewModel _selectedProduct;

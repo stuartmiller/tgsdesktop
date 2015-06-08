@@ -7,6 +7,7 @@
              xmlns:tgs="clr-namespace:tgsdesktop.views"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <Style TargetType="telerik:RadWatermarkTextBox" BasedOn="{StaticResource RadAutoCompleteTextBoxStyle}" x:Key="WatermarkTextBoxStyle">
             <Setter Property="SelectionOnFocus" Value="SelectAll" />
         </Style>
@@ -72,28 +73,29 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <tgs:NavigationView Grid.Row="0"  x:Name="NavigationBar" />
         <!-- Customer lookup row -->
         <telerik:RadAutoCompleteBox Grid.Row="1"
-                                    Name="txtCustomers"
-                                    Width="500"
-                                    ItemsSource="{Binding Customers}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Margin="3"
-                                    WatermarkContent="Customer"
-                                    DisplayMemberPath="DisplayText"
-                                    TextSearchPath="SearchText"
-                                    AutoCompleteMode="SuggestAppend"
-                                    TextSearchMode="Contains"
-                                    SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
-                                    TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
-                                    DropDownItemTemplate="{StaticResource CustomerSearchAutoComplete}"
-                                    FontSize="16"
-                                    MaxDropDownHeight="700"
-                                    SelectionMode="Single"/>
+                                        Name="txtCustomers"
+                                        Width="500"
+                                        ItemsSource="{Binding Customers}"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="3"
+                                        WatermarkContent="Customer"
+                                        DisplayMemberPath="DisplayText"
+                                        TextSearchPath="SearchText"
+                                        AutoCompleteMode="SuggestAppend"
+                                        TextSearchMode="Contains"
+                                        SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
+                                        TextBoxStyle="{StaticResource WatermarkTextBoxStyle}"
+                                        DropDownItemTemplate="{StaticResource CustomerSearchAutoComplete}"
+                                        FontSize="16"
+                                        MaxDropDownHeight="700"
+                                        SelectionMode="Single"/>
         <!-- Customer details row -->
         <Grid Grid.Row="2">
             <StackPanel Orientation="Vertical">
@@ -116,7 +118,7 @@
             </StackPanel>
         </Grid>
         <!-- Customer transactions row -->
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3"  Visibility="{Binding Path=TransactionsVisible, Converter={StaticResource BoolToVis}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -125,9 +127,11 @@
                 <TextBlock Grid.Row="0" Text="Transactions"/>
                 <telerik:RadGridView ItemsSource="{Binding Transactions}"
                                      Margin="3"
+                                     MaxWidth="900"
                                      ShowGroupPanel="False"
                                      IsReadOnly="True"
-                                     AutoGenerateColumns="False">
+                                     AutoGenerateColumns="False"
+                                     SelectedItem="{Binding SelectedTransaction}">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn Header="Txn Id" DataMemberBinding="{Binding TransactionId}" IsFilterable="False" />
                         <telerik:GridViewDataColumn Header="Date" DataMemberBinding="{Binding EffectiveDate, StringFormat={}{0:d}}" IsFilterable="False"/>
@@ -143,21 +147,14 @@
                         <telerik:GridViewColumn>
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <telerik:RadButton Content="Print" Command="{Binding Print}" Width="120"/>
+                                    <telerik:RadButton Content="View" Command="{Binding View}" Width="120"/>
                                 </DataTemplate>
                             </telerik:GridViewColumn.CellTemplate>
                         </telerik:GridViewColumn>
                         <telerik:GridViewColumn>
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <telerik:RadButton Content="Refund" Command="{Binding GoToRefund}" Width="120"/>
-                                </DataTemplate>
-                            </telerik:GridViewColumn.CellTemplate>
-                        </telerik:GridViewColumn>
-                        <telerik:GridViewColumn>
-                            <telerik:GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <telerik:RadButton Content="Reverse" Command="{Binding Reverse}" Width="120"/>
+                                    <telerik:RadButton Content="Reverse" Command="{Binding ReverseTransaction}" Width="120"/>
                                 </DataTemplate>
                             </telerik:GridViewColumn.CellTemplate>
                         </telerik:GridViewColumn>
@@ -165,13 +162,22 @@
                 </telerik:RadGridView>
             </Grid>
         </Grid>
-        <!-- Refund -->
-        <Grid Visibility="Collapsed">
+        <!-- Refund Invoice -->
+        <Grid Grid.Row="3" Visibility="{Binding RefundInvoiceVisible, Converter={StaticResource BoolToVis}}">
 
         </Grid>
         <!-- Reverse -->
-        <Grid Visibility="Collapsed">
-
+        <Grid Grid.Row="3" Visibility="{Binding ReverseTransactionVisible, Converter={StaticResource BoolToVis}}">
+            <StackPanel Orientation="Horizontal">
+                <telerik:RadButton Content="Yes" Command="{Binding ConfirmReverseTransaction}"/>
+                <telerik:RadButton Content="Cancel" Command="{Binding TransactionToReverse.Cancel}" IsCancel="{Binding IsReverseInvoiceVisible}"/>
+            </StackPanel>
+        </Grid>
+        <!-- View Invoice -->
+        <Grid Grid.Row="4" Visibility="{Binding InvoiceSelected, Converter={StaticResource BoolToVis}}">
+            <telerik:RadGridView Width="600"
+                                 ItemsSource="{Binding SelectedInvoice.Items}"
+                                 HorizontalAlignment="Center"/>
         </Grid>
     </Grid>
 </UserControl>

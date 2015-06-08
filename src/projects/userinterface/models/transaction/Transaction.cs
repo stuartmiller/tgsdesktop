@@ -28,8 +28,9 @@ namespace tgsdesktop.models.transaction {
 
         public int Id { get; set; }
         public DateTime PostDate { get; set; }
-        public DateTime? EffectiveDate { get; set; }
-        public string InvoiceNumber { get; set; }
+        public DateTime EffectiveDate { get; set; }
+        public int? InvoiceId { get; set; }
+        public List<Payment> Payments { get; set; }
         public string Memo { get; set; }
         public List<JournalEntry> JournalEntries { get; private set; }
         public DateTime Modified { get; set; }
