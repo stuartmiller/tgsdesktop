@@ -174,5 +174,13 @@ FROM tbl_generalJournal gj
             return retVal.Values.ToList();
 
         }
+
+        public void ReverseTransaction(int id) {
+            this.Db.Reset();
+            this.Db.Command.CommandText = "UPDATE tbl_transaction SET reversedUtc=GETUTCDATE() WHERE id=@id AND reversedUtc IS NULL";
+            this.Db.Command.Parameters.AddWithValue("@id", id);
+            this.Db.Execute();
+
+        }
     }
 }

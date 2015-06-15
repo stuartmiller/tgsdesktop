@@ -143,7 +143,8 @@ namespace tgsdesktop.viewmodels {
                     EffectiveDate = this.InvoiceDate,
                     InvoiceNumber = this.InvoiceNumber,
                     SalesTax = this.SalesTax,
-                    TxnMemo = "Invoice " + this.InvoiceNumber
+                    TxnMemo = "Invoice " + this.InvoiceNumber,
+                    DiscountPercentage = this.DiscountPercentage > 0 ? (this.DiscountPercentage / 100) : 0
                 };
                 if (this.TaxableAmt > 0)
                     item.Items.Add(new models.AddSalesInvoiceModel.Item{

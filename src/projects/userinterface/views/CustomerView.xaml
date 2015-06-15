@@ -4,18 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:converters="clr-namespace:tgsdesktop.views.converters" 
              xmlns:tgs="clr-namespace:tgsdesktop.views"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converters:InvertableBooleanToVisibilityConverter x:Key="BoolToVis"/>
         <Style TargetType="telerik:RadWatermarkTextBox" BasedOn="{StaticResource RadAutoCompleteTextBoxStyle}" x:Key="WatermarkTextBoxStyle">
             <Setter Property="SelectionOnFocus" Value="SelectAll" />
-        </Style>
-        <Style x:Key="ProductAutoCompleteStyle" TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="Foreground" Value="#FF0A0A0A" />
-            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="NameAutoCompleteStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI" />
@@ -44,12 +39,6 @@
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
-        <DataTemplate x:Key="ProductSearchAutoComplete">
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <TextBlock Text="{Binding Name}" Style="{StaticResource ProductAutoCompleteStyle}" />
-                <TextBlock Text="{Binding Price, StringFormat={}{0:C}}" Margin="2,0,0,0" Style="{StaticResource ProductAutoCompleteStyle}" />
-            </StackPanel>
-        </DataTemplate>
         <DataTemplate x:Key="CustomerSearchAutoComplete">
             <Grid>
                 <Grid.RowDefinitions>
@@ -70,6 +59,8 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -125,7 +116,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="Transactions"/>
-                <telerik:RadGridView ItemsSource="{Binding Transactions}"
+                <telerik:RadGridView ItemsSource="{Binding Transactions, Mode=TwoWay}"
                                      Margin="3"
                                      MaxWidth="900"
                                      ShowGroupPanel="False"
@@ -147,37 +138,68 @@
                         <telerik:GridViewColumn>
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <telerik:RadButton Content="View" Command="{Binding View}" Width="120"/>
+                                    <telerik:RadButton Content="View" Command="{Binding ViewTransaction}" Visibility="{Binding IsInvoice, Converter={StaticResource BoolToVis}}" Width="120"/>
                                 </DataTemplate>
                             </telerik:GridViewColumn.CellTemplate>
                         </telerik:GridViewColumn>
-                        <telerik:GridViewColumn>
+                        <!--<telerik:GridViewColumn>
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <telerik:RadButton Content="Reverse" Command="{Binding ReverseTransaction}" Width="120"/>
                                 </DataTemplate>
                             </telerik:GridViewColumn.CellTemplate>
-                        </telerik:GridViewColumn>
+                        </telerik:GridViewColumn>-->
                     </telerik:RadGridView.Columns>
                 </telerik:RadGridView>
             </Grid>
         </Grid>
-        <!-- Refund Invoice -->
-        <Grid Grid.Row="3" Visibility="{Binding RefundInvoiceVisible, Converter={StaticResource BoolToVis}}">
-
+        <!-- View Invoice -->
+        <Grid Grid.Row="4" Visibility="{Binding InvoiceVisible, Converter={StaticResource BoolToVis}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <telerik:RadGridView  Grid.Row="0"
+                                      Width="600"
+                                     ItemsSource="{Binding SelectedTransaction.Invoice.Items}"
+                                     ShowGroupPanel="False"
+                                     IsReadOnly="True"
+                                     AutoGenerateColumns="False"
+                                     HorizontalAlignment="Center">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn Header="Id" DataMemberBinding="{Binding Id}" IsFilterable="False" />
+                        <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="*" IsFilterable="False"/>
+                        <telerik:GridViewDataColumn Header="Price" DataMemberBinding="{Binding Price, StringFormat={}{0:c}}" IsFilterable="False"/>
+                        <telerik:GridViewDataColumn Header="Quantity" DataMemberBinding="{Binding Quantity}" IsFilterable="False"/>
+                        <telerik:GridViewDataColumn Header="Qty Returned" DataMemberBinding="{Binding QuantityReturned}" IsFilterable="False"/>
+                        <telerik:GridViewColumn>
+                            <telerik:GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <telerik:RadWatermarkTextBox Text="{Binding QuantityToReturn}"
+                                                                 Width="35"
+                                                                 IsEnabled="{Binding IsReturnEnabled, Converter={StaticResource BoolToVis}}"/>
+                                                             
+                                </DataTemplate>
+                            </telerik:GridViewColumn.CellTemplate>
+                        </telerik:GridViewColumn>
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding ReverseTransactionVisible, Converter={StaticResource BoolToVis}, ConverterParameter=Inverted}">
+                    <telerik:RadButton Content="Reverse Transaction" Command="{Binding SelectedTransaction.ReverseTransaction}" Width="300"/>
+                    <telerik:RadButton Content="Refund Selected Items" Command="{Binding SelectedTransaction.Invoice.RefundItems}" Width="300" />
+                </StackPanel>
+                <Grid Grid.Row="1" Visibility="{Binding ReverseTransactionVisible, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Are you sure you want to reverse this transaction?" FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal">
+                            <telerik:RadButton Content="Yes" Width="300" Command="{Binding ConfirmReverseTransaction}"/>
+                            <telerik:RadButton Content="Cancel" Width="300" Command="{Binding CancelReverseTransaction}" IsCancel="{Binding IsReverseInvoiceVisible}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
         <!-- Reverse -->
-        <Grid Grid.Row="3" Visibility="{Binding ReverseTransactionVisible, Converter={StaticResource BoolToVis}}">
-            <StackPanel Orientation="Horizontal">
-                <telerik:RadButton Content="Yes" Command="{Binding ConfirmReverseTransaction}"/>
-                <telerik:RadButton Content="Cancel" Command="{Binding TransactionToReverse.Cancel}" IsCancel="{Binding IsReverseInvoiceVisible}"/>
-            </StackPanel>
-        </Grid>
-        <!-- View Invoice -->
-        <Grid Grid.Row="4" Visibility="{Binding InvoiceSelected, Converter={StaticResource BoolToVis}}">
-            <telerik:RadGridView Width="600"
-                                 ItemsSource="{Binding SelectedInvoice.Items}"
-                                 HorizontalAlignment="Center"/>
-        </Grid>
     </Grid>
 </UserControl>

@@ -83,7 +83,7 @@ FROM tbl_salesItem i";
             if (missingIds.Count > 0) {
 
                 this.Reset();
-                this.Command.CommandText = @"SELECT si.id, si.txnId, si.invoiceNo, si.discountPercentage, si.personId 
+                this.Command.CommandText = @"SELECT si.id, si.txnId, si.invoiceNo, si.personId, seasonId, si.salesTaxRate, si.discountPercentage
 FROM tbl_salesInvoice si INNER JOIN @keys k ON si.id=k.id";
                 var idTable = SqlUdtTypes.GetIdArrayTable(missingIds);
                 var keysParam = this.Command.Parameters.AddWithValue("@keys", SqlDbType.Structured);
@@ -98,9 +98,11 @@ FROM tbl_salesInvoice si INNER JOIN @keys k ON si.id=k.id";
                         dict.Add(id, new models.SalesInvoice {
                             Id = id,
                             TransactionId = dr.GetInt32(i++),
-                            InvoiceNumber = dr.GetString(i++),
-                            DiscountPercentage = dr.GetDecimal(i),
-                            PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i)
+                            InvoiceNumber = dr.GetString(i),
+                            PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                            SeasonId = dr.GetInt32(++i),
+                            SalesTaxRate = dr.GetDecimal(++i),
+                            DiscountPercentage = dr.GetDecimal(++i)
                         });
                     }
                 }
@@ -128,7 +130,28 @@ FROM tbl_salesInvoiceItem i
                         dict[item.InvoiceId].Items.Add(item);
                     }
                 }
-                var items = dict.Values.ToList();   
+
+
+                this.Command.CommandText = @"SELECT ri.id, r.invoiceId, r.txnId, ri.itemId, ri.quantity
+FROM tbl_salesInvoiceReturn r
+    INNER JOIN tbl_salesInvoiceReturnItem ri ON r.id=ri.returnId
+    INNER JOIN @keys k ON r.invoiceId=k.id";
+                
+                using (var dr = this.ExecuteReader()) {
+                    while (dr.Read()) {
+                        int i = 0;
+                        var item = new models.SalesInvoice.SalesInvoiceItemReturn {
+                            Id= dr.GetInt32(i++),
+                            InvoiceId = dr.GetInt32(i++),
+                            TxnId = dr.GetInt32(i++),
+                            ItemId = dr.GetInt32(i++),
+                            Quantity = dr.GetInt32(i++)
+                        };
+                        dict[item.InvoiceId].ReturnItems.Add(item);
+                    }
+                }
+
+                var items = dict.Values.ToList();
                 cache.AddItems(items.Select(x => new infrastructure.model.CacheItem { Key = "model.salesinvoice:pk:" + x.Id.ToString(), Value = x }));
                 retVal.AddRange(items);
             }
@@ -182,6 +205,26 @@ FROM tbl_salesInvoiceItem i
 
             return this.GetSalesInvoices(new int[] { id}).FirstOrDefault();
 
+        }
+
+        public models.SalesInvoice RefundInvoiceItems(int invoiceId, IEnumerable<Tuple<int, int>> itemIdQty) {
+            this.Db.Reset();
+            this.Db.Command.CommandText = "proc_addSalesInvoiceReturn";
+            this.Db.Command.CommandType = CommandType.StoredProcedure;
+            this.Db.Command.Parameters.AddWithValue("@invoiceId", invoiceId);
+
+            var itemsTbl = SqlUdtTypes.GetDualKeyTable(itemIdQty);
+            var itemsParam = this.Db.Command.Parameters.Add("@items", SqlDbType.Structured);
+            itemsParam.Value = itemsTbl;
+
+            this.Db.Command.Parameters.AddWithValue("@userId", User.Person.Id);
+
+            this.Db.Execute();
+
+            var cache = infrastructure.IocContainer.Resolve<infrastructure.ICacheProvider>();
+            cache.RemoveItem("model.salesinvoice:pk:" + invoiceId);
+
+            return this.GetSalesInvoices(new int[] {invoiceId}).First();
         }
 
         static List<models.SalesInvoiceSummary> _salesInvoiceSummaryList;

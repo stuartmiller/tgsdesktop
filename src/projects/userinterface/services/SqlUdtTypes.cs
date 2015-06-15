@@ -54,5 +54,14 @@ namespace tgsdesktop.services {
             return dt;
         }
 
+        internal static DataTable GetDualKeyTable(IEnumerable<Tuple<int, int>> keys) {
+            var dt = new DataTable("udt_int-intArray");
+            dt.Columns.Add("key1", typeof(int));
+            dt.Columns.Add("key2", typeof(int));
+            foreach (var key in keys)
+                dt.Rows.Add(key.Item1, key.Item2);
+            return dt;
+        }
+
     }
 }

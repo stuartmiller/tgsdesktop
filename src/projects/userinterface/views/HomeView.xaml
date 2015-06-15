@@ -19,7 +19,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Content="" Height="75" Width="500" FontSize="24" FontWeight="Bold" />
-                <Button Content="Hyper Drive" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding MakeGeneralJournalEntries}" />
+                <Button Content="General Journal Entry" Height="75" Width="500" FontSize="24" FontWeight="Bold" Command="{Binding MakeGeneralJournalEntries}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Content="Button1" Height="75" Width="500" FontSize="24" FontWeight="Bold" />

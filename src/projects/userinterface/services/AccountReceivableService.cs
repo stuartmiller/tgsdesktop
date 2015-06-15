@@ -231,7 +231,7 @@ AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.revers
 			END
 		WHEN ISNULL(gj.memo,'')<>'' THEN gj.memo
 		ELSE txn.memo
-	END
+	END, si.id, sir.id
 FROM tbl_generalJournal gj
 	INNER JOIN @keys k ON gj.personId=k.id
 	INNER JOIN tbl_transaction txn ON gj.txnId=txn.id
@@ -264,7 +264,9 @@ ORDER BY gj.personId, txn.effectiveDate, txn.id";
                         EffectiveDate = dr.GetDateTime(i++),
                         Amount = System.Math.Abs(dr.GetDecimal(i)),
                         IsCredit = dr.GetDecimal(i) > 0 ? false : true,
-                        Memo =dr.IsDBNull(++i) ? null : dr.GetString(i)
+                        Memo =dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        InvoiceId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                        ReturnId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
                     });
                 }
             }

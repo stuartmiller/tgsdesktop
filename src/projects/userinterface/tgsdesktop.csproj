@@ -228,7 +228,7 @@
     <Compile Include="infrastructure\IGeneralJournalService.cs" />
     <Compile Include="infrastructure\IMainViewModel.cs" />
     <Compile Include="infrastructure\IocContainer.cs" />
-    <Compile Include="infrastructure\IPointOfSaleService.cs" />
+    <Compile Include="infrastructure\ISalesInvoiceService.cs" />
     <Compile Include="infrastructure\model\CacheMetadata.cs" />
     <Compile Include="models\AccountPayment.cs" />
     <Compile Include="models\AddSalesInvoiceModel.cs" />
@@ -279,6 +279,7 @@
     <Compile Include="viewmodels\transaction\GeneralJournalViewModel.cs" />
     <Compile Include="viewmodels\transaction\HouseholdViewModel.cs" />
     <Compile Include="viewmodels\transaction\PaymentViewModel.cs" />
+    <Compile Include="views\converters\InvertableBooleanToVisibilityConverter.cs" />
     <Compile Include="views\CustomerSearchView.xaml.cs">
       <DependentUpon>CustomerSearchView.xaml</DependentUpon>
     </Compile>
