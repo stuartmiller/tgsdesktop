@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace tgsdesktop.viewmodels.transaction {
     public class GeneralJournalViewModel : ReactiveObject {
 
-        public GeneralJournalViewModel(models.transaction.JournalEntry2 journalEntry = null) {
+        public GeneralJournalViewModel(models.transaction.JournalEntry journalEntry = null) {
 
             var debitAmount = this.WhenAny(
                 vm => vm.IsCredit,
@@ -25,15 +25,15 @@ namespace tgsdesktop.viewmodels.transaction {
 
             if (journalEntry != null) {
                 this.Id = journalEntry.Id;
-                this.SeasonId = journalEntry.SeasonId.Value;
-                this.Amount = journalEntry.Amount;
-                this.IsCredit = journalEntry.IsCredit;
-                if (journalEntry.CustomerId.HasValue) {
+                this.SeasonId = journalEntry.SeasonId;
+                this.Amount = System.Math.Abs(journalEntry.SignedAmount);
+                this.IsCredit = journalEntry.SignedAmount < 0;
+                if (journalEntry.PersonId.HasValue) {
                     var accountService = infrastructure.IocContainer.Resolve<infrastructure.IAccountReceivableService>();
                     this.SelectedCustomer = new CustomerViewModel(
                         accountService.GetPeople(models.PersonType.Camper
                             | models.PersonType.Staff
-                            | models.PersonType.Other).Single(c => c.Id == journalEntry.CustomerId) as models.Person);
+                            | models.PersonType.Other).Single(c => c.Id == journalEntry.PersonId) as models.Person);
                 }
                 this.Memo = journalEntry.Memo;
                 

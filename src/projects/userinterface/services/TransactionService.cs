@@ -12,8 +12,8 @@ namespace tgsdesktop.services {
         public void AddReceivablePayment(IList<models.transaction.Payment2> payments, int seasonId, int personId, string memo, string invoiceNo, DateTime? effectiveDate) {
             this.Command.CommandText = "proc_addTransactionJournalEntries";
             this.Command.Parameters.AddWithValue("@invoiceNo", invoiceNo);
-            this.AddAccountJournalEntryTableParam(new models.transaction.JournalEntry2[] {
-                new models.transaction.JournalEntry2 {
+            this.AddAccountJournalEntryTableParam(new models.transaction.AddJournalEntryRequest[] {
+                new models.transaction.AddJournalEntryRequest {
                     AccountId = 101,
                     Amount = payments.Sum(p => p.Amount),
                     IsCredit = true,
@@ -60,7 +60,7 @@ namespace tgsdesktop.services {
             this.Command.Parameters.AddWithValue("@pmt", pmtParam);
         }
 
-        void AddAccountJournalEntryTableParam(IList<models.transaction.JournalEntry2> journalEntries) {
+        void AddAccountJournalEntryTableParam(IList<models.transaction.AddJournalEntryRequest> journalEntries) {
             var sqlDataRecords = journalEntries.Select(x => {
                 var dataRecord = new SqlDataRecord(new SqlMetaData[] {
                     new SqlMetaData("accountId", SqlDbType.Int),

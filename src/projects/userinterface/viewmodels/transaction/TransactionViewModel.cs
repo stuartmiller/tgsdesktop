@@ -9,7 +9,7 @@ namespace tgsdesktop.viewmodels.transaction {
 
     public class TransactionViewModel : ReactiveObject {
 
-        public TransactionViewModel(models.transaction.Transaction2 transaction) {
+        public TransactionViewModel(models.transaction.Transaction transaction) {
             this.Reverse = ReactiveCommand.Create();
 
             this.Payments = new ReactiveList<PaymentViewModel>();
@@ -19,8 +19,8 @@ namespace tgsdesktop.viewmodels.transaction {
                 this.Id = transaction.Id;
                 this.EffectiveDate = transaction.EffectiveDate;
                 this.Amount = transaction.JournalEntries == null || transaction.JournalEntries.Count == 0 ?
-                    null : (decimal?)transaction.JournalEntries.Sum(x => x.Amount);
-                this.InvoiceNumber = transaction.InvoiceNumber;
+                    null : (decimal?)transaction.JournalEntries.Sum(x => x.DebitAmount);
+                //this.InvoiceNumber = transaction.InvoiceNumber;
                 this.Memo = transaction.Memo;
                 //if (transaction.Payments.Count > 0)
                 //    this.Payments.AddRange(transaction.Payments.Select(p => new PaymentViewModel(p)));

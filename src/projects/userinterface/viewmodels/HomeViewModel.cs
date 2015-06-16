@@ -22,6 +22,7 @@ namespace tgsdesktop.viewmodels {
             this.MakeGeneralJournalEntries = this.RegisterNavigationCommand(() => new transaction.TransactionEntryViewModel(this.HostScreen));
             this.GoToSettings = this.RegisterNavigationCommand(() => new SettingsViewModel(this.HostScreen));
             this.GoToCustomer = this.RegisterNavigationCommand(() => new CustomerViewModel(this.HostScreen));
+            this.GoToCustomerAccountEntry = this.RegisterNavigationCommand(() => new CustomerAccountEntryViewModel(this.HostScreen));
 
 
         }
@@ -38,6 +39,7 @@ namespace tgsdesktop.viewmodels {
         public ReactiveCommand<object> GoToSalesInvoice2 { get; private set; }
         public ReactiveCommand<object> GoToSettings { get; private set; }
         public ReactiveCommand<object> GoToCustomer { get; private set; }
+        public ReactiveCommand<object> GoToCustomerAccountEntry { get; private set; }
 
     }
 }

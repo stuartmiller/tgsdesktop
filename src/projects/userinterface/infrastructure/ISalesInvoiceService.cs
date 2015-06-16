@@ -9,6 +9,7 @@ namespace tgsdesktop.infrastructure {
 
         IList<models.Product> GetProducts();
         models.Product GetItem(int itemId);
+        List<models.Product> GetItems(IEnumerable<int> itemIds);
         List<models.SalesInvoice> GetSalesInvoices(IEnumerable<int> ids);
         models.SalesInvoice AddSalesInvoice(models.AddSalesInvoiceModel invoice);
         Task<List<models.SalesInvoiceSummary>> GetTransactionSummariesAsync();

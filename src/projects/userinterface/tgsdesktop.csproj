@@ -264,6 +264,7 @@
     <Compile Include="utilities\ResourceAccessor.cs" />
     <Compile Include="utilities\Encryption.cs" />
     <Compile Include="utilities\SimpleHash.cs" />
+    <Compile Include="viewmodels\CustomerAccountEntryViewModel.cs" />
     <Compile Include="viewmodels\CustomerViewModel.cs" />
     <Compile Include="viewmodels\IDialogViewModel.cs" />
     <Compile Include="viewmodels\SalesInvoice2ViewModel.cs" />
@@ -280,6 +281,9 @@
     <Compile Include="viewmodels\transaction\HouseholdViewModel.cs" />
     <Compile Include="viewmodels\transaction\PaymentViewModel.cs" />
     <Compile Include="views\converters\InvertableBooleanToVisibilityConverter.cs" />
+    <Compile Include="views\CustomerAccountEntryView.xaml.cs">
+      <DependentUpon>CustomerAccountEntryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\CustomerSearchView.xaml.cs">
       <DependentUpon>CustomerSearchView.xaml</DependentUpon>
     </Compile>
@@ -403,6 +407,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="views\CustomerAccountEntryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="views\CustomerSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

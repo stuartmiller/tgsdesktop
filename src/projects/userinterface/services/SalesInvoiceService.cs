@@ -9,24 +9,30 @@ namespace tgsdesktop.services {
     public class SalesInvoiceService : ServiceBase, infrastructure.ISalesInvoiceService {
 
         public models.Product GetItem(int itemId) {
-
-            models.Product retVal = null;
+            return this.GetItems(new int[] {itemId}).FirstOrDefault();
+        }
+        public List<models.Product> GetItems(IEnumerable<int> itemIds) {
 
             this.Reset();
             this.Command.CommandText = @"SELECT i.id, i.description, i.cost, i.price, i.isTaxable
 FROM tbl_salesItem i
-WHERE id=@itemId";
-            this.Command.Parameters.AddWithValue("@itemId", itemId);
+    INNER JOIN @t t ON i.id=t.id";
+            var dt = SqlUdtTypes.GetIdArrayTable(itemIds);
+            var tblParam = this.Command.Parameters.Add("@t", SqlDbType.Structured);
+            tblParam.TypeName = dt.TableName;
+            tblParam.Value = dt;
+
+            var retVal = new List<models.Product>();
             using (var dr = this.ExecuteReader(CommandBehavior.SingleRow)) {
                 while (dr.Read()) {
                     var i = 0;
-                    retVal = new models.Product {
+                    retVal.Add(new models.Product {
                         ItemId = dr.GetInt32(i++),
                         Name = dr.GetString(i),
                         Cost = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
                         Price = dr.IsDBNull(++i) ? null : (decimal?)dr.GetDecimal(i),
                         IsTaxable = dr.GetBoolean(++i)
-                    };
+                    });
                 }
             }
             return retVal;

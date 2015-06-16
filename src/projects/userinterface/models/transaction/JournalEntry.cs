@@ -5,9 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace tgsdesktop.models.transaction {
-    public class JournalEntry2 {
-        public int Id { get; set; }
-        public int TxnId { get; set; }
+    public class AddJournalEntryRequest {
         public int? SeasonId { get; set; }
         public decimal Amount { get; set; }
         public bool IsCredit { get; set; }

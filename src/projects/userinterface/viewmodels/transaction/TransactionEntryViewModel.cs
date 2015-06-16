@@ -134,7 +134,7 @@ namespace tgsdesktop.viewmodels.transaction {
             );
             this.AddTransaction.Subscribe(_ => {
                 System.Diagnostics.Debug.WriteLine("TransactionAdded");
-                var transaction = new models.transaction.Transaction2 {
+                var transaction = new models.transaction.AddTransactionRequest {
                     EffectiveDate = this.EffectiveDate.Date,
                     InvoiceNumber = this.InvoiceNumber,
                     Memo = this.Memo
@@ -146,7 +146,7 @@ namespace tgsdesktop.viewmodels.transaction {
                     Amount = p.Amount.Value,
                     CheckNumber = p.CheckNumber
                 }));
-                transaction.JournalEntries.AddRange(this.JournalEntries.Select(je => new models.transaction.JournalEntry2 {
+                transaction.JournalEntries.AddRange(this.JournalEntries.Select(je => new models.transaction.AddJournalEntryRequest {
                     AccountId = je.SelectedAccount.Id.Value,
                     Amount = je.Amount.Value,
                     CustomerId = je.SelectedCustomer == null ? null : (int?)je.SelectedCustomer.PersonModel.Id,

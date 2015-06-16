@@ -53,7 +53,7 @@ namespace tgsdesktop.services.transaction {
             return _accountList.Where(x => includeArchived ? true : !x.Archived.HasValue).ToList();
         }
 
-        public models.transaction.Transaction2 AddTransaction(models.transaction.Transaction2 transaction,
+        public models.transaction.Transaction AddTransaction(models.transaction.AddTransactionRequest transaction,
             IEnumerable<tgsdesktop.models.transaction.Payment> payments) {
 
             this.Reset();
@@ -95,9 +95,9 @@ namespace tgsdesktop.services.transaction {
             return this.GetTransactions(new int[] { id }).First();
         }
 
-        public IList<models.transaction.Transaction2> GetTransactions(IEnumerable<int> ids) {
+        public IList<models.transaction.Transaction> GetTransactions(IEnumerable<int> ids) {
             this.Reset();
-            this.Command.CommandText = @"SELECT t.id, t.postDateUtc, t.effectiveDate, t.invoiceNo, t.memo, t.modifiedUtc, t.reversedUtc, t.version
+            this.Command.CommandText = @"SELECT t.id, t.postDateUtc, t.effectiveDate, t.memo, t.modifiedUtc, t.reversedUtc, t.version
 FROM tbl_transaction t
     INNER JOIN @keys k ON t.id=k.id";
 
@@ -106,19 +106,19 @@ FROM tbl_transaction t
             keysParam.TypeName = "udt_intIdArray";
             keysParam.Value = idTable;
 
-            var retVal = new Dictionary<int, models.transaction.Transaction2>();
+            var retVal = new Dictionary<int, models.transaction.Transaction>();
             using (var dr = this.ExecuteReader()) {
                 while (dr.Read()) {
                     var i = 0;
                     var id = dr.GetInt32(i++);
-                    var t = new models.transaction.Transaction2 {
+                    var t = new models.transaction.Transaction {
                         Id = id,
                         PostDate = DateTime.SpecifyKind(dr.GetDateTime(i++), DateTimeKind.Utc),
                         EffectiveDate = dr.GetDateTime(i).Date,
-                        InvoiceNumber = dr.IsDBNull(++i) ? null : dr.GetString(i),
+                        //InvoiceNumber = dr.IsDBNull(++i) ? null : dr.GetString(i),
                         Memo = dr.IsDBNull(++i) ? null : dr.GetString(i),
                         Modified = DateTime.SpecifyKind(dr.GetDateTime(++i), DateTimeKind.Utc),
-                        IsReversed = !dr.IsDBNull(++i)
+                        IsReversed = !dr.IsDBNull(++i),
                     };
                     t.Version = new byte[8];
                     dr.GetBytes(++i, 0, t.Version, 0, 8);
@@ -126,7 +126,7 @@ FROM tbl_transaction t
                 }
             }
 
-            this.Command.CommandText = @"SELECT gj.id, gj.txnId, gj.seasonId, gj.signedAmt, gj.accountId, gj.personId, gj.memo
+            this.Command.CommandText = @"SELECT gj.id, gj.txnId, gj.seasonId, gj.signedAmt, gj.creditAmt, gj.debitAmt, gj.accountId, gj.personId, gj.memo
 FROM tbl_generalJournal gj
     INNER JOIN @keys k ON gj.txnId=k.id";
 
@@ -135,15 +135,16 @@ FROM tbl_generalJournal gj
                     var i = 0;
                     var id = dr.GetInt32(i++);
                     var txnId = dr.GetInt32(i++);
-                    retVal[txnId].JournalEntries.Add(new models.transaction.JournalEntry2 {
+                    retVal[txnId].JournalEntries.Add(new models.transaction.JournalEntry {
                         Id = id,
                         TxnId = txnId,
                         SeasonId = dr.GetInt32(i++),
-                        Amount = System.Math.Abs(dr.GetDecimal(i)),
-                        IsCredit = dr.GetDecimal(i++) < 0,
+                        SignedAmount = dr.GetDecimal(i++),
+                        CreditAmount = dr.GetDecimal(i++),
+                        DebitAmount = dr.GetDecimal(i++),
                         AccountId = dr.GetInt32(i),
-                        CustomerId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
-                        Memo = dr.IsDBNull(++i) ? null : dr.GetString(i)
+                        PersonId = dr.IsDBNull(++i) ? null : (int?)dr.GetInt32(i),
+                        Memo = dr.IsDBNull(++i) ? null : dr.GetString(i),
                     });
                 }
             }
