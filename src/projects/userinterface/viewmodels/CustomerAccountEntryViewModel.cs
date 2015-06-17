@@ -9,12 +9,16 @@ using System.Threading.Tasks;
 namespace tgsdesktop.viewmodels {
 
     public interface ICustomerAccountEntryViewModel {
-
+        ReactiveCommand<object> AddTransaction { get; }
     }
 
     public class CustomerAccountEntryViewModel : ViewModelBase, ICustomerAccountEntryViewModel {
         public CustomerAccountEntryViewModel(IScreen screen)
             : base(screen) {
+
+            this.SalesTaxRate = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.IGlobalSettingsAccessor>().SalesTaxRate;
+
+            this.Transactions = new ReactiveList<TransactionViewModel>();
 
             this.Accounts = new List<AccountDetails>(new AccountDetails[] {
                 new AccountDetails{Id = 106, Name="Table Girl Scholarship", AllowPrice=false, AllowQuantity = false, FixedPrice = 100m, IsTaxable=false},
@@ -49,6 +53,18 @@ namespace tgsdesktop.viewmodels {
             this.WhenAnyValue(vm => vm.SelectedAccount)
                 .Select(_ => this.SelectedAccount == null ? true : this.SelectedAccount.AllowQuantity)
                 .ToProperty(this, vm => vm.QuantityVisible, out _quantityVisible);
+            this.WhenAnyValue(vm => vm.SelectedAccount)
+                .Select(_ => this.SelectedAccount != null)
+                .ToProperty(this, vm => vm.IsAccountSelected, out _isAccountSelected);
+            this.WhenAny(
+                vm => vm.Amount,
+                vm => vm.Quantity,
+                (a, b) => {
+                    if (a.GetValue().HasValue && b.GetValue().HasValue)
+                        return (a.GetValue().Value * b.GetValue().Value) * (this.SelectedAccount.IsTaxable ? 1 + this.SalesTaxRate : 1);
+                    return 0m;
+                })
+                .ToProperty(this, vm => vm.Total, out _total);
 
             this.WhenAnyValue(vm => vm.SelectedAccount)
                 .Subscribe(_ => {
@@ -87,8 +103,15 @@ namespace tgsdesktop.viewmodels {
                             IsCredit = false
                         }
                 });
+
+                var t = svc.AddTransaction(atRequest, null);
+                this.Transactions.Insert(0, new TransactionViewModel(t, this.SelectedCustomer.Name));
+
+                this.SelectedCustomer = null;
             });
         }
+
+        decimal SalesTaxRate { get; set; }
 
         public ReactiveList<transaction.CustomerViewModel> Customers { get; private set; }
         transaction.CustomerViewModel _selectedCustomer;
@@ -107,6 +130,8 @@ namespace tgsdesktop.viewmodels {
         string _memo;
         public string Memo { get { return _memo; } set { this.RaiseAndSetIfChanged(ref _memo, value); } }
 
+        public ReactiveList<TransactionViewModel> Transactions { get; private set; }
+
         public class AccountDetails {
             public int Id { get; set; }
             public string Name { get; set; }
@@ -123,7 +148,24 @@ namespace tgsdesktop.viewmodels {
         public bool QuantityVisible { get { return _quantityVisible.Value; } }
         readonly ObservableAsPropertyHelper<decimal> _total;
         public decimal Total { get { return _total.Value; } }
+        readonly ObservableAsPropertyHelper<bool> _isAccountSelected;
+        public bool IsAccountSelected { get { return _isAccountSelected.Value; } }
 
         public ReactiveCommand<object> AddTransaction { get; private set; }
+
+        public class TransactionViewModel : ReactiveObject {
+
+            public TransactionViewModel(models.transaction.Transaction txn, string personName) {
+                this.Id = txn.Id;
+                this.EffectiveDate = txn.EffectiveDate;
+                this.PersonName = personName;
+                this.Amount = txn.JournalEntries.Single(x => x.AccountId == 101).DebitAmount;
+            }
+
+            public int Id { get; set; }
+            public DateTime EffectiveDate { get; set; }
+            public string PersonName { get; set; }
+            public decimal Amount { get; set; }
+        }
     }
 }
