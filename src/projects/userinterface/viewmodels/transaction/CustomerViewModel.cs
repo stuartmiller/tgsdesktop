@@ -32,8 +32,9 @@ namespace tgsdesktop.viewmodels.transaction {
                 infoLines.Add(camper.Session.Name + (camper.Cabin == null ? string.Empty :
                     " " + camper.Cabin.Name));
             } else if (customer.IsParent) {
+                DisplayText += " **Parent";
                 var parent = customer as models.Parent;
-                infoLines.Add(string.Join(", ", parent.Campers.Select(c => c.FirstName)));
+                infoLines.Add(string.Join(", ", parent.Campers.Select(c => c.FirstName + (parent.LastName == c.LastName ? string.Empty : ' ' + c.LastName))));
             }
 
             var sb = new StringBuilder();
