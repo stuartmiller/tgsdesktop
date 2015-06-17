@@ -80,8 +80,10 @@ namespace tgsdesktop.services.transaction {
 
             this.Command.Parameters.AddWithValue("@userId", User.Person.Id);
 
-            foreach (var pmt in payments)
-                pmtDt.Rows.Add(pmt.MethodId, pmt.Amount, pmt.CheckNumber);
+            if (payments != null) {
+                foreach (var pmt in payments)
+                    pmtDt.Rows.Add(pmt.MethodId, pmt.Amount, pmt.CheckNumber);
+            }
             foreach (var je in transaction.JournalEntries)
                 gjeDt.Rows.Add(je.AccountId, je.SeasonId, je.Amount, je.IsCredit, je.CustomerId, je.Memo);
 
