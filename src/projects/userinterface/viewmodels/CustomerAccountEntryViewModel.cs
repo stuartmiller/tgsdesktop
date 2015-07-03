@@ -20,16 +20,17 @@ namespace tgsdesktop.viewmodels {
 
             this.Transactions = new ReactiveList<TransactionViewModel>();
 
+            var itemService = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
             this.Accounts = new List<AccountDetails>(new AccountDetails[] {
                 new AccountDetails{Id = 106, Name="Table Girl Scholarship", AllowPrice=false, AllowQuantity = false, FixedPrice = 100m, IsTaxable=false},
                 new AccountDetails{Id = 107, Name="Account Withdrawal", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
                 new AccountDetails{Id = 109, Name="Travel Expense", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
                 new AccountDetails{Id = 110, Name="Offering", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 111, Name="Prescriptions", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
+                new AccountDetails{Id = 132, Name="Health Hut Charges", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
                 new AccountDetails{Id = 112, Name="Great Day Donation", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
                 new AccountDetails{Id = 116, Name="Personal Expense Refund", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{ItemId=125, Name="Theme Shirt", AllowPrice=true, AllowQuantity = true, IsTaxable=true},
-                new AccountDetails{ItemId=127, Name="Shipping for Lost and Found", AllowPrice=true, AllowQuantity = false, IsTaxable=false}
+                new AccountDetails{ItemId=127, Name="Shipping for Lost and Found", AllowPrice=true, AllowQuantity = false, IsTaxable=false, Item = itemService.GetItem(127)},
+                new AccountDetails{ItemId=125, Name="Theme Shirt", AllowPrice=true, AllowQuantity = true, IsTaxable=true, Item = itemService.GetItem(125)}
             });
 
             var accountItems = this.Accounts.Where(x => x.ItemId.HasValue);
@@ -64,7 +65,7 @@ namespace tgsdesktop.viewmodels {
                 vm => vm.Quantity,
                 (a, b) => {
                     if (a.GetValue().HasValue && b.GetValue().HasValue)
-                        return (a.GetValue().Value * b.GetValue().Value) * (this.SelectedAccount.IsTaxable ? this.SalesTaxRate : 1);
+                        return (a.GetValue().Value * b.GetValue().Value) * (this.SelectedAccount.IsTaxable ? this.SalesTaxRate : 0);
                     return 0m;
                 })
                 .ToProperty(this, vm => vm.SalesTax, out _salesTax);
@@ -127,6 +128,8 @@ namespace tgsdesktop.viewmodels {
                         SalesTax = this.SalesTax,
                         TxnMemo = this.SelectedAccount.Name,
                     };
+                    if (this.SelectedAccount.AllowPrice)
+                        this.SelectedAccount.Item.Price = this.Amount;
                     addSalesInvoiceModel.Items.Add(new models.AddSalesInvoiceModel.Item(this.SelectedAccount.Item) { Quantity = this.Quantity.Value });
                     addSalesInvoiceModel.AccountPayments.Add(new models.AddSalesInvoiceModel.AccountPayment { Amount = this.Total, PersonId = this.SelectedCustomer.PersonModel.Id });
 
