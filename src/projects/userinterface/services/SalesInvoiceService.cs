@@ -44,7 +44,7 @@ FROM tbl_salesItem i
             this.Command.CommandText = @"SELECT p.id, p.Name, p.ProductCost, p.Price, p.OldPrice, p.specialPrice, p.IsTaxExempt,
 	(SELECT TOP 1 PictureId FROM [Product_Picture_Mapping] WHERE productId=p.id ORDER BY displayOrder) AS pictureId
 FROM [Product] p
-WHERE Published=1 AND Deleted=0";
+WHERE Deleted=0";
             var retVal = new List<models.Product>();
             using (var dr = this.ExecuteReader()) {
                 while (dr.Read()) {
