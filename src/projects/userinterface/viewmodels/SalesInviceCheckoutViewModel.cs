@@ -124,7 +124,7 @@ namespace tgsdesktop.viewmodels {
         private void SaveTransaction() {
 
             var invoice = new models.AddSalesInvoiceModel {
-                Person = this.InvoiceViewModel.SelectedCustomer == null ? null : this.InvoiceViewModel.SelectedCustomer.PersonModel,
+                PersonId = this.InvoiceViewModel.SelectedCustomer == null ? null : (int?)this.InvoiceViewModel.SelectedCustomer.PersonModel.Id,
                 InvoiceNumber = this.InvoiceViewModel.InvoiceNumber,
                 DiscountPercentage = this.InvoiceViewModel.InvoiceDiscount/100,
                 SalesTax = this.InvoiceViewModel.SalesTax,

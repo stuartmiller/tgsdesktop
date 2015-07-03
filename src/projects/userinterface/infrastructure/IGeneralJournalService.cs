@@ -13,6 +13,8 @@ namespace tgsdesktop.infrastructure {
 
         models.transaction.Transaction AddTransaction(models.transaction.AddTransactionRequest transaction, IEnumerable<tgsdesktop.models.transaction.Payment> payments);
 
+        IList<models.transaction.Transaction> GetTransactions(IEnumerable<int> ids);
+
         void ReverseTransaction(int id);
     }
 }

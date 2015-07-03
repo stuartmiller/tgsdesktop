@@ -176,7 +176,7 @@ namespace tgsdesktop.viewmodels {
                         Amount = p.Amount.Value
                     });
                 if (SelectedCustomer != null) {
-                    item.Person = this.SelectedCustomer.PersonModel;
+                    item.PersonId = this.SelectedCustomer.PersonModel.Id;
                 }
                 svc.AddSalesInvoice(item);
 

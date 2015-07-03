@@ -17,5 +17,9 @@ namespace tgsdesktop {
             }
             return age;
         }
+
+        public static string ToInvoiceNumber(this DateTime date) {
+            return date.ToString("MHHmmssff");
+        }
     }
 }

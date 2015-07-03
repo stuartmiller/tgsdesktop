@@ -25,7 +25,7 @@ namespace tgsdesktop.viewmodels {
         public SalesInvoiceViewModel(IScreen screen)
             : base(screen) {
 
-            this.InvoiceNumber = DateTime.Now.ToString("Hmmssff");
+            this.InvoiceNumber = DateTime.Now.ToInvoiceNumber();
             this.SeasonId = infrastructure.IocContainer.Resolve<infrastructure.IGlobalSettingsAccessor>().CurrentSeasonId;
             this.EffectiveDate = DateTime.Now;
 

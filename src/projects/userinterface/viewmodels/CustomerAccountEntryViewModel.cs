@@ -28,15 +28,18 @@ namespace tgsdesktop.viewmodels {
                 new AccountDetails{Id = 111, Name="Prescriptions", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
                 new AccountDetails{Id = 112, Name="Great Day Donation", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
                 new AccountDetails{Id = 116, Name="Personal Expense Refund", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 106, Name="Theme Shirt", AllowPrice=true, AllowQuantity = true, IsTaxable=true, ItemId=125}
+                new AccountDetails{ItemId=125, Name="Theme Shirt", AllowPrice=true, AllowQuantity = true, IsTaxable=true},
+                new AccountDetails{ItemId=127, Name="Shipping for Lost and Found", AllowPrice=true, AllowQuantity = false, IsTaxable=false}
             });
 
             var accountItems = this.Accounts.Where(x => x.ItemId.HasValue);
             var items = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>().GetItems(accountItems.Select(x => x.ItemId.Value));
             foreach (var i in items) {
                 var ai = accountItems.SingleOrDefault(x => x.ItemId == i.ItemId);
-                if (ai != null)
+                if (ai != null) {
                     ai.FixedPrice = i.Price;
+                    ai.Item = i;
+                }
             }
 
             this.Customers = new ReactiveList<transaction.CustomerViewModel>();
@@ -56,6 +59,15 @@ namespace tgsdesktop.viewmodels {
             this.WhenAnyValue(vm => vm.SelectedAccount)
                 .Select(_ => this.SelectedAccount != null)
                 .ToProperty(this, vm => vm.IsAccountSelected, out _isAccountSelected);
+            this.WhenAny(
+                vm => vm.Amount,
+                vm => vm.Quantity,
+                (a, b) => {
+                    if (a.GetValue().HasValue && b.GetValue().HasValue)
+                        return (a.GetValue().Value * b.GetValue().Value) * (this.SelectedAccount.IsTaxable ? this.SalesTaxRate : 1);
+                    return 0m;
+                })
+                .ToProperty(this, vm => vm.SalesTax, out _salesTax);
             this.WhenAny(
                 vm => vm.Amount,
                 vm => vm.Quantity,
@@ -84,14 +96,16 @@ namespace tgsdesktop.viewmodels {
                 vm => vm.Quantity,
                 (a, b, c, d) => a.GetValue() != null && b.GetValue() != null && c.GetValue().HasValue && c.GetValue().Value > 0 && d.GetValue().HasValue && d.GetValue().Value > 0));
             this.AddTransaction.Subscribe(_ => {
-                var svc = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.IGeneralJournalService>();
-                var atRequest = new models.transaction.AddTransactionRequest {
-                    EffectiveDate = this.EffectiveDate,
-                    Memo = this.Memo
-                };
-                atRequest.JournalEntries.AddRange(new models.transaction.AddJournalEntryRequest[] {
+                models.transaction.Transaction txn = null;
+                if (this.SelectedAccount.Id.HasValue) {
+                    var atRequest = new models.transaction.AddTransactionRequest {
+                        EffectiveDate = this.EffectiveDate,
+                        Memo = this.Memo
+                    };
+                    var svc = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.IGeneralJournalService>();
+                    atRequest.JournalEntries.AddRange(new models.transaction.AddJournalEntryRequest[] {
                         new models.transaction.AddJournalEntryRequest {
-                            AccountId = this.SelectedAccount.Id,
+                            AccountId = this.SelectedAccount.Id.Value,
                             Amount = this.Total,
                             CustomerId = this.SelectedCustomer.PersonModel.Id,
                             IsCredit = true
@@ -102,10 +116,26 @@ namespace tgsdesktop.viewmodels {
                             CustomerId = this.SelectedCustomer.PersonModel.Id,
                             IsCredit = false
                         }
-                });
+                    });
+                    txn = svc.AddTransaction(atRequest, null);
+                } else {
+                    var svc = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.ISalesInvoiceService>();
+                    var addSalesInvoiceModel = new models.AddSalesInvoiceModel{
+                        EffectiveDate = this.EffectiveDate,
+                        InvoiceNumber = DateTime.Now.ToInvoiceNumber(),
+                        PersonId = this.SelectedCustomer.PersonModel.Id,
+                        SalesTax = this.SalesTax,
+                        TxnMemo = this.SelectedAccount.Name,
+                    };
+                    addSalesInvoiceModel.Items.Add(new models.AddSalesInvoiceModel.Item(this.SelectedAccount.Item) { Quantity = this.Quantity.Value });
+                    addSalesInvoiceModel.AccountPayments.Add(new models.AddSalesInvoiceModel.AccountPayment { Amount = this.Total, PersonId = this.SelectedCustomer.PersonModel.Id });
 
-                var t = svc.AddTransaction(atRequest, null);
-                this.Transactions.Insert(0, new TransactionViewModel(t, this.SelectedCustomer.Name));
+                    var retVal = svc.AddSalesInvoice(addSalesInvoiceModel);
+
+                    txn = tgsdesktop.infrastructure.IocContainer.Resolve<infrastructure.IGeneralJournalService>().GetTransactions(new int[] { retVal.TransactionId }).First();
+                }
+                this.Transactions.Insert(0, new TransactionViewModel(txn, this.SelectedCustomer.Name));
+
 
                 this.SelectedCustomer = null;
             });
@@ -133,19 +163,23 @@ namespace tgsdesktop.viewmodels {
         public ReactiveList<TransactionViewModel> Transactions { get; private set; }
 
         public class AccountDetails {
-            public int Id { get; set; }
+            public int? Id { get; set; }
+            public int? ItemId { get; set; }
             public string Name { get; set; }
             public bool IsTaxable { get; set; }
             public bool AllowQuantity { get; set; }
             public bool AllowPrice { get; set; }
             public decimal? FixedPrice { get; set; }
-            public int? ItemId { get; set; }
+
+            public models.Product Item { get; set; }
         }
 
         readonly ObservableAsPropertyHelper<bool> _amountVisible;
         public bool AmountVisible { get { return _amountVisible.Value; } }
         readonly ObservableAsPropertyHelper<bool> _quantityVisible;
         public bool QuantityVisible { get { return _quantityVisible.Value; } }
+        readonly ObservableAsPropertyHelper<decimal> _salesTax;
+        public decimal SalesTax { get { return _salesTax.Value; } }
         readonly ObservableAsPropertyHelper<decimal> _total;
         public decimal Total { get { return _total.Value; } }
         readonly ObservableAsPropertyHelper<bool> _isAccountSelected;
