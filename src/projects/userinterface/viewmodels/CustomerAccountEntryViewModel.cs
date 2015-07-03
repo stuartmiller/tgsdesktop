@@ -21,14 +21,14 @@ namespace tgsdesktop.viewmodels {
             this.Transactions = new ReactiveList<TransactionViewModel>();
 
             this.Accounts = new List<AccountDetails>(new AccountDetails[] {
-                new AccountDetails{Id = 106, Name="Table Girl Scholarship", AllowPrice=false, AllowQuantity = false, FixedPrice = 100m, IsTaxable=false},
-                new AccountDetails{Id = 107, Name="Account Withdrawal", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 109, Name="Travel Expense", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 110, Name="Offering", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 111, Name="Prescriptions", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 112, Name="Great Day Donation", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 116, Name="Personal Expense Refund", AllowPrice=true, AllowQuantity = false, IsTaxable=false},
-                new AccountDetails{Id = 106, Name="Theme Shirt", AllowPrice=true, AllowQuantity = true, IsTaxable=true, ItemId=125}
+                new AccountDetails{Id = 106, Name="Table Girl Scholarship", AllowPrice=false, AllowQuantity = false, FixedPrice = 100m, IsTaxable=false, IsCredit=true},
+                new AccountDetails{Id = 107, Name="Account Withdrawal", AllowPrice=true, AllowQuantity = false, IsTaxable=false, IsCredit = false},
+                new AccountDetails{Id = 109, Name="Travel Expense", AllowPrice=true, AllowQuantity = false, IsTaxable=false, IsCredit = false},
+                new AccountDetails{Id = 110, Name="Offering", AllowPrice=true, AllowQuantity = false, IsTaxable=false, IsCredit = false},
+                new AccountDetails{Id = 111, Name="Prescriptions", AllowPrice=true, AllowQuantity = false, IsTaxable=false, IsCredit = false},
+                new AccountDetails{Id = 112, Name="Great Day Donation", AllowPrice=true, AllowQuantity = false, IsTaxable=false, IsCredit = false},
+                new AccountDetails{Id = 116, Name="Personal Expense Refund", AllowPrice=true, AllowQuantity = false, IsTaxable=false, IsCredit = false},
+                new AccountDetails{Id = 106, Name="Theme Shirt", AllowPrice=true, AllowQuantity = true, IsTaxable=true, ItemId=125, IsCredit = false}
             });
 
             var accountItems = this.Accounts.Where(x => x.ItemId.HasValue);
@@ -94,13 +94,13 @@ namespace tgsdesktop.viewmodels {
                             AccountId = this.SelectedAccount.Id,
                             Amount = this.Total,
                             CustomerId = this.SelectedCustomer.PersonModel.Id,
-                            IsCredit = true
+                            IsCredit = !this.SelectedAccount.IsCredit
                         },
                         new models.transaction.AddJournalEntryRequest {
                             AccountId = 101,
                             Amount = this.Total,
                             CustomerId = this.SelectedCustomer.PersonModel.Id,
-                            IsCredit = false
+                            IsCredit = this.SelectedAccount.IsCredit
                         }
                 });
 
@@ -140,6 +140,7 @@ namespace tgsdesktop.viewmodels {
             public bool AllowPrice { get; set; }
             public decimal? FixedPrice { get; set; }
             public int? ItemId { get; set; }
+            public bool IsCredit { get; set; }
         }
 
         readonly ObservableAsPropertyHelper<bool> _amountVisible;
