@@ -219,6 +219,8 @@ AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.revers
             this.Db.Reset();
             this.Db.Command.CommandText = @"SELECT gj.personId, txn.id AS txnId, txn.effectiveDate, gj.signedAmt,
 	CASE
+		WHEN ISNULL(gj.memo,'')<>'' THEN gj.memo
+		WHEN ISNULL(txn.memo,'')<>'' THEN txn.memo
 		WHEN si.id IS NOT NULL THEN 'Invoice #' + si.invoiceNo
 		WHEN sir.id IS NOT NULL THEN 'Return'
 		WHEN pmt.id IS NOT NULL THEN 'Payment ' +
@@ -229,8 +231,7 @@ AND (SELECT MAX(CASE WHEN t.reversedUtc IS NULL THEN t.postDateUtc ELSE t.revers
 				WHEN pmt.methodId=5 THEN 'MasterCard'
 				WHEN pmt.methodId=6 THEN 'Discover'
 			END
-		WHEN ISNULL(gj.memo,'')<>'' THEN gj.memo
-		ELSE txn.memo
+		ELSE (SELECT TOP 1 xa.name FROM tbl_account xa INNER JOIN tbl_generalJournal xgj ON gj.txnId=xgj.txnId AND xgj.accountId<>101 WHERE xgj.accountId=xa.id)
 	END, si.id, sir.id
 FROM tbl_generalJournal gj
 	INNER JOIN @keys k ON gj.personId=k.id
