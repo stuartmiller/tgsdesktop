@@ -199,7 +199,7 @@ FROM tbl_salesInvoiceReturn r
                 actPmtParam.Value = aPmtDt;
             itemsParam.Value = itmDt;
 
-            this.Command.Parameters.AddWithValue("@personId", invoice.Person == null ? (object)DBNull.Value : invoice.Person.Id);
+            this.Command.Parameters.AddWithValue("@personId", invoice.PersonId.HasValue ? invoice.PersonId.Value : (object)DBNull.Value);
             this.Command.Parameters.AddWithValue("@salesTax", invoice.SalesTax);
             this.Command.Parameters.AddWithValue("@userId", User.Person.Id);
 

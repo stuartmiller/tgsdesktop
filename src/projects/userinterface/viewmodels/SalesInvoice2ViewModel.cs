@@ -164,19 +164,19 @@ namespace tgsdesktop.viewmodels {
                         Price = this.Stamps.Price.Value,
                         Quantity = this.StampsQty
                     });
-                foreach (var p in this.Payments.Where(x => x.Amount.HasValue && x.Amount.Value > 0))
+                foreach (var p in this.Payments.Where(x => x.Amount.HasValue))
                     item.Payments.Add(new models.AddSalesInvoiceModel.Payment {
                         Amount = p.Amount.Value,
                         CheckNumber = p.CheckNumber,
                         Method = (models.transaction.PaymentMethod)p.PaymentMethod.Key
                     });
-                foreach (var p in this.AccountPayments.Where(x => x.Amount.HasValue && x.Amount.Value > 0))
+                foreach (var p in this.AccountPayments.Where(x => x.Amount.HasValue))
                     item.AccountPayments.Add(new models.AddSalesInvoiceModel.AccountPayment {
                         PersonId = p.PersonId,
                         Amount = p.Amount.Value
                     });
                 if (SelectedCustomer != null) {
-                    item.Person = this.SelectedCustomer.PersonModel;
+                    item.PersonId = this.SelectedCustomer.PersonModel.Id;
                 }
                 svc.AddSalesInvoice(item);
 

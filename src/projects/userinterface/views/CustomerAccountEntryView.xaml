@@ -75,7 +75,12 @@
                              SelectedItem="{Binding SelectedAccount}"
                              SelectedValuePath="Id" />
         <!-- Customer lookup row -->
-        <TextBlock Text="Choose an account in the dropdown above." Visibility="{Binding IsAccountSelected, Converter={StaticResource BoolToVis}, ConverterParameter=Inverted}"/>
+        <TextBlock Grid.Row="2" Text="Choose an account in the dropdown above."
+                   Visibility="{Binding IsAccountSelected, Converter={StaticResource BoolToVis}, ConverterParameter=Inverted}"
+                   HorizontalAlignment="Center"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   Foreground="Red"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding IsAccountSelected, Converter={StaticResource BoolToVis}}">
             <telerik:RadDatePicker Width="120"
                                    Margin="3,3,0,3"
@@ -103,16 +108,19 @@
                                          Text="{Binding Amount, StringFormat={}{0:C}}"
                                          Margin="3,3,0,3"
                                          Width="75"
+                                         SelectionOnFocus="SelectAll"
                                          Visibility="{Binding AmountVisible, Converter={StaticResource BoolToVis}}"/>
             <telerik:RadWatermarkTextBox x:Name="txtQuantity"
                                          Text="{Binding Quantity}"
                                          Margin="3,3,0,3"
                                          Width="25"
+                                         SelectionOnFocus="SelectAll"
                                          Visibility="{Binding QuantityVisible, Converter={StaticResource BoolToVis}}"/>
             <telerik:RadWatermarkTextBox x:Name="txtMemo"
                                          Text="{Binding Memo}"
                                          Margin="3,3,0,3"
                                          WatermarkContent="Memo"
+                                         SelectionOnFocus="SelectAll"
                                          Width="300"/>
             <TextBlock x:Name="txtTotal"
                        FontSize="16"
@@ -137,7 +145,7 @@
                 <telerik:GridViewDataColumn Header="Id" DataMemberBinding="{Binding Id}" IsFilterable="False" />
                 <telerik:GridViewDataColumn Header="EffectiveDate" DataMemberBinding="{Binding EffectiveDate, StringFormat={}{0:d}}" Width="*" IsFilterable="False"/>
                 <telerik:GridViewDataColumn Header="Name" DataMemberBinding="{Binding PersonName}" Width="*" IsFilterable="False"/>
-                <telerik:GridViewDataColumn Header="Amount" DataMemberBinding="{Binding Price, StringFormat={}{0:c}}" IsFilterable="False"/>
+                <telerik:GridViewDataColumn Header="Amount" DataMemberBinding="{Binding Amount, StringFormat={}{0:c}}" IsFilterable="False"/>
             </telerik:RadGridView.Columns>
         </telerik:RadGridView>
 

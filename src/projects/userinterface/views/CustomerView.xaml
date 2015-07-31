@@ -77,7 +77,7 @@
                                         VerticalAlignment="Stretch"
                                         Margin="3"
                                         WatermarkContent="Customer"
-                                        DisplayMemberPath="DisplayText"
+                                        DisplayMemberPath="NameDetail"
                                         TextSearchPath="SearchText"
                                         AutoCompleteMode="SuggestAppend"
                                         TextSearchMode="Contains"

@@ -345,7 +345,6 @@
     <Compile Include="models\Person.cs" />
     <Compile Include="models\Transaction.cs" />
     <Compile Include="viewmodels\accounts\PaymentEntryViewModel.cs" />
-    <Compile Include="viewmodels\accounts\SearchViewModel.cs" />
     <Compile Include="viewmodels\ARTxnViewModel.cs" />
     <Compile Include="viewmodels\AppBootStrapper.cs" />
     <Compile Include="viewmodels\BatchTransactionViewModel.cs" />

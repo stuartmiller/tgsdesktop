@@ -12,9 +12,7 @@ namespace tgsdesktop.viewmodels.transaction {
 
         public CustomerViewModel(models.Person customer) {
             PersonModel = customer;
-            Name = customer.FirstName + " " + customer.LastName +
-                (!string.IsNullOrEmpty(customer.NickName) && customer.FirstName != customer.NickName ?
-                " (" + customer.NickName + ')' : string.Empty);
+
             this.Balance = customer.Balance * -1; // change the sign so the ui shows negative for a debit balance
             if (customer.Balance != 0) {
                 this.BalanceString = (customer.Balance > 0 ? "(" : string.Empty)
@@ -32,8 +30,9 @@ namespace tgsdesktop.viewmodels.transaction {
                 infoLines.Add(camper.Session.Name + (camper.Cabin == null ? string.Empty :
                     " " + camper.Cabin.Name));
             } else if (customer.IsParent) {
+                DisplayText += " **Parent";
                 var parent = customer as models.Parent;
-                infoLines.Add(string.Join(", ", parent.Campers.Select(c => c.FirstName)));
+                infoLines.Add(string.Join(", ", parent.Campers.Select(c => c.FirstName + (parent.LastName == c.LastName ? string.Empty : ' ' + c.LastName))));
             }
 
             var sb = new StringBuilder();
@@ -82,7 +81,23 @@ namespace tgsdesktop.viewmodels.transaction {
         public string DisplayText { get; set; }
         public string SearchText { get; set; }
 
-        public string Name { get; set; }
+        public string Name {
+            get { return PersonModel.FirstName + ' ' + PersonModel.LastName + (!string.IsNullOrEmpty(PersonModel.NickName) ? " (" + PersonModel.NickName + ')' : string.Empty); }
+        }
+        public string NameDetail {
+            get {
+                var sb = new StringBuilder(this.Name);
+                if (!PersonModel.IsStaff && PersonModel.IsParent)
+                    sb.Append(" **Parent/Staff**");
+                else if (PersonModel.IsParent)
+                    sb.Append(" **Parent**");
+                else if (PersonModel.IsCamper) {
+                    var camper = PersonModel as models.Camper;
+                    sb.Append(' ').Append(camper.Session.Name).Append(" Camper");
+                }
+                return sb.ToString();
+            }
+        }
         public string InfoLine1 { get; set; }
         public System.Windows.Visibility InfoLine1Visibility { get { return string.IsNullOrEmpty(this.InfoLine1) ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; } }
         public string InfoLine2 { get; set; }

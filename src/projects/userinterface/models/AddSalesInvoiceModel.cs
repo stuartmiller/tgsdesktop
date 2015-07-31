@@ -18,13 +18,25 @@ namespace tgsdesktop.models {
         public int? SeasonId { get; set; }
         public DateTime? EffectiveDate { get; set; }
         public string TxnMemo { get; set; }
-        public models.Person Person { get; set; }
+        public int? PersonId { get; set; }
         public decimal SalesTax { get; set; }
         public List<Payment> Payments { get; private set; }
         public List<AccountPayment> AccountPayments { get; set; }
         public List<Item> Items { get; private set; }
 
         public class Item {
+
+            public Item(models.Product product = null) {
+                if (product != null) {
+                    this.Description = product.Name;
+                    this.ProductId = product.ProductId;
+                    this.ItemId = product.ItemId;
+                    this.Price = product.Price.HasValue ? product.Price.Value : 0m;
+                    this.Cost = product.Cost;
+                    IsTaxable = product.IsTaxable;
+                }
+            }
+
             public string Description { get; set; }
             public int? ProductId { get; set; }
             public int? ItemId { get; set; }
