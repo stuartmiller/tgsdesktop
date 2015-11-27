@@ -33,7 +33,7 @@ namespace tgsdesktop.models {
                     this.ItemId = product.ItemId;
                     this.Price = product.Price.HasValue ? product.Price.Value : 0m;
                     this.Cost = product.Cost;
-                    IsTaxable = product.IsTaxable;
+                    IsTaxable = product.IsTaxable; 
                 }
             }
 
